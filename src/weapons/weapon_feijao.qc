@@ -1,0 +1,94 @@
+void() feijao_explode =
+{
+	local entity tgt = self.movetarget;
+	
+	bprint(ftos(tgt.feijao_count));
+	bprint("\n");
+	
+	if(tgt.feijao_count < 7){
+		T_Damage (tgt, self, self.owner, 8);
+		particle(tgt.origin + '0 0 16', '0 0 1', 75, 10);
+	}else{
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+		WriteCoord (MSG_BROADCAST, self.movetarget.origin_x);
+		WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
+		WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
+		
+		T_Damage (tgt, self, self.owner, 32);
+	}
+	
+	tgt.feijao_manager = 0;
+	tgt.feijao_count   = 0;
+	
+	remove(self);
+}
+
+void() feijao_touch =
+{
+	if (other == self.owner)			return;
+	if (other.solid == SOLID_TRIGGER)	return;
+
+	if (pointcontents(self.origin) == CONTENT_SKY) { remove(self); return; }
+	if (!other.takedamage){ remove(self); return; }
+	
+	spawn_touchblood (9);
+	//T_Damage (other, self, self.owner, 4);
+	other.feijao_count = other.feijao_count + 1;
+	
+	if(other.feijao_manager != 0){
+		other.feijao_manager.nextthink = time + 1;
+		remove(self);
+		return;
+	}
+	
+	self.solid = SOLID_NOT;
+	self.movetype = MOVETYPE_NONE;
+	self.velocity = '0 0 0';
+	setmodel(self, "");
+	setsize(self, '0 0 0');
+	
+	self.movetarget = other;
+	other.feijao_manager = self;
+	
+	self.think = feijao_explode;
+	self.nextthink = time + 1;
+};
+
+void(vector org, vector dir) feijao_launch =
+{
+	newmis = spawn ();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;
+
+	newmis.angles = vectoangles(dir);
+	
+	newmis.touch = feijao_touch;
+	newmis.classname = "spike";
+	newmis.think = SUB_Remove;
+	newmis.nextthink = time + 6;
+	setmodel (newmis, "progs/spike.mdl");
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	setorigin (newmis, org);
+
+	newmis.velocity = dir * 1000;
+};
+
+void() W_FireFeijao =
+{
+	local vector	dir;
+	local entity	old;
+	
+	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
+
+	self.currentammo = self.ammo_nails1 = self.ammo_nails1 - 1;
+	UpdateAmmoCounts(self);
+
+	dir = aim (self, 1024);
+	feijao_launch (self.origin + '0 0 16', dir);
+	newmis.touch = feijao_touch;
+	setmodel(newmis, "progs/s_spike.mdl");
+	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);			
+	self.punchangle_x = -2;
+}
