@@ -12,7 +12,7 @@ items.qc
 grapple.qc		// ZOID - grappling hook
 
 // --- AVIÃOZINHO DASH --------------------------------
-avmovement.qc
+av_move.qc
 
 // --- AVIÃOZINHO WEAPONS -----------------------------
 weapons_utils.qc

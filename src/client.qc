@@ -1385,13 +1385,13 @@ void() PlayerPreThink =
 	
 	if(self.flags & FL_DASHING && self.velocity_z <= 0.0) self.velocity_z = 0.0;
 	
-	if(self.flags & FL_DASHING && self.dash_cooldown <= time){
+	if(self.flags & FL_DASHING && self.dash_duration <= time){
 		if(self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
 		if(self.flags & FL_DASHING)  self.flags = self.flags - FL_DASHING;
 	}
 	
-	if(self.dash_timer < time && self.dash_count > 0){
-		if(self.dash_count > 0) self.dash_timer = time + 1.25;
+	if(self.dash_cooldown < time && self.dash_count > 0){
+		if(self.dash_count > 0) self.dash_cooldown = time + AV_DASH_COOLDOWN;
 		self.dash_count = self.dash_count - 1;
 	}
 };
