@@ -471,13 +471,13 @@ void(entity theMorph) morph_setup =
 	if ( theMorph.owner )
 	{
 		theMorph.effects = 0;
-		theMorph.health = 200;
+		theMorph.health = 72; // MODIFICADO: era 200, agora -64%
 		theMorph.spawnflags = theMorph.owner.spawnflags;
 	}
 	else
 	{
 		theMorph.effects = theMorph.effects | EF_DIMLIGHT;
-	    theMorph.health = 2000;
+	    theMorph.health = 731; // MODIFICADO: era 2000, agora -63%
 	}
 	
 //	theMorph.frame = $start01;

@@ -359,10 +359,10 @@ WEAPONS
 
 void() bound_other_ammo =
 {
-	if (other.ammo_shells1 > 100)
-		other.ammo_shells1 = 100;
-	if (other.ammo_nails1 > 200)
-		other.ammo_nails1 = 200;
+	if (other.ammo_shells1 > 200)  // MODIFICADO: era 100
+		other.ammo_shells1 = 200;
+	if (other.ammo_nails1 > 335)  // MODIFICADO: era 345, agora 335
+		other.ammo_nails1 = 335;
 	if (other.ammo_rockets1 > 100)
 		other.ammo_rockets1 = 100;		
 	if (other.ammo_cells1 > 100)
@@ -775,7 +775,7 @@ local float		best;
 // shotgun
 	if (self.weapon == 1)
 	{
-		if (other.ammo_shells1 >= 100)
+		if (other.ammo_shells1 >= 200)  // MODIFICADO: era 100
 			return;
 		other.ammo_shells1 = other.ammo_shells1 + self.aflag;
 	}
@@ -783,7 +783,7 @@ local float		best;
 // spikes
 	if (self.weapon == 2)
 	{
-		if (other.ammo_nails1 >= 200)
+		if (other.ammo_nails1 >= 335)  // MODIFICADO: era 345, agora 335
 			return;
 		other.ammo_nails1 = other.ammo_nails1 + self.aflag;
 	}

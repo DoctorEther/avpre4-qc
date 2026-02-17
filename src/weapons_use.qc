@@ -264,13 +264,13 @@ void() W_Attack =
 	{
 		player_shot1 ();
 		W_FireShotgun ();
-		self.attack_finished = time + RuneApplyHell(0.5, self);
+		self.attack_finished = time + RuneApplyHell(0.393, self); // MODIFICADO: era 0.374, agora 5% mais lento
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
 		player_shot1 ();
 		W_FireSuperShotgun ();
-		self.attack_finished = time + RuneApplyHell(0.7, self);
+		self.attack_finished = time + RuneApplyHell(0.549, self); // MODIFICADO: era 0.523, agora 5% mais lento
 	}
 	else if (self.weapon == IT_LAVA_NAILGUN)
 	{
