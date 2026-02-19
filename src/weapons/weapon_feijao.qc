@@ -1,28 +1,31 @@
+float	IT_FEIJAO				= 16777216;
+
 void() feijao_explode =
 {
 	local entity tgt = self.movetarget;
 	
-	bprint(ftos(tgt.feijao_count));
-	bprint("\n");
-	
-	if(tgt.feijao_count < 7){
-		T_Damage (tgt, self, self.owner, 8);
-		particle(tgt.origin + '0 0 16', '0 0 1', 75, 10);
-	}else{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-		WriteCoord (MSG_BROADCAST, self.movetarget.origin_x);
-		WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
-		WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
-		
-		T_Damage (tgt, self, self.owner, 32);
+	if(tgt.health <= 0){
+		tgt.feijao_manager = 0;
+		tgt.feijao_count   = 0;
+		remove(self);
+		return;
 	}
+
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, self.movetarget.origin_x);
+	WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
+	WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
+	
+	T_RadiusDamage (self, self.owner, tgt.feijao_count * 30, 0);
 	
 	tgt.feijao_manager = 0;
 	tgt.feijao_count   = 0;
 	
 	remove(self);
 }
+
+float AV_FEIJAO_TIME = 0.45;
 
 void() feijao_touch =
 {
@@ -33,11 +36,15 @@ void() feijao_touch =
 	if (!other.takedamage){ remove(self); return; }
 	
 	spawn_touchblood (9);
-	//T_Damage (other, self, self.owner, 4);
+	//T_Damage (other, self, self.owner, 6);
 	other.feijao_count = other.feijao_count + 1;
 	
 	if(other.feijao_manager != 0){
-		other.feijao_manager.nextthink = time + 1;
+		if(other.feijao_count < 4)
+			other.feijao_manager.nextthink = time + AV_FEIJAO_TIME;
+		else
+			other.feijao_manager.nextthink = time + 0.001;
+			
 		remove(self);
 		return;
 	}
@@ -52,7 +59,7 @@ void() feijao_touch =
 	other.feijao_manager = self;
 	
 	self.think = feijao_explode;
-	self.nextthink = time + 1;
+	self.nextthink = time + AV_FEIJAO_TIME;
 };
 
 void(vector org, vector dir) feijao_launch =

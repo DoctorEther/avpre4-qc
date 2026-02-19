@@ -344,7 +344,6 @@ float	IT_QUAD					= 4194304;		//23
 //ZOID --
 float	IT_GRAPPLE				= 0;		// grapple overload, hope it
 float	IT_AVIAO				= 8388608;
-float	IT_FEIJAO				= 16777216;
 
 //-- ZOID										// doesn't mess things up!
 												
