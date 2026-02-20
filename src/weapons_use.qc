@@ -931,9 +931,11 @@ void() ImpulseCommands =
 void() PreImpulseCommands =
 {
 	if(self.impulse == 40) PlayerDoubleJump();
-	else if(self.impulse == 41) PlayerDash();
+	if(self.impulse == 41) PlayerDash();
+	if(self.impulse == 49) func_vehicle_triton();
+	if(self.impulse == 50) Car_CheckAttach ();
 	
-	if(self.impulse >= 40 && self.impulse <= 41) self.impulse = 0;
+	if(self.impulse >= 40 && self.impulse <= 50) self.impulse = 0;
 }
 
 /*

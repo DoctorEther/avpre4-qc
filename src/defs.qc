@@ -880,6 +880,7 @@ float (entity e, float healamount, float ignore) T_Heal; // health function
 
 float(entity targ, entity inflictor) CanDamage;
 
+float	modelindex_eyes, modelindex_player;
 
 // 
 // new_items.qc

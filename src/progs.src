@@ -5,6 +5,15 @@ teamplay.qc		// ZOID - teamplay stuff
 runes.qc
 motd.qc
 subs.qc
+
+// FUNC_VEHICLE
+func_vehicle/maths.qc
+func_vehicle/phys_defs.qc
+func_vehicle/phys_matrix.qc
+func_vehicle/phys_exec.qc
+func_vehicle/func_vehicle.qc
+func_vehicle/func_vehicle_builtins.qc
+
 fight.qc
 ai.qc
 combat.qc

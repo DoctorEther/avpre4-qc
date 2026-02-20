@@ -359,6 +359,9 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 					points = points * 0.5;
 				if (points > 0)
 				{
+					vector dir = normalize(org - inflictor.origin);
+					Phys_Force(head, 1000, dir * points, org, dir);
+					
 					if (CanDamage (head, inflictor))
 					{	// shambler takes half damage from all explosions
 						if (head.classname == "monster_shambler")						
