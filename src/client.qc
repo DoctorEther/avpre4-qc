@@ -1134,7 +1134,6 @@ void() PlayerDeathThink =
 	respawn();
 };
 
-
 void() PlayerJump =
 {
 	local vector start, end;
@@ -1355,15 +1354,6 @@ void() PlayerPreThink =
 	if (self.deadflag == DEAD_DYING)
 		return; // dying, so do nothing
 	
-	if (self.button2)
-	{
-		PlayerJump();
-	}
-	else
-	{
-		self.flags = self.flags | FL_JUMPRELEASED;
-	}
-
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
@@ -1386,6 +1376,58 @@ void() PlayerPreThink =
 		GrappleService();
 	
 	// --- AVIÃOZINHO --------------------------------------
+	
+	if(self.on_ladder){
+		self.on_ladder = 0;
+		
+		if(self.movement_x != 0 || self.movement_y != 0){
+			self.velocity = '0 0 0';
+			
+			makevectors(self.v_angle);
+			local vector ang = v_forward;
+			
+			local float climb_x = self.movement_x;
+			if(climb_x){
+				if(climb_x >  1) climb_x =  1;
+				if(climb_x < -1) climb_x = -1;
+				
+				self.velocity_z = climb_x  * ang_z * 160;
+			}
+			
+			local float climb_y = self.movement_y;
+			if(climb_y){
+				if(climb_y >  1) climb_y =  1;
+				if(climb_y < -1) climb_y = -1;
+				
+				ang_z = 0;
+				ang = normalize(ang);
+				
+				self.velocity_x = climb_y  * ang_y * 160;
+				self.velocity_y = -climb_y * ang_x * 160;
+			}
+			
+			if (time > self.ladder_step_finished) {
+				r = random();
+				if (r > 0.75)
+					sound (self, CHAN_BODY, "ladder/pl_ladder1.wav", 0.5, ATTN_NORM);
+				else if (r > 0.5)
+					sound (self, CHAN_BODY, "ladder/pl_ladder2.wav", 0.5, ATTN_NORM);
+				else if (r > 0.25)
+					sound (self, CHAN_BODY, "ladder/pl_ladder3.wav", 0.5, ATTN_NORM);
+				else
+					sound (self, CHAN_BODY, "ladder/pl_ladder4.wav", 0.5, ATTN_NORM);
+				self.ladder_step_finished = time + 0.5;
+			}
+		}else{
+			self.velocity = '0 0 0';
+		}
+	}else{
+		self.gravity = 1; 
+		if(self.button2)
+			PlayerJump ();
+		else
+			self.flags = self.flags | FL_JUMPRELEASED;
+	}
 	
 	if(self.flags & FL_DASHING && self.velocity_z <= 0.0) self.velocity_z = 0.0;
 	

@@ -41,6 +41,10 @@ triggers.qc
 plats.qc
 misc.qc
 
+// --- AVIÃOZINHO FUNC_SOUNDTRACK ---------------------
+triggers/trigger_soundtrack.qc
+triggers/trigger_ladder.qc
+
 ogre.qc
 ogre_berserker.qc
 hunter.qc

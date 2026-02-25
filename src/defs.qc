@@ -597,6 +597,9 @@ float	AS_MISSILE		= 4;
 .entity		feijao_manager
 .float		feijao_count;
 
+.float		on_ladder
+.float		ladder_step_finished;
+
 //
 // object stuff
 //

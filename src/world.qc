@@ -123,7 +123,7 @@ void() main =
 
 	precache_sound ("ambience/water1.wav");
 	precache_sound ("ambience/wind2.wav");
-
+	
 // shareware
 	precache_file ("maps/start.bsp");
 
@@ -283,6 +283,11 @@ void() worldspawn =
 
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
+	
+	precache_sound("ladder/pl_ladder1.wav");
+	precache_sound("ladder/pl_ladder2.wav");
+	precache_sound("ladder/pl_ladder3.wav");
+	precache_sound("ladder/pl_ladder4.wav");
 
 // PGM Addition Sounds
     precache_sound ("enforcer/enfstop.wav");    // shield impact
