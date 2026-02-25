@@ -1,5 +1,8 @@
 ../progs.dat
 
+// no need to declare function prototypes yay
+#pragma autoproto 
+
 defs.qc
 teamplay.qc		// ZOID - teamplay stuff
 runes.qc

@@ -470,13 +470,13 @@ float DRAW_GAME_SINGLE_FRAME	= -1; // mal: use in game code that updates every f
 // player expanded settings flags
 float PEF_CHANGEONLYNEW	= 1;
 float PEF_CHANGENEVER   = 2;
-
+/*
 enum class BotGoalReturnCode : int {
 	Error = 0,
 	Success,
 	InProgress
 };
-
+*/
 //================================================
 
 //
@@ -594,7 +594,7 @@ float	AS_MISSILE		= 4;
 .float		dash_timer;
 .float		dash_count;
 
-.entity		feijao_manager
+.entity		feijao_manager;
 .float		feijao_count;
 
 .float		on_ladder
@@ -764,7 +764,8 @@ void() traceoff						= #30;
 void(entity e) eprint				= #31;		// prints an entire edict
 float(float yaw, float dist) walkmove	= #32;	// returns TRUE or FALSE
 // #33 was removed
-float(float yaw, float dist) droptofloor= #34;	// TRUE if landed on floor
+//float(float yaw, float dist) droptofloor= #34;	// TRUE if landed on floor
+float() droptofloor= #34;	// TRUE if landed on floor
 void(float style, string value) lightstyle = #35;
 float(float v) rint					= #36;		// round to nearest int
 float(float v) floor				= #37;		// largest integer <= v
