@@ -1,3 +1,6 @@
+// Declaring it here so we can use normal jump here.
+void() PlayerJump;
+
 // --- AVIÃOZINHO PLAYER FIELDS ---------------------
 
 .float		jump_count;
@@ -8,6 +11,7 @@
 
 // FLAG
 float	FL_DASHING				= 262144;	// DASHING;
+
 
 // --- MATH -----------------------------------------
 
@@ -56,61 +60,32 @@ void(float speed) PushPlayer =
 
 // --- JUMP -----------------------------------------
 
-void() PlayerDoubleJump =
-{
-	local vector start, end;
-	
-	if (self.flags & FL_WATERJUMP)
-		return;
-	
-	if (self.waterlevel >= 2)
-	{
-		if (self.watertype == CONTENT_WATER)
-			self.velocity_z = 100;
-		else if (self.watertype == CONTENT_SLIME)
-			self.velocity_z = 80;
-		else
-			self.velocity_z = 50;
-
-// play swiming sound
-		if (self.swim_flag < time)
-		{
-			self.swim_flag = time + 1;
-			if (random() < 0.5)
-				sound (self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
-			else
-				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
-		}
-
+void() PlayerDoubleJump = {
+	if(self.jump_count == 0 && (self.flags & FL_ONGROUND)){
+		PlayerJump();
 		return;
 	}
-
-	if (!(self.flags & FL_ONGROUND) && self.jump_count >= 2) 	return;
-	if ( !(self.flags & FL_JUMPRELEASED) )						return;		// don't pogo stick
 	
-	if (!(self.flags & FL_ONGROUND) && self.jump_count == 0) self.jump_count = 1;
+	if(self.waterlevel >= 2)								return; //Can't double jump in water.
+	if(!(self.flags & FL_ONGROUND) && self.jump_count >= 2)	return; // Already jumped twice.
+	if(!(self.flags & FL_JUMPRELEASED))						return; // don't pogo stick
 	
 	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
-
-	if(self.jump_count == 0 && (self.flags & FL_ONGROUND)) self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
+	
+	if(self.jump_count == 0 && !(self.flags & FL_ONGROUND)) self.jump_count = 1; // Double jump if in air, but has not jumped before.
 	
 	self.jump_count = self.jump_count + 1;
 	
-	if(self.jump_count <= 1){
-		sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
-		self.velocity_z = 270;
-	}else{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-		WriteCoord (MSG_BROADCAST, self.origin_x);
-		WriteCoord (MSG_BROADCAST, self.origin_y);
-		WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
 	
-		sound(self, CHAN_AUTO, "weapons/r_exp3.wav", 1, ATTN_NORM);
-		
-		if(vlen(self.movement) > 0) PushPlayer(460);
-		self.velocity_z = 380;
-	}
+	sound(self, CHAN_AUTO, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	
+	if(vlen(self.movement) > 0) PushPlayer(460);
+	self.velocity_z = 380;
 };
 
 // --- DASH -----------------------------------------
@@ -121,11 +96,7 @@ float AV_DASH_COOLDOWN	= 1.25;
 
 void() PlayerDash =
 {
-	//Is dash available?
-	if(self.dash_count >= 3) return;
-	
-	//Is the player pressing any movement key?
-	//if(vlen(self.movement) == 0) return;
+	if(self.dash_count >= 3) return; //Is dash available?
 	
 	if(!(self.flags & FL_DASHING)) self.flags = self.flags + FL_DASHING;
 	
@@ -138,7 +109,7 @@ void() PlayerDash =
 	if(self.velocity_z <= 0){
 		self.velocity_z = 128;
 		
-		if(self.jump_count == 0){
+		if(self.flags & FL_ONGROUND){
 			self.jump_count = self.jump_count + 1;
 			self.flags = self.flags - FL_ONGROUND;
 		}
