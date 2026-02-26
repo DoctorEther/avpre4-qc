@@ -1380,7 +1380,7 @@ void() PlayerPreThink =
 	if(self.on_ladder){
 		self.on_ladder = 0;
 		
-		if(self.movement_x != 0 || self.movement_y != 0){
+		if(self.movement_x != 0 || self.movement_y != 0 || self.button2){
 			self.velocity = '0 0 0';
 			
 			makevectors(self.v_angle);
@@ -1391,6 +1391,8 @@ void() PlayerPreThink =
 				if(climb_x >  1) climb_x =  1;
 				if(climb_x < -1) climb_x = -1;
 				
+				self.velocity_x = climb_x  * ang_x * 160;
+				self.velocity_y = climb_x  * ang_y * 160;
 				self.velocity_z = climb_x  * ang_z * 160;
 			}
 			
@@ -1404,6 +1406,10 @@ void() PlayerPreThink =
 				
 				self.velocity_x = climb_y  * ang_y * 160;
 				self.velocity_y = -climb_y * ang_x * 160;
+			}
+			
+			if(self.button2){
+				self.velocity_z = 160;
 			}
 			
 			if (time > self.ladder_step_finished) {
@@ -1420,6 +1426,7 @@ void() PlayerPreThink =
 			}
 		}else{
 			self.velocity = '0 0 0';
+			self.flags = self.flags | FL_JUMPRELEASED;
 		}
 	}else{
 		self.gravity = 1; 
