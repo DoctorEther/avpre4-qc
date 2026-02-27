@@ -87,7 +87,7 @@ float() CheckAttack =
 
 	traceline (spot1, spot2, FALSE, self);
 
-	if (trace_ent != targ && trace_ent.owner.driving != targ)
+	if (trace_ent != targ)
 		return FALSE;		// don't have a clear shot
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
@@ -267,7 +267,7 @@ float() SoldierCheckAttack =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
-	if (trace_ent != targ && trace_ent.owner.driving != targ)
+	if (trace_ent != targ)
 		return FALSE;	// don't have a clear shot
 			
 	
@@ -344,7 +344,7 @@ float() ShamCheckAttack =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
-	if (trace_ent != targ && trace_ent.owner.driving != targ)
+	if (trace_ent != targ)
 	{
 		return FALSE;	// don't have a clear shot
 	}
@@ -400,7 +400,7 @@ float() OgreCheckAttack =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
-	if (trace_ent != targ && trace_ent.owner.driving != targ)
+	if (trace_ent != targ)
 	{
 		return FALSE;	// don't have a clear shot
 	}

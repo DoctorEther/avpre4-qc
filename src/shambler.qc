@@ -237,7 +237,7 @@ void() CastLightning =
 	// overload the frags field which is unused on enemies
 	self.frags += 1;
 
-	LightningDamage (org, trace_endpos + dir*4, self, 10);
+	LightningDamage (org, trace_endpos, self, 10);
 };
 
 void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face();

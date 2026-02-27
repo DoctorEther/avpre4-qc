@@ -27,6 +27,8 @@ void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 
+float	modelindex_eyes, modelindex_player;
+
 void(entity targ, entity attacker) dmatch_score;
 
 /*
@@ -902,12 +904,6 @@ void() PutClientInServer =
 	setmodel (self, "progs/player.mdl");
 	modelindex_player = self.modelindex;
 	
-	setmodel (self, "progs/null.spr");
-	modelindex_null = self.modelindex;
-	
-	stuffcmd(self, "chase_active 0\n");
-	stuffcmd(self, "crosshair 1\n");
-	
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	self.view_ofs = '0 0 22';
@@ -1696,8 +1692,6 @@ void() PlayerPostThink =
 	if(self.flags & FL_ONGROUND) self.jump_count = 0;
 	if(self.flags & FL_ONGROUND && self.flags & FL_DASHING) self.flags = self.flags - FL_DASHING;
 	if (!(self.flags & FL_ONGROUND)) self.jump_flag = self.velocity_z;
-	
-	TryUpdateVehicle();
 };	
 
 /*
