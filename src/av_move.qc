@@ -13,19 +13,22 @@ void() PlayerJump;
 float	FL_DASHING				= 262144;	// DASHING;
 
 
-// --- MATH -----------------------------------------
+// --- UTIL -----------------------------------------
 
 vector() MovementVector =
 {
 	//Keyboard axis.
-	local vector wish = self.movement;
-	if(wish_x > 0) wish_x =  1;
-	if(wish_x < 0) wish_x = -1;
-	if(wish_y > 0) wish_y =  1;
-	if(wish_y < 0) wish_y = -1;
-	wish = normalize(wish);
+	local vector wasd = self.movement;
+	if(wasd_x > 0) wasd_x =  1;
+	if(wasd_x < 0) wasd_x = -1;
+	if(wasd_y > 0) wasd_y =  1;
+	if(wasd_y < 0) wasd_y = -1;
+	wasd = normalize(wasd);
 	
-	if(wish_x == 0 && wish_y == 0) wish_x = 1;
+	if(wasd_x == 0 && wasd_y == 0) wasd_x = 1;
+	
+	sprint(self, vtos(wasd));
+	sprint(self, "\n");
 	
 	//Looking direction.
 	makevectors(self.angles);
@@ -35,8 +38,8 @@ vector() MovementVector =
 	
 	//Rotated axis.
 	local vector mov;
-	mov_x = wish_x * dir_x + wish_y * dir_y;
-	mov_y = wish_x * dir_y - wish_y * dir_x;
+	mov_x = wasd_x * dir_x + wasd_y * dir_y;
+	mov_y = wasd_x * dir_y - wasd_y * dir_x;
 
 	return mov;
 }
@@ -115,10 +118,6 @@ void() PlayerDash =
 		}
 	}
 	
-	local vector mov = MovementVector();
-	mov_x = -mov_x;
-	mov_y = -mov_y;
-	
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
 	WriteCoord (MSG_BROADCAST, self.origin_x);
@@ -126,5 +125,4 @@ void() PlayerDash =
 	WriteCoord (MSG_BROADCAST, self.origin_z - 8);
 	
 	sound(self, CHAN_AUTO, "weapons/r_exp3.wav", 0.5, ATTN_NORM);
-	particle(self.origin + '0 0 8', mov, 0, 10);
 }
