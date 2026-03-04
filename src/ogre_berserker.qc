@@ -407,6 +407,8 @@ precache_sound("ogre/ogidle2.wav");
 precache_sound("ogre/ogpain1.wav");
 precache_sound("ogre/ogsawatk.wav");
 precache_sound("ogre/ogwake.wav");
+precache_sound("ogre/ogleap.wav");
+precache_sound("player/udeath.wav");
 self.solid = SOLID_SLIDEBOX;
 self.movetype = MOVETYPE_STEP;
 setmodel(self, "progs/ogreb.mdl");
