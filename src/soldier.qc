@@ -374,37 +374,45 @@ void()	moto_stand8	=[	$stand8,	moto_stand1	] {ai_stand();};
 
 // Walk - 3X MAIS RÁPIDO (aumentado de 2x)
 void()	moto_walk1	=[	$prowl_1,	moto_walk2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
 ai_walk(3);};  // Era 2, agora 3
 void()	moto_walk2	=[	$prowl_2,	moto_walk3	] {ai_walk(3);};
 void()	moto_walk3	=[	$prowl_3,	moto_walk4	] {ai_walk(3);};
 void()	moto_walk4	=[	$prowl_4,	moto_walk5	] {ai_walk(3);};
-void()	moto_walk5	=[	$prowl_5,	moto_walk6	] {ai_walk(6);};  // Era 4, agora 6
+void()	moto_walk5	=[	$prowl_5,	moto_walk6	] {
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
+ai_walk(6);};  // Era 4, agora 6
 void()	moto_walk6	=[	$prowl_6,	moto_walk7	] {ai_walk(9);};  // Era 6, agora 9
 void()	moto_walk7	=[	$prowl_7,	moto_walk8	] {ai_walk(12);};  // Era 8, agora 12
 void()	moto_walk8	=[	$prowl_8,	moto_walk9	] {ai_walk(12);};  // Era 8, agora 12
-void()	moto_walk9	=[	$prowl_9,	moto_walk10	] {ai_walk(6);};  // Era 4, agora 6
+void()	moto_walk9	=[	$prowl_9,	moto_walk10	] {
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
+ai_walk(6);};  // Era 4, agora 6
 void()	moto_walk10	=[	$prowl_10,	moto_walk11	] {ai_walk(6);};  // Era 4, agora 6
 void()	moto_walk11	=[	$prowl_11,	moto_walk12	] {ai_walk(6);};  // Era 4, agora 6
 void()	moto_walk12	=[	$prowl_12,	moto_walk13	] {ai_walk(3);};  // Era 2, agora 3
-void()	moto_walk13	=[	$prowl_13,	moto_walk14	] {ai_walk(2);};  // Era 1, agora 2
+void()	moto_walk13	=[	$prowl_13,	moto_walk14	] {
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
+ai_walk(2);};  // Era 1, agora 2
 void()	moto_walk14	=[	$prowl_14,	moto_walk15	] {ai_walk(3);};  // Era 2, agora 3
 void()	moto_walk15	=[	$prowl_15,	moto_walk16	] {ai_walk(3);};  // Era 2, agora 3
 void()	moto_walk16	=[	$prowl_16,	moto_walk17	] {ai_walk(3);};  // Era 2, agora 3
-void()	moto_walk17	=[	$prowl_17,	moto_walk18	] {ai_walk(9);};  // Era 6, agora 9
+void()	moto_walk17	=[	$prowl_17,	moto_walk18	] {
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
+ai_walk(9);};  // Era 6, agora 9
 void()	moto_walk18	=[	$prowl_18,	moto_walk19	] {ai_walk(9);};  // Era 6, agora 9
 void()	moto_walk19	=[	$prowl_19,	moto_walk20	] {ai_walk(9);};  // Era 6, agora 9
 void()	moto_walk20	=[	$prowl_20,	moto_walk21	] {ai_walk(9);};  // Era 6, agora 9
-void()	moto_walk21	=[	$prowl_21,	moto_walk22	] {ai_walk(6);};  // Era 4, agora 6
+void()	moto_walk21	=[	$prowl_21,	moto_walk22	] {
+sound (self, CHAN_BODY, "nailgrunt/engine.wav", 1, ATTN_NORM);
+ai_walk(6);};  // Era 4, agora 6
 void()	moto_walk22	=[	$prowl_22,	moto_walk23	] {ai_walk(3);};  // Era 2, agora 3
 void()	moto_walk23	=[	$prowl_23,	moto_walk24	] {ai_walk(3);};  // Era 2, agora 3
 void()	moto_walk24	=[	$prowl_24,	moto_walk1	] {ai_walk(3);};  // Era 2, agora 3
 
 // Run - 60% MAIS RÁPIDO + TENTATIVA DE MELEE + FLANQUEAMENTO FRONTAL
 void()	moto_run1	=[	$run1,		moto_run2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+sound (self, CHAN_BODY, "nailgrunt/engine_rev.wav", 1, ATTN_NORM);
 	
 // Tenta melee se estiver perto E bem posicionado
 if (moto_check_melee())
@@ -435,11 +443,17 @@ else
 	ai_run(23);  // Velocidade normal aumentada (era 18, agora 23)
 }
 };
-void()	moto_run2	=[	$run2,		moto_run3	] {ai_run(31);};  // Era 24, agora 31
+void()	moto_run2	=[	$run2,		moto_run3	] {
+sound (self, CHAN_BODY, "nailgrunt/engine_rev.wav", 1, ATTN_NORM);
+ai_run(31);};  // Era 24, agora 31
 void()	moto_run3	=[	$run3,		moto_run4	] {ai_run(21);};  // Era 16, agora 21
-void()	moto_run4	=[	$run4,		moto_run5	] {ai_run(21);};  // Era 16, agora 21
+void()	moto_run4	=[	$run4,		moto_run5	] {
+sound (self, CHAN_BODY, "nailgrunt/engine_rev.wav", 1, ATTN_NORM);
+ai_run(21);};  // Era 16, agora 21
 void()	moto_run5	=[	$run5,		moto_run6	] {ai_run(17);};  // Era 13, agora 17
-void()	moto_run6	=[	$run6,		moto_run7	] {ai_run(31);};  // Era 24, agora 31
+void()	moto_run6	=[	$run6,		moto_run7	] {
+sound (self, CHAN_BODY, "nailgrunt/engine_rev.wav", 1, ATTN_NORM);
+ai_run(31);};  // Era 24, agora 31
 void()	moto_run7	=[	$run7,		moto_run8	] {ai_run(21);};  // Era 16, agora 21
 void()	moto_run8	=[	$run8,		moto_run1	] {ai_run(17);};  // Era 13, agora 17
 
@@ -520,19 +534,19 @@ void(entity attacker, float damage) moto_pain =
 	{
 		self.pain_finished = time + 0.6;
 		moto_pain1 ();
-		sound (self, CHAN_VOICE, "soldier/pain1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "nailgrunt/pain1.wav", 1, ATTN_NORM);
 	}
 	else if (r < 0.6)
 	{
 		self.pain_finished = time + 1.1;
 		moto_painb1 ();
-		sound (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "nailgrunt/pain2.wav", 1, ATTN_NORM);
 	}
 	else
 	{
 		self.pain_finished = time + 1.1;
 		moto_painc1 ();
-		sound (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "nailgrunt/pain2.wav", 1, ATTN_NORM);
 	}
 };
 
@@ -732,7 +746,7 @@ void() moto_die =
 	}
 
 // regular death
-	sound (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "nailgrunt/death1.wav", 1, ATTN_NORM);
 	if (random() < 0.5)
 		moto_die1 ();
 	else
@@ -769,11 +783,12 @@ void() monster_nailgrunt =
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
 
-	precache_sound ("soldier/death1.wav");
-	precache_sound ("soldier/idle.wav");
-	precache_sound ("soldier/pain1.wav");
-	precache_sound ("soldier/pain2.wav");
-	precache_sound ("soldier/sight1.wav");
+	precache_sound ("nailgrunt/death1.wav");
+	precache_sound ("nailgrunt/engine.wav");
+	precache_sound ("nailgrunt/engine_rev.wav");
+	precache_sound ("nailgrunt/pain1.wav");
+	precache_sound ("nailgrunt/pain2.wav");
+	precache_sound ("nailgrunt/sight1.wav");
 	precache_sound ("player/udeath.wav");
 	precache_sound ("weapons/spike2.wav");
 	precache_sound ("zombie/z_hit.wav");  // Som de impacto melee
