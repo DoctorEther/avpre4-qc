@@ -198,9 +198,6 @@ float (entity targ) visible =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 	
-	if (trace_fraction < 1)
-		return TRUE;
-	
 	if (trace_fraction == 1)
 		return TRUE;
 	return FALSE;
