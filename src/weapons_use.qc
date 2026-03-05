@@ -615,7 +615,6 @@ void() CheatCommand =
 		IT_GRENADE_LAUNCHER |
 		IT_ROCKET_LAUNCHER |
 		IT_AVIAO |
-		IT_FEIJAO |
 		IT_KEY1 | IT_KEY2;
 
 	self.ammo_cells1 = 200;
