@@ -27,9 +27,6 @@ vector() MovementVector =
 	
 	if(wasd_x == 0 && wasd_y == 0) wasd_x = 1;
 	
-	sprint(self, vtos(wasd));
-	sprint(self, "\n");
-	
 	//Looking direction.
 	makevectors(self.angles);
 	local vector dir = v_forward;
