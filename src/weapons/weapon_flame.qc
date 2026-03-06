@@ -120,4 +120,8 @@ void() w_fire_flames =
 	// posição da chama do ataque
 	org = self.origin + v_forward * 30 + v_right * 2 + '0 0 21';
 	weapon_make_flame(org, v_forward);
+	
+	self.ammo_nails1 = self.ammo_nails1 - 1;
+    self.currentammo = self.ammo_nails1;
+    UpdateAmmoCounts(self);
 };

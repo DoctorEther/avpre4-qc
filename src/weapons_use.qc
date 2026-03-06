@@ -45,7 +45,7 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_LAVA_NAILGUN)
 	{
-		self.currentammo = self.ammo_lava_nails;
+		self.currentammo = self.ammo_nails1;
 		self.weaponmodel = "progs/v_lava.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_LAVA_NAILS;
@@ -375,22 +375,15 @@ void() W_ChangeWeapon =
 		fl = IT_SUPER_SHOTGUN;
 		if (self.ammo_shells1 < 2)
 			am = 1;
-	}	
+	}
 	else if (self.impulse == 4)
 	{
-		if ((self.items & IT_LAVA_NAILGUN) && 
-				(self.weapon == IT_NAILGUN || self.ammo_nails1 < 1))
-		{
+		if((self.items & IT_LAVA_NAILGUN) && (self.weapon == IT_NAILGUN))
 			fl = IT_LAVA_NAILGUN;
-			if (self.ammo_lava_nails < 1)
-				am = 1;
-		}
 		else
-		{
 			fl = IT_NAILGUN;
-			if (self.ammo_nails1 < 1)
-				am = 1;
-		}
+		
+		if (self.ammo_nails1 < 1) am = 1;
 	}
 	else if (self.impulse == 5)
 	{
@@ -931,6 +924,8 @@ void() PreImpulseCommands =
 {
 	if(self.impulse == 40) PlayerDoubleJump();
 	if(self.impulse == 41) PlayerDash();
+	
+	if(self.impulse == 42) self.av_skating = !self.av_skating;
 	
 	if(self.impulse >= 40 && self.impulse <= 50) self.impulse = 0;
 }

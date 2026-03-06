@@ -872,9 +872,7 @@ void() player_flame1 = [$nailatt1, player_flame1]
         return;
     }
     w_fire_flames();
-    self.ammo_nails1 = self.ammo_nails1 - 1;
-    self.currentammo = self.ammo_nails1;
-    UpdateAmmoCounts(self);
+    
  	if (time >= self.next_flame_sound) {
        sound(self, CHAN_WEAPON, "dread/flameon.wav", 1, ATTN_NORM);
        // intervalo entre o som da chama
