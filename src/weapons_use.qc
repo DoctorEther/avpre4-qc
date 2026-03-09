@@ -52,10 +52,10 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_LAVA_SUPER_NAILGUN)
 	{
-		self.currentammo = self.ammo_lava_nails;
+		self.currentammo = self.ammo_nails1;
 		self.weaponmodel = "progs/v_lava2.mdl";
 		self.weaponframe = 0;
-		self.items2 = self.items2 | IT2_LAVA_NAILS;
+		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == IT_MULTI_GRENADE)
 	{
@@ -113,13 +113,6 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
-	}
-	else if (self.weapon == IT_FEIJAO)
-	{
-		self.currentammo = self.ammo_nails;
-		self.weaponmodel = "progs/v_lava2.mdl";
-		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
 	}
 	else
 	{
@@ -279,8 +272,9 @@ void() W_Attack =
 	}
 	else if (self.weapon == IT_LAVA_SUPER_NAILGUN)
 	{
-		lavaGunFired = 1;
-		player_lava_nail1 ();
+		player_feijaoa();
+		W_FireFeijao();
+		self.attack_finished = time + 0.1;
 	}
 	else if (self.weapon == IT_MULTI_GRENADE)
 	{
@@ -307,12 +301,6 @@ void() W_Attack =
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
 		player_nail1 ();
-	}
-	else if (self.weapon == IT_FEIJAO)
-	{
-		player_feijaoa();
-		W_FireFeijao();
-		self.attack_finished = time + 0.1;
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
@@ -441,12 +429,6 @@ void() W_ChangeWeapon =
 			if (self.ammo_plasma < 1)
 				am = 1;
 		}
-		else if((self.items & IT_FEIJAO) && (self.weapon == IT_AVIAO || self.ammo_nails1 < 1))
-		{
-			fl = IT_FEIJAO;
-			if (self.ammo_nails1 < 1)
-				am = 1;
-		}
 		else
 		{
 			fl = IT_LIGHTNING;
@@ -463,7 +445,7 @@ void() W_ChangeWeapon =
 	else if (self.impulse == 61)
 	{
 		fl = IT_LAVA_SUPER_NAILGUN;
-		if (self.ammo_lava_nails < 1)
+		if (self.ammo_nails1 < 1)
 			am = 1;
 	}
 	else if (self.impulse == 62)
@@ -509,12 +491,6 @@ void() W_ChangeWeapon =
 	{
 		fl = IT_ROCKET_LAUNCHER;
 		if (self.ammo_rockets < 1)
-			am = 1;
-	}
-	else if (self.impulse == 43)
-	{
-		fl = IT_FEIJAO;
-		if (self.ammo_cells1 < 1)
 			am = 1;
 	}
 
@@ -924,8 +900,6 @@ void() PreImpulseCommands =
 {
 	if(self.impulse == 40) PlayerDoubleJump();
 	if(self.impulse == 41) PlayerDash();
-	
-	if(self.impulse == 42) self.av_skating = !self.av_skating;
 	
 	if(self.impulse >= 40 && self.impulse <= 50) self.impulse = 0;
 }

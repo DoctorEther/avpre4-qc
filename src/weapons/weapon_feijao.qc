@@ -1,5 +1,3 @@
-float	IT_FEIJAO				= 16777216;
-
 void() feijao_explode =
 {
 	local entity tgt = self.movetarget;
