@@ -15,17 +15,26 @@ float	FL_DASHING				= 262144;	// DASHING;
 
 // --- UTIL -----------------------------------------
 
+float AV_ANGLE_SNAP = 45;
+
+vector(vector vec) SnapOctants = {
+	local vector v_ang = vectoangles(vec);
+	local float ang = rint(v_ang_y / AV_ANGLE_SNAP) * AV_ANGLE_SNAP;
+	
+	local vector outvec;
+	outvec_y = ang;
+	makevectors(outvec);
+	
+	outvec_x = v_forward_x;
+	outvec_y = v_forward_y;
+	
+	return outvec;
+}
+
 vector() MovementVector =
 {
 	//Keyboard axis.
-	local vector wasd = self.movement;
-	if(wasd_x > 0) wasd_x =  1;
-	if(wasd_x < 0) wasd_x = -1;
-	if(wasd_y > 0) wasd_y =  1;
-	if(wasd_y < 0) wasd_y = -1;
-	wasd = normalize(wasd);
-	
-	if(wasd_x == 0 && wasd_y == 0) wasd_x = 1;
+	local vector wasd = SnapOctants(self.movement);
 	
 	//Looking direction.
 	makevectors(self.angles);
@@ -39,7 +48,7 @@ vector() MovementVector =
 	mov_y = wasd_x * dir_y - wasd_y * dir_x;
 
 	return mov;
-}
+};
 
 void(float speed) PushPlayer =
 {
@@ -56,7 +65,7 @@ void(float speed) PushPlayer =
 		self.velocity_x = mov_x * vel;
 		self.velocity_y = mov_y * vel;
 	}
-}
+};
 
 // --- JUMP -----------------------------------------
 
@@ -122,4 +131,4 @@ void() PlayerDash =
 	WriteCoord (MSG_BROADCAST, self.origin_z - 8);
 	
 	sound(self, CHAN_AUTO, "weapons/r_exp3.wav", 0.5, ATTN_NORM);
-}
+};
