@@ -106,6 +106,22 @@ void() kamikaze_explode =
     self.takedamage = DAMAGE_NO;
     self.velocity   = '0 0 0';
 
+    // ----------------------------------------------------------
+    // FIX: nos caminhos de explosão por toque, proximidade ou
+    // pain (3 hits), o Killed() do engine nunca é chamado porque
+    // a health ainda está positiva. Contamos o kill manualmente.
+    // Quando kamikaze_die é chamado via th_die, Killed() já
+    // decrementou a health para <=0, então o bloco é ignorado
+    // e não há double-count.
+    // ----------------------------------------------------------
+    if (self.health > 0)
+    {
+        self.health = 0;
+        killed_monsters = killed_monsters + 1;
+        WriteByte(MSG_BROADCAST, SVC_KILLEDMONSTER);
+    }
+    // ----------------------------------------------------------
+
     kamikaze_gibs();
 
     WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
@@ -275,4 +291,3 @@ void() monster_kamikaze =
 
     walkmonster_start();
 };
-
