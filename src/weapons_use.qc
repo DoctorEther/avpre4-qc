@@ -45,14 +45,14 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == IT_LAVA_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails1;
+		self.currentammo = self.ammo_lava_nails;
 		self.weaponmodel = "progs/v_lava.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_LAVA_NAILS;
 	}
 	else if (self.weapon == IT_LAVA_SUPER_NAILGUN)
 	{
-		self.currentammo = self.ammo_nails1;
+		self.currentammo = self.ammo_lava_nails;
 		self.weaponmodel = "progs/v_lava2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
@@ -366,24 +366,20 @@ void() W_ChangeWeapon =
 	}
 	else if (self.impulse == 4)
 	{
-		if((self.items & IT_LAVA_NAILGUN) && (self.weapon == IT_NAILGUN))
+		if((self.items & IT_LAVA_NAILGUN) && (self.weapon == IT_NAILGUN)){
 			fl = IT_LAVA_NAILGUN;
-		else
+			if (self.ammo_lava_nails < 1) am = 1;
+		}else{
 			fl = IT_NAILGUN;
-		
-		if (self.ammo_nails1 < 1) am = 1;
+			if (self.ammo_nails1 < 1) am = 1;
+		}
 	}
 	else if (self.impulse == 5)
 	{
-		if ((self.items & IT_LAVA_SUPER_NAILGUN) && 
-				(self.weapon == IT_SUPER_NAILGUN || self.ammo_nails1 < 2))
-		{
+		if ((self.items & IT_LAVA_SUPER_NAILGUN) && (self.weapon == IT_SUPER_NAILGUN)){
 			fl = IT_LAVA_SUPER_NAILGUN;
-			if (self.ammo_lava_nails < 2)
-				am = 1;
-		}
-		else
-		{
+			if (self.ammo_lava_nails < 2) am = 1;
+		}else{
 			fl = IT_SUPER_NAILGUN;
 			if (self.ammo_nails1 < 2)
 				am = 1;
@@ -445,7 +441,7 @@ void() W_ChangeWeapon =
 	else if (self.impulse == 61)
 	{
 		fl = IT_LAVA_SUPER_NAILGUN;
-		if (self.ammo_nails1 < 1)
+		if (self.ammo_lava_nails < 1)
 			am = 1;
 	}
 	else if (self.impulse == 62)

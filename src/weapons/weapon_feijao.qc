@@ -87,7 +87,7 @@ void() W_FireFeijao =
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 
-	self.currentammo = self.ammo_nails1 = self.ammo_nails1 - 1;
+	self.currentammo = self.ammo_lava_nails = self.ammo_lava_nails - 1;
 	UpdateAmmoCounts(self);
 
 	dir = aim (self, 1024);
