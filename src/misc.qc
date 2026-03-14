@@ -36,6 +36,7 @@ void() info_notnull =
 //============================================================================
 
 float START_OFF = 1;
+float opt_noheads;
 
 void() light_use =
 {
@@ -743,4 +744,39 @@ void() misc_noisemaker =
 
 	self.nextthink = time + 0.1 + random();
 	self.think = noise_think;
+};
+
+void(string gibname) ThrowBall =
+{
+
+    if (opt_noheads)
+    {
+        setmodel(self, "progs/gib.mdl");
+        self.skin = FALSE;
+    }
+    else
+    {
+        setmodel(self, gibname);
+    }
+    self.frame = FALSE;
+    if ((gibname == "progs/h_ogre.mdl"))
+    {
+        self.skin = FALSE;
+    }
+    self.movetype = MOVETYPE_BOUNCE;
+    self.takedamage = FALSE;
+    self.solid = 1;
+    self.touch = kick_touch;
+    self.view_ofs = '0 0 8';
+    setsize(self, '0 0 -1', VEC_ORIGIN);
+    self.origin_z = (self.origin_z - 24);
+    self.flags = (self.flags - (self.flags & FL_ONGROUND));
+    self.avelocity = (crandom() * '0 600 0');
+    self.classname = "ball";
+};
+
+void() football = 
+{
+    ThrowBall("progs/ball.mdl");
+    return;
 };
