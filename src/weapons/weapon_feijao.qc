@@ -15,10 +15,12 @@ void() feijao_explode =
 	WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
 	WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
 	
-	T_RadiusDamage (self, self.owner, tgt.feijao_count * 30, 0);
+	T_RadiusDamage (self, self.owner, tgt.feijao_count * 20, 0);
 	
 	tgt.feijao_manager = 0;
 	tgt.feijao_count   = 0;
+	
+	tgt.effects = 0;
 	
 	remove(self);
 }
@@ -34,11 +36,11 @@ void() feijao_touch =
 	if (!other.takedamage){ remove(self); return; }
 	
 	spawn_touchblood (9);
-	//T_Damage (other, self, self.owner, 6);
+	T_Damage (other, self, self.owner, 6);
 	other.feijao_count = other.feijao_count + 1;
 	
 	if(other.feijao_manager != 0){
-		if(other.feijao_count < 4)
+		if(other.feijao_count < 6)
 			other.feijao_manager.nextthink = time + AV_FEIJAO_TIME;
 		else
 			other.feijao_manager.nextthink = time + 0.001;
@@ -46,6 +48,8 @@ void() feijao_touch =
 		remove(self);
 		return;
 	}
+	
+	other.effects = EF_DIMLIGHT;
 	
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
@@ -68,6 +72,7 @@ void(vector org, vector dir) feijao_launch =
 	newmis.solid = SOLID_BBOX;
 
 	newmis.angles = vectoangles(dir);
+	newmis.effects = EF_DIMLIGHT;
 	
 	newmis.touch = feijao_touch;
 	newmis.classname = "spike";
@@ -94,6 +99,6 @@ void() W_FireFeijao =
 	feijao_launch (self.origin + '0 0 16', dir);
 	newmis.touch = feijao_touch;
 	setmodel(newmis, "progs/s_spike.mdl");
-	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);			
+	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
 	self.punchangle_x = -2;
 }
