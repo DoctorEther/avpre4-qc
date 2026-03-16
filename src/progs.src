@@ -17,6 +17,7 @@ grapple.qc		// ZOID - grappling hook
 
 // --- AVIÃOZINHO DASH --------------------------------
 av_move.qc
+av_cam.qc
 
 // --- AVIÃOZINHO WEAPONS -----------------------------
 weapons_utils.qc
