@@ -11,7 +11,9 @@ void() kick_touch =
 	// only a player can kick it
 	if (other.classname != "player")
 		return;
-
+	
+	if(self.model == "progs/ball.mdl" && self.classname == "ball") bprint("GOOOOOOOL!!!\n");
+	
 	//randomize sound
 	if (random()< 0.8)
 		sound(other, CHAN_ITEM, "zombie/z_hit.wav", 1, ATTN_NORM);
