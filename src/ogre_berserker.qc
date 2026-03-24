@@ -318,8 +318,6 @@ void() ogreb_cdie14 =[ $cdeath14, ogreb_cdie14 ] {};
 
 void() ogreb_die =
 {
-local float r;
-r = random();
 // check for gib
 if (self.health < -80)
 {
@@ -333,12 +331,7 @@ ThrowGib("progs/gib3.mdl", self.health);
 return;
 }
 sound(self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
-if (r < 0.33)
-ogreb_die1();
-else if (r < 0.66)
-ogreb_bdie1();
-else
-ogreb_cdie1();
+ogreb_die1(); // Always use main death animation (frames 68-89)
 };
 
 //============================================================================
