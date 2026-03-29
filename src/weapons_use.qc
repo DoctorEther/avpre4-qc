@@ -897,7 +897,7 @@ void() PreImpulseCommands =
 	if(self.impulse == 40) PlayerDoubleJump();
 	if(self.impulse == 41) PlayerDash();
 	
-	if(self.impulse == 42) AV_SwitchCam();
+	if(self.impulse == 42){ AV_SwitchCam(); self.av_skating = !self.av_skating; }
 	
 	if(self.impulse >= 40 && self.impulse <= 50) self.impulse = 0;
 }

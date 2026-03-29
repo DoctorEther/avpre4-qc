@@ -18,6 +18,7 @@ grapple.qc		// ZOID - grappling hook
 // --- AVIÃOZINHO DASH --------------------------------
 av_move.qc
 av_cam.qc
+av_skate.qc
 
 // --- AVIÃOZINHO WEAPONS -----------------------------
 weapons_utils.qc
@@ -37,9 +38,10 @@ triggers.qc
 plats.qc
 misc.qc
 
-// --- AVIÃOZINHO FUNC_SOUNDTRACK ---------------------
+// --- AVIÃOZINHO TRIGGERS ---------------------
 triggers/trigger_soundtrack.qc
 triggers/trigger_ladder.qc
+triggers/trigger_localcmd.qc
 
 ogre.qc
 ogre_berserker.qc

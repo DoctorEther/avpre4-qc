@@ -1,0 +1,50 @@
+.float av_skating;
+.float av_skate_speed;
+
+#define AV_SKATE_FRICTION_WMOD 1.04
+#define AV_SKATE_FRICTION_SMOD 1.06
+#define AV_SKATE_ROTATION_SPEED 0.04
+
+void() AV_SkateUpdate() = {
+	if(!self.av_skating) return;
+	
+	if(!(self.flags & FL_ONGROUND)) return;
+	
+	//DELAY HORIZONTAL FRICTION
+	if(self.movement_x || self.movement_y){
+		self.velocity_x = self.velocity_x * AV_SKATE_FRICTION_SMOD;
+		self.velocity_y = self.velocity_y * AV_SKATE_FRICTION_SMOD;
+	}else{
+		self.velocity_x = self.velocity_x * AV_SKATE_FRICTION_WMOD;
+		self.velocity_y = self.velocity_y * AV_SKATE_FRICTION_WMOD;
+	}
+	
+	//ROTATE VELOCITY TOWARDS LOOKING VECTOR
+	local vector l_vec, v_vec, r_vec;
+	local float s_speed;
+	
+	l_vec = MovementVector();
+	l_vec_z = 0;
+	l_vec = normalize(l_vec);
+	
+	v_vec = self.velocity;
+	v_vec_z = 0;
+	
+	s_speed = vlen(v_vec); //SPEED
+	if(s_speed > 1024) s_speed = 1024;
+	
+	sprint(self, vtos(self.movement));
+	sprint(self, " ");
+	sprint(self, ftos(s_speed));
+	sprint(self, "\n");
+	
+	v_vec = normalize(v_vec);
+	
+	r_vec_x = v_vec_x + (l_vec_x - v_vec_x) * AV_SKATE_ROTATION_SPEED;
+	r_vec_y = v_vec_y + (l_vec_y - v_vec_y) * AV_SKATE_ROTATION_SPEED;
+	
+	r_vec = normalize(r_vec);
+	
+	self.velocity_x = r_vec_x * s_speed;
+	self.velocity_y = r_vec_y * s_speed;
+};

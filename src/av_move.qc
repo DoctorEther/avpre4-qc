@@ -12,7 +12,6 @@ void() PlayerJump;
 // FLAG
 float	FL_DASHING				= 262144;	// DASHING;
 
-
 // --- UTIL -----------------------------------------
 
 float AV_ANGLE_SNAP = 45;
