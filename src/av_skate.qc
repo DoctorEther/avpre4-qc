@@ -1,5 +1,4 @@
 .float av_skating;
-.float av_skate_speed;
 
 #define AV_SKATE_FRICTION_WMOD 1.04
 #define AV_SKATE_FRICTION_SMOD 1.06
@@ -32,11 +31,6 @@ void() AV_SkateUpdate() = {
 	
 	s_speed = vlen(v_vec); //SPEED
 	if(s_speed > 1024) s_speed = 1024;
-	
-	sprint(self, vtos(self.movement));
-	sprint(self, " ");
-	sprint(self, ftos(s_speed));
-	sprint(self, "\n");
 	
 	v_vec = normalize(v_vec);
 	

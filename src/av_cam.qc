@@ -27,9 +27,10 @@ void() AV_CamUpdate = {
 
 void() AV_SwitchCam = {
 	self.av_camera_active = !self.av_camera_active;
+	self.av_skating = self.av_camera_active;
 	
 	if(self.av_camera_active){
-		if(self.av_camera == world){ self.av_camera = spawn(); sprint(self, "creating camera\n"); }
+		if(self.av_camera == world) self.av_camera = spawn();
 		
 		setmodel(self.av_camera, "progs/s_bubble.spr");
 		
@@ -39,6 +40,8 @@ void() AV_SwitchCam = {
 		msg_entity = self;
 		WriteByte(MSG_ONE, 5);
 		WriteEntity(MSG_ONE, self.av_camera);
+		
+		AV_CamUpdate();
 	}else{
 		msg_entity = self;
 		WriteByte (MSG_ONE, 5);

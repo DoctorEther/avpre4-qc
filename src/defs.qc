@@ -597,8 +597,11 @@ float	AS_MISSILE		= 4;
 .entity		feijao_manager;
 .float		feijao_count;
 
-.float		on_ladder
+.float		on_ladder;
 .float		ladder_step_finished;
+
+// AVIÃOZINHO GLOBAL FIELDS
+entity av_global_train;
 
 //
 // object stuff
@@ -944,6 +947,8 @@ float(string s1, string s2, float len) strncasecmp = #230;
 .float is_dashing;
 .float dash_time;
 .vector dash_dir;
+
+.float scale;
 
 // ---------- tunables ----------
 float DASH_SPEED           = 600;

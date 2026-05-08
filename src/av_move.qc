@@ -74,6 +74,7 @@ void() PlayerDoubleJump = {
 		return;
 	}
 	
+	if(self.av_skating)										return; //Can't double jump while skating.
 	if(self.waterlevel >= 2)								return; //Can't double jump in water.
 	if(!(self.flags & FL_ONGROUND) && self.jump_count >= 2)	return; // Already jumped twice.
 	if(!(self.flags & FL_JUMPRELEASED))						return; // don't pogo stick
@@ -104,6 +105,7 @@ float AV_DASH_COOLDOWN	= 1.25;
 
 void() PlayerDash =
 {
+	if(self.av_skating) return; //Can't double jump while skating.
 	if(self.dash_count >= 3) return; //Is dash available?
 	
 	if(!(self.flags & FL_DASHING)) self.flags = self.flags + FL_DASHING;
