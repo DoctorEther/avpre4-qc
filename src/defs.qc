@@ -832,6 +832,13 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// values at level start
 												// for coop respawn
 
+.float tracknum;
+
+.string soundorigin;
+
+.string soundsubtitle;
+
+
 float() finaleFinished = #0:ex_finaleFinished;
 
 // Plays a sound that only "client" can hear. Useful for announcers...

@@ -6,7 +6,8 @@
 //   - Defina o campo "tracknum" com o numero da track desejada (ex: 2)
 //   - O brush vira o gatilho, basta o jogador entrar nele
 //
-// Musicas ficam em id1/music/trackXX.ogg ou trackXX.mp3
+// No Quakespasm, coloque as musicas em id1/music/ com o nome:
+//   track02.mp3, track03.mp3, etc.
 
 void() music_touch =
 {
@@ -17,16 +18,11 @@ void() music_touch =
 
 	self.touch = SUB_Null;
 
-	// Envia via protocolo nativo (funciona no engine original)
-	WriteByte(MSG_ALL, SVC_CDTRACK);
-	WriteByte(MSG_ALL, self.tracknum);
-	WriteByte(MSG_ALL, self.tracknum);
-
-	// Fallback via stuffcmd para Quakespasm/FTE
+	// Quakespasm usa stuffcmd com comando "music"
 	pl = find(world, classname, "player");
 	while (pl != world)
 	{
-		stuffcmd(pl, "music ");
+		stuffcmd(pl, "music track0");
 		stuffcmd(pl, ftos(self.tracknum));
 		stuffcmd(pl, "\n");
 		pl = find(pl, classname, "player");

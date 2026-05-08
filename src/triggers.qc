@@ -695,3 +695,5 @@ void() trigger_monsterjump =
 	self.touch = trigger_monsterjump_touch;
 };
 
+
+
