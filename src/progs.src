@@ -13,6 +13,7 @@ fight.qc
 ai.qc
 combat.qc
 items.qc
+items/ammo_infinite.qc	// spawn de munição infinita (spawnflag 4 nos pickups)
 grapple.qc		// ZOID - grappling hook
 
 // --- AVIÃOZINHO DASH --------------------------------

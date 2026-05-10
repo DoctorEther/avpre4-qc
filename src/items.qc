@@ -905,6 +905,7 @@ void() item_shells =
 	self.netname = "$qc_shells";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 /*QUAKED item_spikes (0 .5 .8) (0 0 0) (32 32 32) big
@@ -931,6 +932,7 @@ void() item_spikes =
 	self.netname = "$qc_nails";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 /*QUAKED item_lava_spikes (0 .5 .8) (0 0 0) (32 32 32) big
@@ -957,6 +959,7 @@ void() item_lava_spikes =
 	self.netname = "$qc_lava_nails";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 /*QUAKED item_rockets (0 .5 .8) (0 0 0) (32 32 32) big
@@ -983,6 +986,7 @@ void() item_rockets =
 	self.netname = "$qc_rockets";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 /*QUAKED item_multi_rockets (0 .5 .8) (0 0 0) (32 32 32) big
@@ -1009,6 +1013,7 @@ void() item_multi_rockets =
 	self.netname = "$qc_multi_rockets";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 
@@ -1035,6 +1040,7 @@ void() item_cells =
 	self.netname = "$qc_cells";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 /*QUAKED item_plasma (0 .5 .8) (0 0 0) (32 32 32) big
@@ -1060,6 +1066,7 @@ void() item_plasma =
 	self.netname = "$qc_plasma";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
+	Ammo_SetInfiniteTouch();
 };
 
 
