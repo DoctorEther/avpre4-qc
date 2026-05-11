@@ -1,7 +1,7 @@
 .float av_skating;
 
 #define AV_SKATE_FRICTION_WMOD 1.04
-#define AV_SKATE_FRICTION_SMOD 1.06
+#define AV_SKATE_FRICTION_SMOD 1.07
 #define AV_SKATE_ROTATION_SPEED 0.04
 
 void() AV_SkateUpdate() = {
