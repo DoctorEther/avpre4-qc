@@ -347,13 +347,13 @@ When the player presses attack or jump, change to the next level
 */
 void() IntermissionThink =
 {
-	if (time < intermission_exittime)
-		return;
+    if (time < intermission_exittime)
+        return;
 
-	if (!self.button0 && !self.button1 && !self.button2)
-		return;
+    if (self.impulse != 40 && self.impulse != 41 && self.impulse != 42 && !self.button0 && !self.button1 && !self.button2)
+        return;
 
-	ExitIntermission ();
+    ExitIntermission ();
 };
 
 void() execute_changelevel =
@@ -1085,49 +1085,50 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	local entity	old_self;
-	local float		forward;
+    local entity    old_self;
+    local float        forward;
 
-	if ((self.flags & FL_ONGROUND))
-	{
-		forward = vlen (self.velocity);
-		forward = forward - 20;
-		if (forward <= 0)
-			self.velocity = '0 0 0';
-		else	
-			self.velocity = forward * normalize(self.velocity);
-	}
+    if ((self.flags & FL_ONGROUND))
+    {
+        forward = vlen (self.velocity);
+        forward = forward - 20;
+        if (forward <= 0)
+            self.velocity = '0 0 0';
+        else    
+            self.velocity = forward * normalize(self.velocity);
+    }
 
-	if (self.spawn_deferred)
-	{
-		local entity spot;
-		
-		spot = SelectSpawnPoint(FALSE);
-		//dprint("time {} >= self.spawn_deferred {}\n", ftos(time), ftos(self.spawn_deferred));
-		if (spot != world || time >= self.spawn_deferred) {
-			respawn();
-		}
+    if (self.spawn_deferred)
+    {
+        local entity spot;
+        
+        spot = SelectSpawnPoint(FALSE);
+        //dprint("time {} >= self.spawn_deferred {}\n", ftos(time), ftos(self.spawn_deferred));
+        if (spot != world || time >= self.spawn_deferred) {
+            respawn();
+        }
 
-		return;
-	}
+        return;
+    }
 
 // wait for all buttons released
-	if (self.deadflag == DEAD_DEAD)
-	{
-		if (self.button2 || self.button1 || self.button0)
-			return;
-		self.deadflag = DEAD_RESPAWNABLE;
-		return;
-	}
+    if (self.deadflag == DEAD_DEAD)
+    {
+        if (self.impulse == 40 || self.impulse == 41 || self.impulse == 42 || self.button0 || self.button1 || self.button2)
+            return;
+        self.deadflag = DEAD_RESPAWNABLE;
+        return;
+    }
 
 // wait for any button down
-	if (!self.button2 && !self.button1 && !self.button0)
-		return;
+    if (self.impulse != 40 && self.impulse != 41 && self.impulse != 42 && !self.button0 && !self.button1 && !self.button2)
+        return;
 
-	self.button0 = 0;
-	self.button1 = 0;
-	self.button2 = 0;
-	respawn();
+    self.button0 = 0;
+    self.button1 = 0;
+    self.button2 = 0;
+    self.impulse = 0;
+    respawn();
 };
 
 void() PlayerJump =
