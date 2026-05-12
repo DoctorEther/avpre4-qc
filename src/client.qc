@@ -1114,11 +1114,13 @@ void() PlayerDeathThink =
 // wait for all buttons released
     if (self.deadflag == DEAD_DEAD)
     {
-        if (self.impulse == 40 || self.impulse == 41 || self.impulse == 42 || self.button0 || self.button1 || self.button2)
+        if (self.button0 || self.button1 || self.button2)
             return;
+        self.impulse = 0;
         self.deadflag = DEAD_RESPAWNABLE;
-        return;
+    return;
     }
+
 
 // wait for any button down
     if (self.impulse != 40 && self.impulse != 41 && self.impulse != 42 && !self.button0 && !self.button1 && !self.button2)
