@@ -6,7 +6,7 @@ void() skate_touch = {
 	
 	local entity tmp = self;
 	self = other;
-	AV_SwitchCam();
+	AV_SwitchSkate();
 	self = tmp;
 };
 

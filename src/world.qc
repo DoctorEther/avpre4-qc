@@ -299,6 +299,7 @@ void() worldspawn =
 	precache_sound ("items/damage2.wav");
 
 	precache_model ("progs/player.mdl");
+	precache_model ("progs/splayer.mdl"); // AVIÃOZINHO
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
 	precache_model ("progs/gib1.mdl");

@@ -27,12 +27,11 @@ void() AV_CamUpdate = {
 
 void() AV_SwitchCam = {
 	self.av_camera_active = !self.av_camera_active;
-	self.av_skating = self.av_camera_active;
 	
 	if(self.av_camera_active){
 		if(self.av_camera == world) self.av_camera = spawn();
 		
-		setmodel(self.av_camera, "progs/s_bubble.spr");
+		setmodel(self.av_camera, "progs/eyes.mdl");
 		
 		self.av_camera.solid = SOLID_NOT;
 		self.av_camera.movetype = MOVETYPE_FLY;

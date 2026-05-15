@@ -1448,7 +1448,6 @@ void() PlayerPreThink =
 	}
 	
 	AV_SkateUpdate();
-	AV_CamUpdate();
 };
 
 /*
@@ -1698,6 +1697,8 @@ void() PlayerPostThink =
 	if(self.flags & FL_ONGROUND) self.jump_count = 0;
 	if(self.flags & FL_ONGROUND && self.flags & FL_DASHING) self.flags = self.flags - FL_DASHING;
 	if (!(self.flags & FL_ONGROUND)) self.jump_flag = self.velocity_z;
+	
+	AV_CamUpdate();
 };	
 
 /*
