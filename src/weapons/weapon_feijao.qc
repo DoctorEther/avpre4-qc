@@ -55,7 +55,7 @@ void() feijao_touch =
 	self.movetype = MOVETYPE_NONE;
 	self.velocity = '0 0 0';
 	setmodel(self, "");
-	setsize(self, '0 0 0');
+	setsize(self, '-8 -8 -8', '8 8 8');
 	
 	self.movetarget = other;
 	other.feijao_manager = self;
