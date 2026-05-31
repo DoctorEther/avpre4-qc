@@ -90,7 +90,7 @@ void() W_FireFeijao =
 	local vector	dir;
 	local entity	old;
 	
-	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "weapons/feijoada.wav", 1, ATTN_NORM);
 
 	self.currentammo = self.ammo_lava_nails = self.ammo_lava_nails - 1;
 	UpdateAmmoCounts(self);
