@@ -70,6 +70,13 @@ float MORPH_EGYPT	= 4;
 float MORPH_GREEK	= 8;
 
 void() morph_teleport;
+void() morph_run1;
+void() morph_charge1;
+void() morph_sweep1;
+void() morph_ringattack01;
+void() morph_fire1;
+void() morph_missile_pick;
+float() MorphCheckAttack;
 
 // ========================
 // standing
@@ -146,7 +153,8 @@ void() morph_stab2 =
 	if ( dist <= 90 )
 	{
 		sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
-	    attackDamage = (random() * 10) + 20;
+		attackDamage = (random() * 10) + 20;
+		attackDamage = attackDamage * 0.21;
 		T_Damage (self.enemy, self, self, attackDamage);
 		SpawnBlood ( self.enemy.origin, v_forward * 150, 14);
 	}
@@ -220,7 +228,8 @@ void() morph_smack =
 	if (vlen(delta) > 100)
 		return;
 		
-    ldmg = (random() * 10) + 10;
+	ldmg = (random() * 10) + 10;
+	ldmg = ldmg * 0.21;
 	T_Damage (self.enemy, self, self, ldmg);
 	
 	makevectors (self.angles);
@@ -246,13 +255,228 @@ void() morph_attack =
 	
 	attackChoice = random();
 	
-	if (attackChoice < 0.50)
+	if (attackChoice < 0.40)
 		morph_bigattack01();
-	else if (attackChoice < 0.75)
+	else if (attackChoice < 0.65)
 		morph_attack01();
-	else
+	else if (attackChoice < 0.82)
 		morph_knockback01();
+	else
+		morph_charge1();   // dash de carga
 };
+
+// ========================
+// ATAQUE 1: ANEL DUPLO DE PROJÉTEIS
+// Dispara no frame 3 — windup mínimo, o som é o único aviso.
+// LOW ring  @ 20u → obriga pulo
+// HIGH ring @ 80u → só pulo duplo escapa
+// ========================
+
+void(float yaw_offset, float spawn_z_offset) morph_ring_shot_dir =
+{
+	local vector org, vec, ang;
+
+	// yaw_offset é ângulo ABSOLUTO no mundo — não relativo ao facing do morph.
+	// Isso garante que os projéteis formem um círculo real em volta do inimigo,
+	// independente de para onde ele está virado.
+	ang_x = 0;
+	ang_y = yaw_offset;  // absoluto, sem somar self.angles_y
+	ang_z = 0;
+	makevectors(ang);
+	vec = v_forward;
+	vec_z = 0;
+
+	org = self.origin;
+	org_z = org_z + spawn_z_offset;
+
+	LaunchLaser(org, vec);
+};
+
+void() morph_dualring =
+{
+	local float s;
+	s = 5; // 360 / 72 projéteis por anel — impenetrável
+
+	// LOW  -4u (20u acima do chão)
+	morph_ring_shot_dir (s* 0,  -4);  morph_ring_shot_dir (s* 1,  -4);  morph_ring_shot_dir (s* 2,  -4);  morph_ring_shot_dir (s* 3,  -4);
+	morph_ring_shot_dir (s* 4,  -4);  morph_ring_shot_dir (s* 5,  -4);  morph_ring_shot_dir (s* 6,  -4);  morph_ring_shot_dir (s* 7,  -4);
+	morph_ring_shot_dir (s* 8,  -4);  morph_ring_shot_dir (s* 9,  -4);  morph_ring_shot_dir (s*10,  -4);  morph_ring_shot_dir (s*11,  -4);
+	morph_ring_shot_dir (s*12,  -4);  morph_ring_shot_dir (s*13,  -4);  morph_ring_shot_dir (s*14,  -4);  morph_ring_shot_dir (s*15,  -4);
+	morph_ring_shot_dir (s*16,  -4);  morph_ring_shot_dir (s*17,  -4);  morph_ring_shot_dir (s*18,  -4);  morph_ring_shot_dir (s*19,  -4);
+	morph_ring_shot_dir (s*20,  -4);  morph_ring_shot_dir (s*21,  -4);  morph_ring_shot_dir (s*22,  -4);  morph_ring_shot_dir (s*23,  -4);
+	morph_ring_shot_dir (s*24,  -4);  morph_ring_shot_dir (s*25,  -4);  morph_ring_shot_dir (s*26,  -4);  morph_ring_shot_dir (s*27,  -4);
+	morph_ring_shot_dir (s*28,  -4);  morph_ring_shot_dir (s*29,  -4);  morph_ring_shot_dir (s*30,  -4);  morph_ring_shot_dir (s*31,  -4);
+	morph_ring_shot_dir (s*32,  -4);  morph_ring_shot_dir (s*33,  -4);  morph_ring_shot_dir (s*34,  -4);  morph_ring_shot_dir (s*35,  -4);
+	morph_ring_shot_dir (s*36,  -4);  morph_ring_shot_dir (s*37,  -4);  morph_ring_shot_dir (s*38,  -4);  morph_ring_shot_dir (s*39,  -4);
+	morph_ring_shot_dir (s*40,  -4);  morph_ring_shot_dir (s*41,  -4);  morph_ring_shot_dir (s*42,  -4);  morph_ring_shot_dir (s*43,  -4);
+	morph_ring_shot_dir (s*44,  -4);  morph_ring_shot_dir (s*45,  -4);  morph_ring_shot_dir (s*46,  -4);  morph_ring_shot_dir (s*47,  -4);
+	morph_ring_shot_dir (s*48,  -4);  morph_ring_shot_dir (s*49,  -4);  morph_ring_shot_dir (s*50,  -4);  morph_ring_shot_dir (s*51,  -4);
+	morph_ring_shot_dir (s*52,  -4);  morph_ring_shot_dir (s*53,  -4);  morph_ring_shot_dir (s*54,  -4);  morph_ring_shot_dir (s*55,  -4);
+	morph_ring_shot_dir (s*56,  -4);  morph_ring_shot_dir (s*57,  -4);  morph_ring_shot_dir (s*58,  -4);  morph_ring_shot_dir (s*59,  -4);
+	morph_ring_shot_dir (s*60,  -4);  morph_ring_shot_dir (s*61,  -4);  morph_ring_shot_dir (s*62,  -4);  morph_ring_shot_dir (s*63,  -4);
+	morph_ring_shot_dir (s*64,  -4);  morph_ring_shot_dir (s*65,  -4);  morph_ring_shot_dir (s*66,  -4);  morph_ring_shot_dir (s*67,  -4);
+	morph_ring_shot_dir (s*68,  -4);  morph_ring_shot_dir (s*69,  -4);  morph_ring_shot_dir (s*70,  -4);  morph_ring_shot_dir (s*71,  -4);
+
+	// HIGH +56u (80u acima do chão)
+	morph_ring_shot_dir (s* 0,  56);  morph_ring_shot_dir (s* 1,  56);  morph_ring_shot_dir (s* 2,  56);  morph_ring_shot_dir (s* 3,  56);
+	morph_ring_shot_dir (s* 4,  56);  morph_ring_shot_dir (s* 5,  56);  morph_ring_shot_dir (s* 6,  56);  morph_ring_shot_dir (s* 7,  56);
+	morph_ring_shot_dir (s* 8,  56);  morph_ring_shot_dir (s* 9,  56);  morph_ring_shot_dir (s*10,  56);  morph_ring_shot_dir (s*11,  56);
+	morph_ring_shot_dir (s*12,  56);  morph_ring_shot_dir (s*13,  56);  morph_ring_shot_dir (s*14,  56);  morph_ring_shot_dir (s*15,  56);
+	morph_ring_shot_dir (s*16,  56);  morph_ring_shot_dir (s*17,  56);  morph_ring_shot_dir (s*18,  56);  morph_ring_shot_dir (s*19,  56);
+	morph_ring_shot_dir (s*20,  56);  morph_ring_shot_dir (s*21,  56);  morph_ring_shot_dir (s*22,  56);  morph_ring_shot_dir (s*23,  56);
+	morph_ring_shot_dir (s*24,  56);  morph_ring_shot_dir (s*25,  56);  morph_ring_shot_dir (s*26,  56);  morph_ring_shot_dir (s*27,  56);
+	morph_ring_shot_dir (s*28,  56);  morph_ring_shot_dir (s*29,  56);  morph_ring_shot_dir (s*30,  56);  morph_ring_shot_dir (s*31,  56);
+	morph_ring_shot_dir (s*32,  56);  morph_ring_shot_dir (s*33,  56);  morph_ring_shot_dir (s*34,  56);  morph_ring_shot_dir (s*35,  56);
+	morph_ring_shot_dir (s*36,  56);  morph_ring_shot_dir (s*37,  56);  morph_ring_shot_dir (s*38,  56);  morph_ring_shot_dir (s*39,  56);
+	morph_ring_shot_dir (s*40,  56);  morph_ring_shot_dir (s*41,  56);  morph_ring_shot_dir (s*42,  56);  morph_ring_shot_dir (s*43,  56);
+	morph_ring_shot_dir (s*44,  56);  morph_ring_shot_dir (s*45,  56);  morph_ring_shot_dir (s*46,  56);  morph_ring_shot_dir (s*47,  56);
+	morph_ring_shot_dir (s*48,  56);  morph_ring_shot_dir (s*49,  56);  morph_ring_shot_dir (s*50,  56);  morph_ring_shot_dir (s*51,  56);
+	morph_ring_shot_dir (s*52,  56);  morph_ring_shot_dir (s*53,  56);  morph_ring_shot_dir (s*54,  56);  morph_ring_shot_dir (s*55,  56);
+	morph_ring_shot_dir (s*56,  56);  morph_ring_shot_dir (s*57,  56);  morph_ring_shot_dir (s*58,  56);  morph_ring_shot_dir (s*59,  56);
+	morph_ring_shot_dir (s*60,  56);  morph_ring_shot_dir (s*61,  56);  morph_ring_shot_dir (s*62,  56);  morph_ring_shot_dir (s*63,  56);
+	morph_ring_shot_dir (s*64,  56);  morph_ring_shot_dir (s*65,  56);  morph_ring_shot_dir (s*66,  56);  morph_ring_shot_dir (s*67,  56);
+	morph_ring_shot_dir (s*68,  56);  morph_ring_shot_dir (s*69,  56);  morph_ring_shot_dir (s*70,  56);  morph_ring_shot_dir (s*71,  56);
+
+	sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
+};
+
+// Disparo no frame 3 — só 2 frames de windup visual
+void() morph_ringattack01 = [ $mfatc01, morph_ringattack02 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack02 = [ $mfatc02, morph_ringattack03 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack03 = [ $mfatc03, morph_ringattack04 ] { morph_dualring(); self.nextthink = time + 0.08; };
+void() morph_ringattack04 = [ $mfatc04, morph_ringattack05 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack05 = [ $mfatc05, morph_ringattack06 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack06 = [ $mfatc06, morph_ringattack07 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack07 = [ $mfatc07, morph_ringattack08 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack08 = [ $mfatc08, morph_ringattack09 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack09 = [ $mfatc09, morph_ringattack10 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack10 = [ $mfatc10, morph_ringattack11 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack11 = [ $mfatc11, morph_ringattack12 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack12 = [ $mfatc12, morph_ringattack13 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack13 = [ $mfatc13, morph_ringattack14 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack14 = [ $mfatc14, morph_ringattack15 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack15 = [ $mfatc15, morph_ringattack16 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack16 = [ $mfatc16, morph_run1         ] { ai_face(); self.nextthink = time + 0.08; };
+
+// ========================
+// ATAQUE 2: LASER SWEEP
+// Sem windup — começa a varrer no frame 1.
+// Arco: -70° a +70°, dois lasers por frame (chão + peito).
+// IMPORTANTE: ai_face() antes de cada disparo para o morph
+// sempre apontar pro jogador atual, não pra onde ele estava.
+// ========================
+
+void() morph_sweep_fire =
+{
+	local vector org_low, org_high, vec, ang;
+
+	ai_face();
+
+	// 5 leques por frame: centro ±4° ±8° — LOW (chão) + HIGH (peito) cada
+
+	ang_x = 0; ang_y = self.angles_y + self.morph_sweep_yaw + (-8); ang_z = 0;
+	makevectors(ang); vec = v_forward; vec_z = 0;
+	org_low = self.origin; org_low_z = org_low_z - 4; LaunchLaser(org_low, vec);
+	org_high = self.origin; org_high_z = org_high_z + 32; LaunchLaser(org_high, vec);
+
+	ang_x = 0; ang_y = self.angles_y + self.morph_sweep_yaw + (-4); ang_z = 0;
+	makevectors(ang); vec = v_forward; vec_z = 0;
+	org_low = self.origin; org_low_z = org_low_z - 4; LaunchLaser(org_low, vec);
+	org_high = self.origin; org_high_z = org_high_z + 32; LaunchLaser(org_high, vec);
+
+	ang_x = 0; ang_y = self.angles_y + self.morph_sweep_yaw + (+0); ang_z = 0;
+	makevectors(ang); vec = v_forward; vec_z = 0;
+	org_low = self.origin; org_low_z = org_low_z - 4; LaunchLaser(org_low, vec);
+	org_high = self.origin; org_high_z = org_high_z + 32; LaunchLaser(org_high, vec);
+
+	ang_x = 0; ang_y = self.angles_y + self.morph_sweep_yaw + (+4); ang_z = 0;
+	makevectors(ang); vec = v_forward; vec_z = 0;
+	org_low = self.origin; org_low_z = org_low_z - 4; LaunchLaser(org_low, vec);
+	org_high = self.origin; org_high_z = org_high_z + 32; LaunchLaser(org_high, vec);
+
+	ang_x = 0; ang_y = self.angles_y + self.morph_sweep_yaw + (+8); ang_z = 0;
+	makevectors(ang); vec = v_forward; vec_z = 0;
+	org_low = self.origin; org_low_z = org_low_z - 4; LaunchLaser(org_low, vec);
+	org_high = self.origin; org_high_z = org_high_z + 32; LaunchLaser(org_high, vec);
+
+	sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 0.6, ATTN_NORM);
+};
+
+// Varre -70° → +70° a cada frame, sem windup, 9 frames de animação mfata
+void() morph_sweep1 = [ $mfata01, morph_sweep2 ] { self.morph_sweep_yaw = -70; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep2 = [ $mfata02, morph_sweep3 ] { self.morph_sweep_yaw = -54; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep3 = [ $mfata03, morph_sweep4 ] { self.morph_sweep_yaw = -38; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep4 = [ $mfata04, morph_sweep5 ] { self.morph_sweep_yaw = -22; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep5 = [ $mfata05, morph_sweep6 ] { self.morph_sweep_yaw =  -6; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep6 = [ $mfata06, morph_sweep7 ] { self.morph_sweep_yaw =  +6; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep7 = [ $mfata07, morph_sweep8 ] { self.morph_sweep_yaw = +22; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep8 = [ $mfata08, morph_sweep9 ] { self.morph_sweep_yaw = +38; morph_sweep_fire(); self.nextthink = time + 0.08; };
+void() morph_sweep9 = [ $mfata09, morph_run1   ] { self.morph_sweep_yaw = +54; morph_sweep_fire(); self.nextthink = time + 0.08; };
+
+// ========================
+// ATAQUE 3: DASH DE CARGA
+// 1 frame de windup (só o som avisa).
+// Velocidade 1100u/s — em arena de 512u o jogador tem ~0.46s.
+// No windup o morph trava a direção na posição ATUAL do jogador,
+// não rastreia durante a carga — punindo quem não dasha.
+// Para apenas ao tocar chão após impacto ou bater em parede.
+// Se acertar: 30 dmg + empurrão violento (600 frente, 400 cima).
+// ========================
+
+void() morph_charge_impact =
+{
+	if (!self.enemy)
+		return;
+	if (vlen(self.enemy.origin - self.origin) > 100)
+		return;
+
+	makevectors(self.angles);
+	T_Damage(self.enemy, self, self, 30 * 0.21);
+	// empurrão forte: obriga o jogador a usar o dash pra se reposicionar
+	self.enemy.velocity = v_forward * 600 + '0 0 400';
+	// para a carga após impacto
+	morph_charge_end();
+};
+
+void() morph_charge_end =
+{
+	self.movetype = MOVETYPE_STEP;
+	self.velocity = '0 0 0';
+	morph_run1();
+};
+
+void() morph_charge_move =
+{
+	morph_charge_impact();
+	// só para se tocar o chão depois que já estava no ar (bateu em parede)
+	if ((self.flags & FL_ONGROUND) && vlen(self.velocity) < 50)
+		morph_charge_end();
+};
+
+// 1 frame de windup — o som é o único aviso
+void() morph_charge1  = [ $mfknck01, morph_charge2  ]
+{
+	// trava direção na posição atual do jogador — não rastreia durante a carga
+	local vector dir;
+	if (!self.enemy) { morph_run1(); return; }
+	dir = normalize(self.enemy.origin - self.origin);
+	dir_z = 0;
+	dir = normalize(dir);
+	self.movetype = MOVETYPE_FLY;
+	self.velocity = dir * 1100;
+	sound(self, CHAN_VOICE, "guard/pain1.wav", 1, ATTN_NORM);
+self.nextthink = time + 0.08; };
+void() morph_charge2  = [ $mfknck02, morph_charge3  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge3  = [ $mfknck03, morph_charge4  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge4  = [ $mfknck04, morph_charge5  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge5  = [ $mfknck05, morph_charge6  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge6  = [ $mfknck06, morph_charge7  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge7  = [ $mfknck07, morph_charge8  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge8  = [ $mfknck08, morph_charge9  ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge9  = [ $mfknck09, morph_charge10 ] { morph_charge_move(); self.nextthink = time + 0.08; };
+void() morph_charge10 = [ $mfknck10, morph_charge11 ] { morph_charge_end(); self.nextthink = time + 0.08; };
+void() morph_charge11 = [ $mfknck11, morph_charge12 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_charge12 = [ $mfknck12, morph_run1     ] { ai_face(); self.nextthink = time + 0.08; };
 
 // ========================
 // ranged attack
@@ -443,6 +667,79 @@ void() morph_wake31 = [ $start31, morph_stand1 ]
 	}
 };
 
+// CheckAttack customizado pro morph:
+// chance de míssil muito maior que o CheckAttack genérico,
+// especialmente a distância — força o jogador a reagir em vez de farmar.
+//
+//   RANGE_MELEE : 90% → corpo a corpo
+//   RANGE_NEAR  : 55% → míssil  (genérico usa 20%)
+//   RANGE_MID   : 35% → míssil  (genérico usa 5%)
+//   RANGE_FAR   : sem ataque
+float() MorphCheckAttack =
+{
+	local vector  spot1, spot2;
+	local float   chance;
+
+	if (time < self.attack_finished)
+		return FALSE;
+
+	// precisa ter linha de visão
+	spot1 = self.origin + self.view_ofs;
+	spot2 = self.enemy.origin + self.enemy.view_ofs;
+	traceline(spot1, spot2, FALSE, self);
+	if (trace_ent != self.enemy)
+		return FALSE;
+
+	if (enemy_range == RANGE_MELEE)
+	{
+		if (self.th_melee)
+		{
+			self.th_melee();
+			return TRUE;
+		}
+	}
+
+	if (!self.th_missile)
+		return FALSE;
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+
+	if (enemy_range == RANGE_MELEE)
+		chance = 0.90;
+	else if (enemy_range == RANGE_NEAR)
+		chance = 0.55;
+	else if (enemy_range == RANGE_MID)
+		chance = 0.35;
+	else
+		chance = 0;
+
+	if (random() < chance)
+	{
+		self.th_missile();
+		SUB_AttackFinished(1.2); // cooldown curto entre ataques
+		self.attack_state = AS_STRAIGHT;
+		return TRUE;
+	}
+
+	return FALSE;
+};
+
+// Escolhe qual ataque à distância usar:
+//   40% → laser normal (morph_fire1)
+//   30% → sweep rasante (obriga pulo no timing)
+//   30% → anel duplo (obriga pulo duplo)
+void() morph_missile_pick =
+{
+	local float r;
+	r = random();
+	if (r < 0.40)
+		morph_fire1();
+	else if (r < 0.70)
+		morph_sweep1();
+	else
+		morph_ringattack01();
+};
+
 void(entity theMorph) morph_setup =
 {
 	theMorph.solid = SOLID_SLIDEBOX;
@@ -463,7 +760,7 @@ void(entity theMorph) morph_setup =
 	theMorph.th_stand = morph_stand1;
 	theMorph.th_walk = morph_walk1;
 	theMorph.th_run = morph_run1;
-	theMorph.th_missile = morph_fire1;
+	theMorph.th_missile = morph_missile_pick;
 	theMorph.th_melee = morph_attack;
 	theMorph.th_pain = morph_pain;
 	theMorph.th_die = morph_die;

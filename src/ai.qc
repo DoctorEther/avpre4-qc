@@ -632,6 +632,8 @@ float() CheckAnyAttack =
 		return DogCheckAttack ();
 	if (self.classname == "monster_wizard")
 		return WizardCheckAttack ();
+	if (self.classname == "monster_morph")
+		return MorphCheckAttack ();
 	return CheckAttack ();
 };
 

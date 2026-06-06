@@ -707,6 +707,7 @@ entity av_global_train;
 //
 .float		AGping;
 .float		childrenSpawned;
+.float		morph_sweep_yaw;   // current sweep angle offset for morph laser sweep attack
 .float		ltrailLastUsed;
 .float		shield_death_time;
 .float		shieldSoundTime;

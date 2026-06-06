@@ -76,6 +76,107 @@ void() hknight_char_a1;
 void() hknight_run1;
 void() hk_idle_sound;
 
+// Fires a single spike at a given yaw offset and Z height offset
+// Fires a single spike at a given yaw offset.
+// spawn_z_offset controls the SPAWN HEIGHT of the projectile above the enemy's feet:
+//   - the projectile travels FLAT (horizontal) so it stays at that height indefinitely.
+//   - spawn_z_offset is added directly to the world-space Z of the spawn point.
+//
+// Physics reference (from av_move.qc / client.qc):
+//   gravity          = 800 u/s^2
+//   1st jump v_z     = 270  → peak height = 45.6u above ground
+//   double jump v_z  = 380  → additional 90.2u, total ~135.8u above ground
+//   player bbox      = -24 to +32 (56u tall), origin 24u above ground
+//
+void(float yaw_offset, float spawn_z_offset) hknight_shot_dir =
+{
+	local	vector	org, vec, ang;
+
+	// Use makevectors to get a horizontal direction for the given yaw.
+	// pitch=0, yaw=self.angles_y+offset, roll=0 -> v_forward is flat (z~=0).
+	ang_x = 0;
+	// yaw_offset é ângulo ABSOLUTO no mundo — não relativo ao facing do inimigo.
+	ang_y = yaw_offset;
+	ang_z = 0;
+	makevectors(ang);
+	vec = v_forward;
+	vec_z = 0; // ensure perfectly flat
+
+	// Spawn at the desired height above ground.
+	// Enemy origin is 24u above ground (bbox mins_z = -24).
+	// Adding spawn_z_offset shifts the projectile to the correct altitude.
+	org = self.origin;
+	org_z = org_z + spawn_z_offset;
+
+	launch_spike (org, vec);
+	newmis.classname = "knightspike";
+	setmodel (newmis, "progs/k_spike.mdl");
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
+	newmis.velocity = vec * 300;
+	if (cvar("pr_checkextension"))
+		if (checkextension("EX_EXTENDED_EF"))
+			newmis.effects = newmis.effects | EF_CANDLELIGHT;
+};
+
+// -----------------------------------------------------------------------
+// RING ATTACK  (magica / magicb sequences)
+// 16 flat spikes in a full 360° ring at mid-body height (~32u above ground).
+// step = 22.5° → gaps too narrow to run through, single jump still clears it.
+// -----------------------------------------------------------------------
+void() hknight_ring_shot =
+{
+	local float s;
+	s = 10; // 360 / 36 spikes
+
+	// +8 from origin = 32u above ground (waist height)
+	hknight_shot_dir (s* 0,  8);  hknight_shot_dir (s* 1,  8);  hknight_shot_dir (s* 2,  8);  hknight_shot_dir (s* 3,  8);
+	hknight_shot_dir (s* 4,  8);  hknight_shot_dir (s* 5,  8);  hknight_shot_dir (s* 6,  8);  hknight_shot_dir (s* 7,  8);
+	hknight_shot_dir (s* 8,  8);  hknight_shot_dir (s* 9,  8);  hknight_shot_dir (s*10,  8);  hknight_shot_dir (s*11,  8);
+	hknight_shot_dir (s*12,  8);  hknight_shot_dir (s*13,  8);  hknight_shot_dir (s*14,  8);  hknight_shot_dir (s*15,  8);
+	hknight_shot_dir (s*16,  8);  hknight_shot_dir (s*17,  8);  hknight_shot_dir (s*18,  8);  hknight_shot_dir (s*19,  8);
+	hknight_shot_dir (s*20,  8);  hknight_shot_dir (s*21,  8);  hknight_shot_dir (s*22,  8);  hknight_shot_dir (s*23,  8);
+	hknight_shot_dir (s*24,  8);  hknight_shot_dir (s*25,  8);  hknight_shot_dir (s*26,  8);  hknight_shot_dir (s*27,  8);
+	hknight_shot_dir (s*28,  8);  hknight_shot_dir (s*29,  8);  hknight_shot_dir (s*30,  8);  hknight_shot_dir (s*31,  8);
+	hknight_shot_dir (s*32,  8);  hknight_shot_dir (s*33,  8);  hknight_shot_dir (s*34,  8);  hknight_shot_dir (s*35,  8);
+
+	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
+};
+
+// -----------------------------------------------------------------------
+// DUAL-HEIGHT RING ATTACK  (magicc sequence)
+// 36 spikes per ring — impenetrável sem pulo duplo.
+// -----------------------------------------------------------------------
+void() hknight_dualring_shot =
+{
+	local float s;
+	s = 10;
+
+	// LOW ring — 20u above ground
+	hknight_shot_dir (s* 0,  -4);  hknight_shot_dir (s* 1,  -4);  hknight_shot_dir (s* 2,  -4);  hknight_shot_dir (s* 3,  -4);
+	hknight_shot_dir (s* 4,  -4);  hknight_shot_dir (s* 5,  -4);  hknight_shot_dir (s* 6,  -4);  hknight_shot_dir (s* 7,  -4);
+	hknight_shot_dir (s* 8,  -4);  hknight_shot_dir (s* 9,  -4);  hknight_shot_dir (s*10,  -4);  hknight_shot_dir (s*11,  -4);
+	hknight_shot_dir (s*12,  -4);  hknight_shot_dir (s*13,  -4);  hknight_shot_dir (s*14,  -4);  hknight_shot_dir (s*15,  -4);
+	hknight_shot_dir (s*16,  -4);  hknight_shot_dir (s*17,  -4);  hknight_shot_dir (s*18,  -4);  hknight_shot_dir (s*19,  -4);
+	hknight_shot_dir (s*20,  -4);  hknight_shot_dir (s*21,  -4);  hknight_shot_dir (s*22,  -4);  hknight_shot_dir (s*23,  -4);
+	hknight_shot_dir (s*24,  -4);  hknight_shot_dir (s*25,  -4);  hknight_shot_dir (s*26,  -4);  hknight_shot_dir (s*27,  -4);
+	hknight_shot_dir (s*28,  -4);  hknight_shot_dir (s*29,  -4);  hknight_shot_dir (s*30,  -4);  hknight_shot_dir (s*31,  -4);
+	hknight_shot_dir (s*32,  -4);  hknight_shot_dir (s*33,  -4);  hknight_shot_dir (s*34,  -4);  hknight_shot_dir (s*35,  -4);
+
+	// HIGH ring — 80u above ground
+	hknight_shot_dir (s* 0,  56);  hknight_shot_dir (s* 1,  56);  hknight_shot_dir (s* 2,  56);  hknight_shot_dir (s* 3,  56);
+	hknight_shot_dir (s* 4,  56);  hknight_shot_dir (s* 5,  56);  hknight_shot_dir (s* 6,  56);  hknight_shot_dir (s* 7,  56);
+	hknight_shot_dir (s* 8,  56);  hknight_shot_dir (s* 9,  56);  hknight_shot_dir (s*10,  56);  hknight_shot_dir (s*11,  56);
+	hknight_shot_dir (s*12,  56);  hknight_shot_dir (s*13,  56);  hknight_shot_dir (s*14,  56);  hknight_shot_dir (s*15,  56);
+	hknight_shot_dir (s*16,  56);  hknight_shot_dir (s*17,  56);  hknight_shot_dir (s*18,  56);  hknight_shot_dir (s*19,  56);
+	hknight_shot_dir (s*20,  56);  hknight_shot_dir (s*21,  56);  hknight_shot_dir (s*22,  56);  hknight_shot_dir (s*23,  56);
+	hknight_shot_dir (s*24,  56);  hknight_shot_dir (s*25,  56);  hknight_shot_dir (s*26,  56);  hknight_shot_dir (s*27,  56);
+	hknight_shot_dir (s*28,  56);  hknight_shot_dir (s*29,  56);  hknight_shot_dir (s*30,  56);  hknight_shot_dir (s*31,  56);
+	hknight_shot_dir (s*32,  56);  hknight_shot_dir (s*33,  56);  hknight_shot_dir (s*34,  56);  hknight_shot_dir (s*35,  56);
+
+	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
+};
+
+// Legacy single-direction shot kept for reference (unused by new attacks)
 void(float offset) hknight_shot =
 {
 	local	vector	offang;
@@ -88,7 +189,6 @@ void(float offset) hknight_shot =
 
 	org = self.origin + self.mins + self.size*0.5 + v_forward * 20;
 
-// set missile speed
 	vec = normalize (v_forward);
 	vec_z = 0 - vec_z + (random() - 0.5)*0.1;
 	
@@ -99,7 +199,7 @@ void(float offset) hknight_shot =
 	newmis.velocity = vec*300;
 	if (cvar("pr_checkextension"))
 		if (checkextension("EX_EXTENDED_EF"))
-			newmis.effects = newmis.effects | EF_CANDLELIGHT; // give the projectiles a weak glow
+			newmis.effects = newmis.effects | EF_CANDLELIGHT;
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
 
@@ -271,12 +371,12 @@ void()	hknight_magica3 =[	$magica3,	hknight_magica4	] {ai_face();};
 void()	hknight_magica4 =[	$magica4,	hknight_magica5	] {ai_face();};
 void()	hknight_magica5 =[	$magica5,	hknight_magica6	] {ai_face();};
 void()	hknight_magica6 =[	$magica6,	hknight_magica7	] {ai_face();};
-void()	hknight_magica7 =[	$magica7,	hknight_magica8	] {hknight_shot(-2);};
-void()	hknight_magica8 =[	$magica8,	hknight_magica9	] {hknight_shot(-1);};
-void()	hknight_magica9 =[	$magica9,	hknight_magica10] {hknight_shot(0);};
-void()	hknight_magica10 =[	$magica10,	hknight_magica11] {hknight_shot(1);};
-void()	hknight_magica11 =[	$magica11,	hknight_magica12] {hknight_shot(2);};
-void()	hknight_magica12 =[	$magica12,	hknight_magica13] {hknight_shot(3);};
+void()	hknight_magica7 =[	$magica7,	hknight_magica8	] {ai_face();};
+void()	hknight_magica8 =[	$magica8,	hknight_magica9	] {ai_face();};
+void()	hknight_magica9 =[	$magica9,	hknight_magica10] {hknight_ring_shot();};
+void()	hknight_magica10 =[	$magica10,	hknight_magica11] {ai_face();};
+void()	hknight_magica11 =[	$magica11,	hknight_magica12] {ai_face();};
+void()	hknight_magica12 =[	$magica12,	hknight_magica13] {ai_face();};
 void()	hknight_magica13 =[	$magica13,	hknight_magica14] {ai_face();};
 void()	hknight_magica14 =[	$magica14,	hknight_run1	] {ai_face();};
 
@@ -288,12 +388,12 @@ void()	hknight_magicb3 =[	$magicb3,	hknight_magicb4	] {ai_face();};
 void()	hknight_magicb4 =[	$magicb4,	hknight_magicb5	] {ai_face();};
 void()	hknight_magicb5 =[	$magicb5,	hknight_magicb6	] {ai_face();};
 void()	hknight_magicb6 =[	$magicb6,	hknight_magicb7	] {ai_face();};
-void()	hknight_magicb7 =[	$magicb7,	hknight_magicb8	] {hknight_shot(-2);};
-void()	hknight_magicb8 =[	$magicb8,	hknight_magicb9	] {hknight_shot(-1);};
-void()	hknight_magicb9 =[	$magicb9,	hknight_magicb10] {hknight_shot(0);};
-void()	hknight_magicb10 =[	$magicb10,	hknight_magicb11] {hknight_shot(1);};
-void()	hknight_magicb11 =[	$magicb11,	hknight_magicb12] {hknight_shot(2);};
-void()	hknight_magicb12 =[	$magicb12,	hknight_magicb13] {hknight_shot(3);};
+void()	hknight_magicb7 =[	$magicb7,	hknight_magicb8	] {ai_face();};
+void()	hknight_magicb8 =[	$magicb8,	hknight_magicb9	] {ai_face();};
+void()	hknight_magicb9 =[	$magicb9,	hknight_magicb10] {hknight_ring_shot();};
+void()	hknight_magicb10 =[	$magicb10,	hknight_magicb11] {ai_face();};
+void()	hknight_magicb11 =[	$magicb11,	hknight_magicb12] {ai_face();};
+void()	hknight_magicb12 =[	$magicb12,	hknight_magicb13] {ai_face();};
 void()	hknight_magicb13 =[	$magicb13,	hknight_run1] {ai_face();};
 
 //============================================================================
@@ -303,12 +403,12 @@ void()	hknight_magicc2 =[	$magicc2,	hknight_magicc3	] {ai_face();};
 void()	hknight_magicc3 =[	$magicc3,	hknight_magicc4	] {ai_face();};
 void()	hknight_magicc4 =[	$magicc4,	hknight_magicc5	] {ai_face();};
 void()	hknight_magicc5 =[	$magicc5,	hknight_magicc6	] {ai_face();};
-void()	hknight_magicc6 =[	$magicc6,	hknight_magicc7	] {hknight_shot(-2);};
-void()	hknight_magicc7 =[	$magicc7,	hknight_magicc8	] {hknight_shot(-1);};
-void()	hknight_magicc8 =[	$magicc8,	hknight_magicc9	] {hknight_shot(0);};
-void()	hknight_magicc9 =[	$magicc9,	hknight_magicc10] {hknight_shot(1);};
-void()	hknight_magicc10 =[	$magicc10,	hknight_magicc11] {hknight_shot(2);};
-void()	hknight_magicc11 =[	$magicc11,	hknight_run1] {hknight_shot(3);};
+void()	hknight_magicc6 =[	$magicc6,	hknight_magicc7	] {ai_face();};
+void()	hknight_magicc7 =[	$magicc7,	hknight_magicc8	] {ai_face();};
+void()	hknight_magicc8 =[	$magicc8,	hknight_magicc9	] {hknight_dualring_shot();};
+void()	hknight_magicc9 =[	$magicc9,	hknight_magicc10] {ai_face();};
+void()	hknight_magicc10 =[	$magicc10,	hknight_magicc11] {ai_face();};
+void()	hknight_magicc11 =[	$magicc11,	hknight_run1] {ai_face();};
 
 //===========================================================================
 
