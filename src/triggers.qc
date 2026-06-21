@@ -25,6 +25,29 @@ void() trigger_reactivate =
 	self.solid = SOLID_TRIGGER;
 };
 
+
+//=============================================================================
+
+void() SUB_EndWaiting = {
+	self.is_waiting = 0;
+	self.estate = STATE_ACTIVE;
+	if (self.use == SUB_EndWaiting) self.use = self.dormant_use;
+
+	// special case for teleports, makes it ignore the fact that it has a targetname when touched
+	if (self.classname == "trigger_teleport") {
+		self.is_waiting = -1;
+	}
+};
+
+void() SUB_CheckWaiting = {
+	if (self.is_waiting > 0) {
+		self.dormant_use = self.use;
+		self.use = SUB_EndWaiting;
+		self.estate = STATE_INACTIVE;
+
+	}
+};
+
 //=============================================================================
 
 float	SPAWNFLAG_NOMESSAGE = 1;
@@ -102,6 +125,9 @@ void() multi_use =
 
 void() multi_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	if (other.classname != "player")
 		return;
 	
@@ -171,6 +197,8 @@ void() trigger_multiple =
 			self.touch = multi_touch;
 		}
 	}
+
+	SUB_CheckWaiting();
 };
 
 
@@ -384,8 +412,11 @@ local entity	death;
 
 void() teleport_touch =
 {
-local entity	t;
-local vector	org;
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	local entity	t;
+	local vector	org;
 
 	if (self.targetname)
 	{
@@ -494,6 +525,8 @@ void() trigger_teleport =
 		o = (self.mins + self.maxs)*0.5;
 		ambientsound (o, "ambience/hum1.wav",0.5 , ATTN_STATIC);
 	}
+
+	SUB_CheckWaiting();
 };
 
 /*
@@ -506,6 +539,8 @@ trigger_setskill
 
 void() trigger_skill_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
 	if (other.classname != "player")
 		return;
 		
@@ -520,6 +555,8 @@ void() trigger_setskill =
 {
 	InitTrigger ();
 	self.touch = trigger_skill_touch;
+
+	SUB_CheckWaiting();
 };
 
 
@@ -533,6 +570,8 @@ ONLY REGISTERED TRIGGERS
 
 void() trigger_onlyregistered_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
 	if (other.classname != "player")
 		return;
 	if (self.attack_finished > time)
@@ -553,6 +592,8 @@ void() trigger_onlyregistered_touch =
 			sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
 		}
 	}
+
+	SUB_CheckWaiting();
 };
 
 /*QUAKED trigger_onlyregistered (.5 .5 .5) ?
@@ -575,6 +616,8 @@ void() hurt_on =
 
 void() hurt_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
@@ -597,6 +640,8 @@ void() trigger_hurt =
 	self.touch = hurt_touch;
 	if (!self.dmg)
 		self.dmg = 5;
+
+	SUB_CheckWaiting();
 };
 
 //============================================================================
@@ -607,6 +652,8 @@ float PUSH_ACTIVE =	4;
 
 void() trigger_push_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
 	if (!(self.spawnflags & PUSH_ACTIVE))
 		return;
 		
@@ -657,12 +704,16 @@ void() trigger_push =
 	self.touch = trigger_push_touch;
 	if (!self.speed)
 		self.speed = 1000;
+
+	SUB_CheckWaiting();
 };
 
 //============================================================================
 
 void() trigger_monsterjump_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
 	if ( other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER )
 		return;
 
@@ -693,6 +744,8 @@ void() trigger_monsterjump =
 		self.angles = '0 360 0';
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
+
+	SUB_CheckWaiting();
 };
 
 

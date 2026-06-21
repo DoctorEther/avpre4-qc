@@ -374,6 +374,9 @@ float	STATE_BOTTOM	= 1;
 float	STATE_UP		= 2;
 float	STATE_DOWN		= 3;
 
+float 	STATE_ACTIVE      = 0;
+float 	STATE_INACTIVE    = 1;
+
 vector	VEC_ORIGIN = '0 0 0';
 vector	VEC_HULL_MIN = '-16 -16 -24';
 vector	VEC_HULL_MAX = '16 16 32';
@@ -722,7 +725,10 @@ entity av_global_train;
 .float    spawn_deferred;
 .float grapple;
 //===========================================================================
-	
+
+.float estate;
+.float is_waiting;
+.void() dormant_use;
 
 //
 // builtin functions
