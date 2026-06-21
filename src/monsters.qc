@@ -30,6 +30,69 @@
 // };
 
 
+//============================================================================
+// TRIGGER SPAWNING
+
+void(entity e) hide_spawned_monster_entity = {
+	//store the important info in unused fields
+	e.mdl = e.model;
+	e.cmins = e.mins;
+	e.cmaxs = e.maxs;
+	e.walkframe = e.solid;
+	e.fly_sound = e.movetype;
+
+	//hide the model and make it non-solid
+	e.model = "";
+	e.solid = SOLID_NOT;
+	e.movetype = MOVETYPE_NONE;
+}
+
+void(entity e) show_spawned_monster_entity = {
+	e.solid = e.walkframe;
+	e.movetype = e.fly_sound;
+	setmodel(e, e.mdl);
+	setsize (e, e.cmins, e.cmaxs);
+}
+
+void() spawn_monster_use = {
+	if (self.delay) {
+		self.think = spawn_monster;
+		self.nextthink = time + self.delay + self.rand*random();
+	}
+	else
+		spawn_monster();
+};
+
+void() spawn_monster = {
+
+	show_spawned_monster_entity(self);
+
+	//if (self.trigger_field) show_spawned_monster_entity(self.trigger_field); // Double-entity monster
+
+	//telefrag any existing entities
+	spawn_tdeath (self.origin, self); 
+
+	//sound and particle effects	
+	if (!(self.spawnflags & MONSTER_SPAWNSILENT))
+		spawn_tfog (self.origin);	
+
+	self.think1();
+}
+
+void(entity e, void() go_function) init_spawned_monster = {
+
+	hide_spawned_monster_entity(e);
+
+	// Double-entity Malice monsters must have both parts hidden.
+	// Secondary entity is always stored in the trigger_field field so we check that
+	//if (e.trigger_field) hide_spawned_monster_entity(e.trigger_field);
+
+	//set up the teleport functions
+
+	e.use = spawn_monster_use;
+	e.think1 = go_function;
+}
+
 /*
 ================
 monster_use
@@ -145,8 +208,14 @@ void() walkmonster_start =
 {
 // delay drop to floor to make sure all doors have been spawned
 // spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = walkmonster_start_go;
+	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
+		init_spawned_monster(self, walkmonster_start_go);
+	}
+	else {
+		self.nextthink = self.nextthink + random()*0.5;
+		self.think = walkmonster_start_go;
+	}
+	
 	total_monsters = total_monsters + 1;
 };
 
@@ -201,8 +270,13 @@ void() flymonster_start_go =
 void() flymonster_start =
 {
 // spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = flymonster_start_go;
+	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
+		init_spawned_monster(self, flymonster_start_go);
+	}
+	else {
+		self.nextthink = self.nextthink + random()*0.5;
+		self.think = flymonster_start_go;
+	}
 	total_monsters = total_monsters + 1;
 };
 
@@ -216,7 +290,6 @@ void() swimmonster_start_go =
 	}
 
 	self.takedamage = DAMAGE_AIM;
-	total_monsters = total_monsters + 1;
 
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
@@ -254,12 +327,15 @@ void() swimmonster_start_go =
 void() swimmonster_start =
 {
 // spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = swimmonster_start_go;
+	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
+		init_spawned_monster(self, swimmonster_start_go);
+	}
+	else {
+		self.nextthink = self.nextthink + random()*0.5;
+		self.think = swimmonster_start_go;
+	}
 
-//	Don't count here. swimmonster_start_go already increments
-//  the monster count!!!
-//	total_monsters = total_monsters + 1;
+	total_monsters = total_monsters + 1;
 };
 
 
