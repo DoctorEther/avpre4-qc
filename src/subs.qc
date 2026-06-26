@@ -278,22 +278,20 @@ void() SUB_UseTargets =
 //
 // kill the killtagets
 //
-	if (self.killtarget)
+	if (self.killtarget != "")
 	{
-		t = world;
-		do
+		t = find (world, targetname, self.killtarget);
+		while (t)
 		{
 			t = find (t, targetname, self.killtarget);
-			if (!t)
-				return;
-			remove (t);
-		} while ( 1 );
+			if (t) remove(t);
+		}
 	}
 	
 //
 // fire targets
 //
-	if (self.target)
+	if (self.target != "")
 	{
 		act = activator;
 		t = world;

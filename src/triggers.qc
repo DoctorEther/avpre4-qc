@@ -418,7 +418,7 @@ void() teleport_touch =
 	local entity	t;
 	local vector	org;
 
-	if (self.targetname)
+	if (self.targetname != "")
 	{
 		if (self.nextthink < time)
 		{
