@@ -474,6 +474,7 @@ float DRAW_GAME_SINGLE_FRAME	= -1; // mal: use in game code that updates every f
 float PEF_CHANGEONLYNEW	= 1;
 float PEF_CHANGENEVER   = 2;
 
+float MONSTER_SPAWNANGRY = 32;
 float MONSTER_SPAWNTRIGGERED = 64;
 float MONSTER_SPAWNSILENT = 128;
 

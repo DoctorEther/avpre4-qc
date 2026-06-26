@@ -233,7 +233,7 @@ void() SUB_UseTargets =
 //
 // check for a delay
 //
-	if (self.delay)
+	if (self.delay && !(self.flags & FL_MONSTER))
 	{
 	// create a temp object to fire at a later time
 		t = spawn();

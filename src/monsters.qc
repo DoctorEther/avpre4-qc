@@ -55,7 +55,7 @@ void(entity e) show_spawned_monster_entity = {
 }
 
 void() spawn_monster_use = {
-	if (self.delay) {
+	if (self.delay || self.rand) {
 		self.think = spawn_monster;
 		self.nextthink = time + self.delay + self.rand*random();
 	}
@@ -199,8 +199,12 @@ local entity	etemp;
 		self.th_stand ();
 	}
 
+	if (self.spawnflags & (MONSTER_SPAWNANGRY + MONSTER_SPAWNTRIGGERED))
+		monster_use();
+	else
+		self.nextthink = self.nextthink + random()*0.5;
 // spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	
 };
 
 
@@ -265,6 +269,9 @@ void() flymonster_start_go =
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
+
+	if (self.spawnflags & (MONSTER_SPAWNANGRY + MONSTER_SPAWNTRIGGERED))
+		monster_use();
 };
 
 void() flymonster_start =
@@ -319,9 +326,14 @@ void() swimmonster_start_go =
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
-
+	
+	
+	if (self.spawnflags & (MONSTER_SPAWNANGRY + MONSTER_SPAWNTRIGGERED))
+		monster_use();
+	else
+		self.nextthink = self.nextthink + random()*0.5;
 // spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+
 };
 
 void() swimmonster_start =
