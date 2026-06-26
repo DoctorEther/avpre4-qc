@@ -205,15 +205,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	targ.armorvalue = targ.armorvalue - save;
 	take = ceil(damage-save);
 
-// add to the damage total for clients, which will be sent as a single
-// message at the end of the frame
-// FIXME: remove after combining shotgun blasts?
-	if (targ.flags & FL_CLIENT)
-	{
-		targ.dmg_take = targ.dmg_take + take;
-		targ.dmg_save = targ.dmg_save + save;
-		targ.dmg_inflictor = inflictor;
-	}
+
 
 // figure momentum add
 	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) )
@@ -236,6 +228,15 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 		return;
 	}
 
+	// add to the damage total for clients, which will be sent as a single
+// message at the end of the frame
+// FIXME: remove after combining shotgun blasts?
+	if (targ.flags & FL_CLIENT)
+	{
+		targ.dmg_take = targ.dmg_take + take;
+		targ.dmg_save = targ.dmg_save + save;
+		targ.dmg_inflictor = inflictor;
+	}
 // team play damage avoidance
 //	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
 //		return;
