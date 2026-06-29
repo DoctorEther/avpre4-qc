@@ -1,4 +1,4 @@
-// Declaring it here so we can use normal jump here.
+// Foward declaration here so we can just use the normal jump here.
 void() PlayerJump;
 
 // --- AVIÃOZINHO PLAYER FIELDS ---------------------
@@ -102,6 +102,20 @@ void() PlayerDoubleJump = {
 float AV_DASH_SPEED		= 650.0;
 float AV_DASH_DURATION	= 0.2;
 float AV_DASH_COOLDOWN	= 1.25;
+
+#define STAT_DASH_INDEX 33
+#define STAT_DASH_PERC 34
+
+void() AV_UpdateDashHUD = {
+	msg_entity = self; 
+	WriteByte(MSG_ONE, SVC_UPDATESTAT);
+	WriteByte(MSG_ONE, STAT_DASH_INDEX);
+	WriteLong(MSG_ONE, 3 - self.dash_count);
+	
+	WriteByte(MSG_ONE, SVC_UPDATESTAT);
+	WriteByte(MSG_ONE, STAT_DASH_PERC);
+	WriteLong(MSG_ONE, (1 - (self.dash_cooldown - time) / AV_DASH_COOLDOWN) * 100);
+};
 
 void() PlayerDash =
 {

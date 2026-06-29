@@ -6,6 +6,33 @@ PLAYER WEAPON USE
 ===============================================================================
 */
 
+// AVIÃOZINHO ---------------------------------------------------
+
+#define STAT_CURRENT_WEAPON 32
+
+#define WEAPON_V_AXE      1
+#define WEAPON_V_SHOT     2
+#define WEAPON_V_SHOT2    3
+#define WEAPON_V_NAIL     4
+#define WEAPON_V_LAVA     5
+#define WEAPON_V_NAIL2    6
+#define WEAPON_V_LAVA2    7
+#define WEAPON_V_ROCK     8
+#define WEAPON_V_MULTI    9
+#define WEAPON_V_ROCK2    10
+#define WEAPON_V_MULTI2   11
+#define WEAPON_V_LIGHT    12
+#define WEAPON_V_PLASMA   13
+
+void(float id) UpdateWeaponIcon = {
+	msg_entity = self; 
+	WriteByte(MSG_ONE, SVC_UPDATESTAT);
+	WriteByte(MSG_ONE, STAT_CURRENT_WEAPON);
+	WriteLong(MSG_ONE, id);
+};
+
+// --------------------------------------------------------------
+
 void() W_SetCurrentAmmo =
 {
 	player_run ();		// get out of any weapon firing states
@@ -20,6 +47,7 @@ void() W_SetCurrentAmmo =
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_axe.mdl";
 		self.weaponframe = 0;
+		UpdateWeaponIcon(WEAPON_V_AXE);
 	}
 //ZOID--
 	else if (self.weapon == IT_GRAPPLE)
@@ -35,6 +63,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_shot.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
+		UpdateWeaponIcon(WEAPON_V_SHOT);
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
@@ -42,6 +71,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_shot2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
+		UpdateWeaponIcon(WEAPON_V_SHOT2);
 	}
 	else if (self.weapon == IT_LAVA_NAILGUN)
 	{
@@ -49,6 +79,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_lava.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_LAVA_NAILS;
+		UpdateWeaponIcon(WEAPON_V_LAVA);
 	}
 	else if (self.weapon == IT_LAVA_SUPER_NAILGUN)
 	{
@@ -56,6 +87,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_lava2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
+		UpdateWeaponIcon(WEAPON_V_NAIL2);
 	}
 	else if (self.weapon == IT_MULTI_GRENADE)
 	{
@@ -63,6 +95,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_multi.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_MULTI_ROCKETS;
+		UpdateWeaponIcon(WEAPON_V_MULTI);
 	}
 	else if (self.weapon == IT_MULTI_ROCKET)
 	{
@@ -71,6 +104,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_multi2.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_MULTI_ROCKETS;
+		UpdateWeaponIcon(WEAPON_V_MULTI2);
 	}
 	else if (self.weapon == IT_AVIAO)
 	{
@@ -78,6 +112,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_plasma.mdl";
 		self.weaponframe = 0;
 		self.items2 = self.items2 | IT2_PLASMA_AMMO;
+		UpdateWeaponIcon(WEAPON_V_PLASMA);
 	}
 	else if (self.weapon == IT_NAILGUN)
 	{
@@ -85,6 +120,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_nail.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
+		UpdateWeaponIcon(WEAPON_V_NAIL);
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
@@ -92,6 +128,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_nail2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
+		UpdateWeaponIcon(WEAPON_V_NAIL2);
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
@@ -99,6 +136,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
+		UpdateWeaponIcon(WEAPON_V_ROCK);
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
@@ -106,6 +144,7 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_rock2.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
+		UpdateWeaponIcon(WEAPON_V_ROCK2);
 	}
 	else if (self.weapon == IT_LIGHTNING)
 	{
@@ -113,12 +152,14 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
+		UpdateWeaponIcon(WEAPON_V_LIGHT);
 	}
 	else
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "";
 		self.weaponframe = 0;
+		UpdateWeaponIcon(0);
 	}
 		
 	UpdateAmmoCounts(self);

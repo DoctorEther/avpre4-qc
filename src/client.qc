@@ -1448,6 +1448,7 @@ void() PlayerPreThink =
 	}
 	
 	AV_SkateUpdate();
+	AV_UpdateDashHUD();
 };
 
 /*
