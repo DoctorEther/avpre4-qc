@@ -140,13 +140,23 @@ local entity	temp;
 //dprint ("t_movetarget\n");
 	self.goalentity = self.movetarget = find (world, targetname, other.target);
 	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-	if (!self.movetarget)
+	
+	if (!self.movetarget || other.wait == -1) 
 	{
 		self.pausetime = time + 999999;
 		self.th_stand ();
 		return;
 	}
-};
+
+	if (other.wait > 0) {
+		self.pausetime = time + other.wait;
+		self.th_stand ();
+	}
+	
+	if (other.angles) {
+		self.ideal_yaw = other.angles_y;
+	}
+}
 
 
 

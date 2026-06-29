@@ -374,6 +374,9 @@ float	STATE_BOTTOM	= 1;
 float	STATE_UP		= 2;
 float	STATE_DOWN		= 3;
 
+float 	STATE_ACTIVE      = 0;
+float 	STATE_INACTIVE    = 1;
+
 vector	VEC_ORIGIN = '0 0 0';
 vector	VEC_HULL_MIN = '-16 -16 -24';
 vector	VEC_HULL_MAX = '16 16 32';
@@ -470,6 +473,11 @@ float DRAW_GAME_SINGLE_FRAME	= -1; // mal: use in game code that updates every f
 // player expanded settings flags
 float PEF_CHANGEONLYNEW	= 1;
 float PEF_CHANGENEVER   = 2;
+
+float MONSTER_SPAWNANGRY = 32;
+float MONSTER_SPAWNTRIGGERED = 64;
+float MONSTER_SPAWNSILENT = 128;
+
 /*
 enum class BotGoalReturnCode : int {
 	Error = 0,
@@ -721,8 +729,17 @@ entity av_global_train;
 //
 .float    spawn_deferred;
 .float grapple;
+
+.float estate;
+.float is_waiting;
+.void() dormant_use;
+
+.vector cmins;
+.vector cmaxs;
+
+.float rand;
+
 //===========================================================================
-	
 
 //
 // builtin functions

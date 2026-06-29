@@ -220,7 +220,7 @@ local entity t;
 
 	plat_spawn_inside_trigger ();	// the "start moving" trigger	
 
-	if (self.targetname)
+	if (self.targetname != "")
 	{
 		self.state = STATE_UP;
 		self.use = plat_use;

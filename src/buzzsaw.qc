@@ -25,18 +25,20 @@ $frame bzzrot01 bzzrot02 bzzrot03 bzzrot04 bzzrot05 bzzrot06
 
 void() buzzsaw_stand1 = [ $buzzsaw, buzzsaw_stand1 ] 
 {
+	self.nextthink = time + 0.025;
 	if ( self.pain_finished < time)
 	{
 		sound ( self, CHAN_VOICE, "buzz/buzz1.wav", 0.2, ATTN_NORM);
 		self.pain_finished = time + 1;
 	}
 	
-	self.angles_x = self.angles_x - 60;
-	self.avelocity_x = 60;
+	//self.angles_x = self.angles_x - 60;
+	self.avelocity_x = 360;
 };
 
 void() buzzsaw_fly =
 {
+	self.nextthink = time + 0.025;
 	local vector 	dir;
 
 	if ( self.pain_finished < time)
@@ -45,12 +47,10 @@ void() buzzsaw_fly =
 		self.pain_finished = time + 1;
 	}
 
-	dir = self.goalentity.origin - self.origin;
-	dir = normalize (dir);
-	dir = dir * self.speed;
+	dir = normalize(self.goalentity.origin - self.origin) * self.speed/4;
 	setorigin (self, self.origin + dir);
-	self.angles_x = self.angles_x - 60;
-	self.avelocity_x = 60;
+	//self.angles_x = self.angles_x - 60;
+	self.avelocity_x = 360;
 }; 
 
 /*
@@ -89,21 +89,18 @@ void() buzzsaw_touch =
 void() buzzsaw_use =
 {
 	self.touch = buzzsaw_touch;
-	if (self.target)
+	self.th_stand =  buzzsaw_stand1;
+	self.nextthink = time + 0.025;
+
+	if (self.target != "")
 	{		
 		self.movetarget = find(world, targetname, self.target);
 		self.goalentity = self.movetarget;
-		self.th_stand =  buzzsaw_fly1;
 		self.th_walk = buzzsaw_fly1;
 		self.th_run = buzzsaw_fly1;
 		self.think = buzzsaw_fly1;
-		self.nextthink = time + 0.1;
 	}
-	else
-	{
-		self.nextthink = time + 0.1;
-		self.think = buzzsaw_stand1;
-	}
+	
 	self.use = SUB_Null;
 };
 
