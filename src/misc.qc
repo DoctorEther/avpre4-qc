@@ -780,3 +780,98 @@ void() football =
     ThrowBall("progs/ball.mdl");
     return;
 };
+
+
+
+//=================================================================================================
+
+void() play_sound_triggered = {
+
+	//if (!SUB_InitEntity()) return;
+	
+	if (!self.noise) {
+	   objerror ("no soundfile set in noise!\n");
+	   remove(self);
+	   return;
+	}
+
+	precache_sound (self.noise);
+	precache_sound ("misc/null.wav");
+
+	if (self.volume == 0)
+		self.volume = 1;
+
+	if (self.speed == 0)
+		self.speed = 1;
+
+	if (self.speed == -1)
+		self.speed = ATTN_NONE;
+
+	if (self.spawnflags & 1){
+		if (self.impulse == 0)
+			self.impulse = 7;
+	}
+
+	self.use = play_sound_triggered_use;
+};
+
+void() play_sound_triggered_use = {
+	entity src;
+
+	if (self.spawnflags & 4) { // play on activator
+		src = activator;
+	}
+	else if (self.spawnflags & 8) { // play on player
+		if (!(activator.flags & FL_CLIENT)) {
+			entity closest = findClosest(self.origin, classname, "player", 1);
+			if (!closest) closest = findClosest(self.origin, classname, "player", 0);
+
+			if (closest) src = closest;
+			else src = self;
+		} 
+		else
+			src = activator;
+	}
+	else if (self.spawnflags & 16) { // play on all players
+		src = find(world, classname, "player");
+	}
+
+	else src = self;
+
+	if (self.spawnflags & 1) { // toggle
+		if (self.state == 0) {
+			self.state = 1;
+
+			if (self.spawnflags & 16) { // play on all players
+				while (src) { // first player was already searched for, if there's none then it'll bail out immediately
+					sound (src, self.impulse, self.noise, self.volume, self.speed);
+					src = find(src, classname, "player");
+				}
+			}
+			else
+				sound (src, self.impulse, self.noise, self.volume, self.speed);
+		}
+		else {
+			self.state = 0;
+
+			if (self.spawnflags & 16) { // play on all players
+				while (src) { // first player was already searched for, if there's none then it'll bail out immediately
+					sound (src, self.impulse, "misc/null.wav", self.volume, self.speed);
+					src = find(src, classname, "player");
+				}
+			}
+			else
+				sound (src, self.impulse, "misc/null.wav", self.volume, self.speed);
+		}
+	}
+	else {
+		if (self.spawnflags & 16) { // play on all players
+			while (src) { // first player was already searched for, if there's none then it'll bail out immediately
+				sound (src, self.impulse, self.noise, self.volume, self.speed);
+				src = find(src, classname, "player");
+			}
+		}
+		else
+			sound (src, self.impulse, self.noise, self.volume, self.speed);
+	}
+};

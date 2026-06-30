@@ -9,6 +9,8 @@ runes.qc
 motd.qc
 subs.qc
 
+utility.qc
+
 fight.qc
 ai.qc
 combat.qc
