@@ -590,6 +590,7 @@ float num_players;	// active player count, maintained by ClientConnect/Disconnec
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
+.float		speed2;
 
 .float	lefty;
 

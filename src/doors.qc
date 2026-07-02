@@ -91,7 +91,7 @@ void() door_go_down =
 	}
 	
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
+	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
 };
 
 void() door_go_up =
@@ -471,42 +471,35 @@ local vector tempVect;
 	{
 		dprint ("no worldtype set!\n");
 	}
+
 	if (self.sounds == 0)
 	{
-		precache_sound ("misc/null.wav");
-		precache_sound ("misc/null.wav");
-		self.noise1 = "misc/null.wav";
-		self.noise2 = "misc/null.wav";
+		if (self.noise1 == "") self.noise1 = "misc/null.wav";
+		if (self.noise2 == "") self.noise2 = "misc/null.wav";
 	}
-	if (self.sounds == 1)
+	else if (self.sounds == 1)
 	{
-		precache_sound ("doors/drclos4.wav");
-		precache_sound ("doors/doormv1.wav");
-		self.noise1 = "doors/drclos4.wav";
-		self.noise2 = "doors/doormv1.wav";
+		if (self.noise1 == "") self.noise1 = "doors/drclos4.wav";
+		if (self.noise2 == "") self.noise2 = "doors/doormv1.wav";
 	}
-	if (self.sounds == 2)
+	else if (self.sounds == 2)
 	{
-		precache_sound ("doors/hydro1.wav");
-		precache_sound ("doors/hydro2.wav");
-		self.noise2 = "doors/hydro1.wav";
-		self.noise1 = "doors/hydro2.wav";
+		if (self.noise2 == "") self.noise2 = "doors/hydro1.wav";
+		if (self.noise1 == "") self.noise1 = "doors/hydro2.wav";
 	}
-	if (self.sounds == 3)
+	else if (self.sounds == 3)
 	{
-		precache_sound ("doors/stndr1.wav");
-		precache_sound ("doors/stndr2.wav");
-		self.noise2 = "doors/stndr1.wav";
-		self.noise1 = "doors/stndr2.wav";
+		if (self.noise2 == "") self.noise2 = "doors/stndr1.wav";
+		if (self.noise1 == "") self.noise1 = "doors/stndr2.wav";
 	}
-	if (self.sounds == 4)
+	else if (self.sounds == 4)
 	{
-		precache_sound ("doors/ddoor1.wav");
-		precache_sound ("doors/ddoor2.wav");
-		self.noise1 = "doors/ddoor2.wav";
-		self.noise2 = "doors/ddoor1.wav";
+		if (self.noise1 == "") self.noise1 = "doors/ddoor2.wav";
+		if (self.noise2 == "") self.noise2 = "doors/ddoor1.wav";
 	}
 
+	precache_sound (self.noise1);
+	precache_sound (self.noise2);
 
 	SetMovedir ();
 
@@ -527,6 +520,8 @@ local vector tempVect;
 	
 	if (!self.speed)
 		self.speed = 100;
+	if (!self.speed2)
+		self.speed2 = self.speed;
 	if (!self.wait)
 		self.wait = 3;
 	if (!self.lip)
@@ -537,18 +532,23 @@ local vector tempVect;
 	self.pos1=self.origin;
 //	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
 
-// PGM fix for cameron's door problem - 02/19/97
-
-	tempVect = self.movedir;
-	if (tempVect_x < 0)
-		tempVect_x = 0 - tempVect_x;
-	if (tempVect_y < 0)
-		tempVect_y = 0 - tempVect_y;
-//	if (tempVect_z < 0)
-//		tempVect_z = 0 - tempVect_z;
-//	self.pos2 = self.pos1 + self.movedir*(tempVect*self.size - self.lip);
-	vector movedir_fabs = { fabs(self.movedir[0]), fabs(self.movedir[1]), fabs(self.movedir[2]) };
-	self.pos2 = self.pos1 + ((movedir_fabs * self.size) - self.lip) * self.movedir;
+	// uses distance instead of lip if set
+	if (self.distance) {
+		self.pos2 = self.pos1 + self.movedir * self.distance;
+	}
+	else {
+	// PGM fix for cameron's door problem - 02/19/97
+		tempVect = self.movedir;
+		if (tempVect_x < 0)
+			tempVect_x = 0 - tempVect_x;
+		if (tempVect_y < 0)
+			tempVect_y = 0 - tempVect_y;
+	//	if (tempVect_z < 0)
+	//		tempVect_z = 0 - tempVect_z;
+	//	self.pos2 = self.pos1 + self.movedir*(tempVect*self.size - self.lip);
+		vector movedir_fabs = { fabs(self.movedir[0]), fabs(self.movedir[1]), fabs(self.movedir[2]) };
+		self.pos2 = self.pos1 + ((movedir_fabs * self.size) - self.lip) * self.movedir;
+	}
 
 // DOOR_START_OPEN is to allow an entity to be lighted in the closed position
 // but spawn in the open position
