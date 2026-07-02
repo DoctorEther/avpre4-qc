@@ -283,8 +283,8 @@ void() SUB_UseTargets =
 		t = find (world, targetname, self.killtarget);
 		while (t)
 		{
-			t = find (t, targetname, self.killtarget);
 			if (t) remove(t);
+			t = find (t, targetname, self.killtarget);
 		}
 	}
 	
