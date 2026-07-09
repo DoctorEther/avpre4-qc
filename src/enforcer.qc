@@ -76,9 +76,9 @@ void() Laser_Touch =
 	{		
 		SpawnBlood (org, self.velocity*0.2, 15);
 		if (self.owner.classname == "monster_morph")
-			T_Damage (other, self, self.owner, 3);
+			T_Damage (other, self, self.owner, 3, DMGTYPE_ENERGY);
 		else
-			T_Damage (other, self, self.owner, 15);
+			T_Damage (other, self, self.owner, 15, DMGTYPE_ENERGY);
 	}
 	else
 	{

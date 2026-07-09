@@ -75,7 +75,7 @@ void() buzzsaw_touch =
 			sound (self, CHAN_WEAPON, "buzz/buzz.wav", 1, ATTN_NORM);
 			self.attack_finished = time + 2;
 		}
-		T_Damage (other, self, self, self.currentammo);
+		T_Damage (other, self, self, self.currentammo, DMGTYPE_BALLISTIC);
 
 		sprayDir = normalize(self.goalentity.origin - self.origin);
 		sprayDir = sprayDir * 200;

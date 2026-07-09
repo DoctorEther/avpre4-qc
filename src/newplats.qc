@@ -70,7 +70,7 @@ void() dn_and_wait_go_up =
 
 void() dn_and_wait_crush =
 {
-	T_Damage (other, self, self, 1);
+	T_Damage (other, self, self, 1, DMGTYPE_CRUSH);
 	
 	if (self.state == STATE_UP)
 		dn_and_wait_go_down ();
@@ -124,7 +124,7 @@ void() toggle_go_up =
 
 void() toggle_crush =
 {
-	T_Damage (other, self, self, 1);
+	T_Damage (other, self, self, 1, DMGTYPE_CRUSH);
 	
 	if (self.state == STATE_UP)
 		toggle_go_down ();
@@ -413,7 +413,7 @@ void() plat2_center_touch =
 
 void() plat2_crush =
 {
-	T_Damage (other, self, self, 1);
+	T_Damage (other, self, self, 1, DMGTYPE_CRUSH);
 	
 	if (self.state == STATE_UP)
 		plat2_go_down ();

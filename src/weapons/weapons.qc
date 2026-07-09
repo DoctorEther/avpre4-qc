@@ -88,18 +88,18 @@ void() T_MissileTouch =
 	{
 		if (other.classname == "monster_shambler")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage (other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 		if (other.classname == "monster_morph")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage (other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 		if (other.classname == "monster_morph2")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage (other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 120, other);
+	T_RadiusDamage (self, self.owner, 120, DMGTYPE_EXPLOSION, other);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -200,7 +200,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage (trace_ent, from, from, damage, DMGTYPE_ENERGY);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -213,7 +213,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage (trace_ent, from, from, damage, DMGTYPE_ENERGY);
 	}
 	e2 = trace_ent;
 
@@ -221,7 +221,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage (trace_ent, from, from, damage,DMGTYPE_ENERGY);
 	}
 };
 
@@ -244,7 +244,7 @@ void() W_FireLightning =
 		cells = self.ammo_cells1;
 		self.ammo_cells1 = 0;
 		W_SetCurrentAmmo ();
-		T_RadiusDamage (self, self, 35*cells, world);
+		T_RadiusDamage (self, self, 35*cells, DMGTYPE_ENERGY, world);
 		return;
 	}
 
@@ -282,7 +282,7 @@ void() W_FireLightning =
 
 void() GrenadeExplode =
 {
-	T_RadiusDamage (self, self.owner, 120, world);
+	T_RadiusDamage (self, self.owner, 120, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -463,7 +463,7 @@ local float rand;
 	if (other.takedamage)
 	{
 		spawn_touchblood (9);
-		T_Damage (other, self, self.owner, 9);
+		T_Damage (other, self, self.owner, 9, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -503,7 +503,7 @@ local float rand;
 	if (other.takedamage)
 	{
 		spawn_touchblood (18);
-		T_Damage (other, self, self.owner, 18);
+		T_Damage (other, self, self.owner, 18, DMGTYPE_BALLISTIC);
 	}
 	else
 	{

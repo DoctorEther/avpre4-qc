@@ -185,8 +185,8 @@ void() CyberhMissileTouch =
 		return;		// don't explode on owner
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 5);	
-	T_RadiusDamage (self, self.owner, 5, world);
+		T_Damage (other, self, self, 5, DMGTYPE_EXPLOSION);	
+	T_RadiusDamage (self, self.owner, 5, DMGTYPE_EXPLOSION, world);
 	
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);

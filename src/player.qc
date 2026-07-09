@@ -582,7 +582,7 @@ vector(float dm) VelocityForDamage =
 
 	return v;
 };
-
+/*
 void(string gibname, float dm) ThrowGib =
 {
 	local	entity new;
@@ -632,7 +632,7 @@ void(string gibname, float dm) ThrowHead =
 	}
 };
 
-
+*/
 void() GibPlayer =
 {
 	ThrowHead ("progs/h_player.mdl", self.health);
@@ -860,7 +860,7 @@ void() player_touch =
 			}
 
 			if (doDamage)
-				T_Damage (other, self.shield_entity, self.shield_entity, 15);
+				T_Damage (other, self.shield_entity, self.shield_entity, 15, DMGTYPE_MELEE);
 
 //			self.shield_death_time = time + 0.5;
 		}

@@ -20,7 +20,7 @@ void() hit_flame_think = {
 		sound(self, CHAN_AUTO, "dread/flameoff.wav", 1, ATTN_NORM);
 	}
 	// aplica dano enquanto o inimigo queima. último parâmetro é a quantidade de dano
-	T_Damage(self.owner, self, self, 1);
+	T_Damage(self.owner, self, self, 1, DMGTYPE_BURN);
 }
 
 void() weapon_spawn_hit_flame;
@@ -65,7 +65,7 @@ void() weapon_flame_touch =
 	if (other.health > 0)
 	{
 		// aplica o dano inicial. último parâmetro é o dano da arma
-		T_Damage(other, self, self.owner, 5);
+		T_Damage(other, self, self.owner, 5, DMGTYPE_BURN);
 		if (!other.inflamed) {
 			weapon_spawn_hit_flame();
 		}

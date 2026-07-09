@@ -31,9 +31,9 @@ void() MultiGrenadeTouch;
 void() MiniGrenadeExplode =
 {
 	if ( self.owner.classname == "player")
-		T_RadiusDamage (self, self.owner, 90, world);
+		T_RadiusDamage (self, self.owner, 90, DMGTYPE_EXPLOSION, world);
 	else
-		T_RadiusDamage (self, self.owner, 60, world);
+		T_RadiusDamage (self, self.owner, 60, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
@@ -212,11 +212,11 @@ void() MultiRocketExplode =
 			damg = damg * 2;  // Very weak to this weapon
 
 		// Apply damage to the monster
-		T_Damage(other, self, self.owner, damg);
+		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
 	// Don't apply radius damage to the other monster, because all damage was done in the impact
-	T_RadiusDamage(self, self.owner, 27, other);
+	T_RadiusDamage(self, self.owner, 27, DMGTYPE_EXPLOSION, other);
 
 	// Set the explosion position slightly behind the missile to simulate impact
 	self.origin = self.origin - 8 * normalize(self.velocity);
@@ -403,7 +403,7 @@ void(vector p1, vector p2, entity from, float damage) PlasmaDamage =
 	if (trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from.owner, damage);
+		T_Damage (trace_ent, from, from.owner, damage, DMGTYPE_ENERGY);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -416,7 +416,7 @@ void(vector p1, vector p2, entity from, float damage) PlasmaDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from.owner, damage);
+		T_Damage (trace_ent, from, from.owner, damage, DMGTYPE_ENERGY);
 	}
 	e2 = trace_ent;
 
@@ -424,7 +424,7 @@ void(vector p1, vector p2, entity from, float damage) PlasmaDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from.owner, damage);
+		T_Damage (trace_ent, from, from.owner, damage, DMGTYPE_ENERGY);
 	}
 };
 
@@ -499,12 +499,12 @@ void() PlasmaTouch =
 	{
 		if (other.classname == "monster_shambler")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage (other, self, self.owner, damg , DMGTYPE_ENERGY);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 70, other);
+	T_RadiusDamage (self, self.owner, 70, DMGTYPE_ENERGY, other);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
@@ -578,7 +578,7 @@ void() W_FirePlasma =
 		cells = self.ammo_plasma;
 		self.ammo_plasma = 0;
 		W_SetCurrentAmmo ();
-		T_RadiusDamage (self, self, 35*cells, world);
+		T_RadiusDamage (self, self, 35*cells, DMGTYPE_ENERGY, world);
 		return;
 	}
 	self.currentammo = self.ammo_plasma = self.ammo_plasma - 1;

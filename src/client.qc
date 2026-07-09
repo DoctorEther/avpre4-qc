@@ -455,7 +455,7 @@ void() changelevel_touch =
 
 	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage (other, self, self, 50000, DMGTYPE_INSTANT);
 		return;
 	}
 
@@ -1329,7 +1329,7 @@ void() WaterMove =
 			self.dmg = self.dmg + 2;
 			if (self.dmg > 15)
 				self.dmg = 10;
-			T_Damage (self, world, world, self.dmg);
+			T_Damage (self, world, world, self.dmg, DMGTYPE_DROWN);
 			self.pain_finished = time + 1;
 		}
 	}
@@ -1354,7 +1354,7 @@ void() WaterMove =
 			else
 				self.dmgtime = time + 0.2;
 
-			T_Damage (self, world, world, 10*self.waterlevel);
+			T_Damage (self, world, world, 10*self.waterlevel, DMGTYPE_LAVA);
 		}
 	}
 	else if (self.watertype == CONTENT_SLIME)
@@ -1362,7 +1362,7 @@ void() WaterMove =
 		if (self.dmgtime < time && self.radsuit_finished < time)
 		{
 			self.dmgtime = time + 1;
-			T_Damage (self, world, world, 4*self.waterlevel);
+			T_Damage (self, world, world, 4*self.waterlevel, DMGTYPE_SLIME);
 		}
 	}
 	
@@ -2315,9 +2315,9 @@ void(entity targ, entity attacker) ClientObituary =
 				return;
 			}
 
-			if (targ.deathtype == "falling")
+			if (targ.deathtype == DMGTYPE_FALL)
 			{
-				targ.deathtype = string_null;
+				targ.deathtype = 0;
 				bprint("$qc_death_fall", targ.netname);
 				return;
 			}

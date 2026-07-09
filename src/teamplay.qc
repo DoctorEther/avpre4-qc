@@ -525,7 +525,7 @@ void() TeamCheckLock =
 					// case base respawn
 					if (self.ctf_killed != 1)
 						self.ctf_killed = 2;
-					T_Damage(self,self,self,1000);  // Kill the player
+					T_Damage(self,self,self,1000, DMGTYPE_INSTANT);  // Kill the player
 					// trying to change teams counts as a suicide
 					self.suicide_count = self.suicide_count + 1;
 
@@ -548,7 +548,7 @@ void() TeamCheckLock =
 			// case base respawn
 			if (self.ctf_killed != 1)
 				self.ctf_killed = 2;
-			T_Damage(self,self,self,1000);  // Kill the player
+			T_Damage(self,self,self,1000, DMGTYPE_INSTANT);  // Kill the player
 		}
 		self.frags = 0;                 // Zero out frags
 		TeamCheckTeam(); // re-assignment

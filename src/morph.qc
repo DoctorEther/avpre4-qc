@@ -155,7 +155,7 @@ void() morph_stab2 =
 		sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
 		attackDamage = (random() * 10) + 20;
 		attackDamage = attackDamage * 0.21;
-		T_Damage (self.enemy, self, self, attackDamage);
+		T_Damage (self.enemy, self, self, attackDamage, DMGTYPE_MELEE);
 		SpawnBlood ( self.enemy.origin, v_forward * 150, 14);
 	}
 	else
@@ -230,7 +230,7 @@ void() morph_smack =
 		
 	ldmg = (random() * 10) + 10;
 	ldmg = ldmg * 0.21;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage (self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	
 	makevectors (self.angles);
 	self.enemy.velocity = v_forward * 100 + '0 0 100';
@@ -431,7 +431,7 @@ void() morph_charge_impact =
 		return;
 
 	makevectors(self.angles);
-	T_Damage(self.enemy, self, self, 30 * 0.21);
+	T_Damage(self.enemy, self, self, 30 * 0.21, DMGTYPE_MELEE);
 	// empurrão forte: obriga o jogador a usar o dash pra se reposicionar
 	self.enemy.velocity = v_forward * 600 + '0 0 400';
 	// para a carga após impacto

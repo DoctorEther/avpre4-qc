@@ -32,7 +32,7 @@ weapons_use.qc
 
 world.qc
 client.qc
-kickgibs.qc
+gibs.qc
 player.qc
 monsters.qc
 doors.qc

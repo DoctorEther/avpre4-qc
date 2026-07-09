@@ -77,7 +77,7 @@ void(vector org, float radius, float damage, entity attacker) Kamikaze_RadiusDam
                     {
                         ent.health        = -99;
                         ent.pain_finished = 0;
-                        T_Damage(ent, world, attacker, 1);
+                        T_Damage(ent, world, attacker, 1, DMGTYPE_EXPLOSION);
                     }
                     else
                     {
@@ -88,7 +88,7 @@ void(vector org, float radius, float damage, entity attacker) Kamikaze_RadiusDam
                 }
                 else
                 {
-                    T_Damage(ent, world, attacker, points);
+                    T_Damage(ent, world, attacker, points, DMGTYPE_EXPLOSION);
                 }
             }
         }

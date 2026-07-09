@@ -15,7 +15,7 @@ void() feijao_explode =
 	WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
 	WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
 	
-	T_RadiusDamage (self, self.owner, tgt.feijao_count * 20, 0);
+	T_RadiusDamage (self, self.owner, tgt.feijao_count * 20, DMGTYPE_EXPLOSION, 0);
 	
 	tgt.feijao_manager = 0;
 	tgt.feijao_count   = 0;
@@ -36,7 +36,7 @@ void() feijao_touch =
 	if (!other.takedamage){ remove(self); return; }
 	
 	spawn_touchblood (9);
-	T_Damage (other, self, self.owner, 6);
+	T_Damage (other, self, self.owner, 6, DMGTYPE_EXPLOSION);
 	other.feijao_count = other.feijao_count + 1;
 	
 	if(other.feijao_manager != 0){

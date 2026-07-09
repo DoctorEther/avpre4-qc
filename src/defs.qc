@@ -478,6 +478,24 @@ float MONSTER_SPAWNANGRY = 32;
 float MONSTER_SPAWNTRIGGERED = 64;
 float MONSTER_SPAWNSILENT = 128;
 
+
+// Damage types
+float DMGTYPE_GENERIC = 1; // just a fallback, avoid using this one
+float DMGTYPE_FALL = 2; // fall damage
+float DMGTYPE_DROWN = 4; // liquid only
+float DMGTYPE_LAVA = 8; // liquid only
+float DMGTYPE_SLIME = 16; // liquid only
+float DMGTYPE_BALLISTIC = 32; // shells and spikes and bullety things
+float DMGTYPE_ENERGY = 64; // lightning, plasma, laser, blaster
+float DMGTYPE_BURN = 128; // 
+float DMGTYPE_TOXIC = 256; // 
+float DMGTYPE_CRUSH = 512; // crushing attacks, usually from movers
+float DMGTYPE_MELEE = 1024; // melee attacks
+float DMGTYPE_INSTANT = 2048; // void, telefrag
+float DMGTYPE_EXPLOSION = 4096; // general explosions
+float DMGTYPE_BURN_LONG = 8192; // keeps on burning for a few seconds
+
+
 /*
 enum class BotGoalReturnCode : int {
 	Error = 0,
@@ -614,6 +632,7 @@ float	AS_MISSILE		= 4;
 .float		invisible_finished;
 .float		super_damage_finished;
 .float		radsuit_finished;
+.float 		lifetime_finished;
 
 .float		invincible_time, invincible_sound;
 .float		invisible_time, invisible_sound;
@@ -634,7 +653,13 @@ float	AS_MISSILE		= 4;
 .float		swim_flag;		// player swimming sound flag
 .float		air_finished;	// when time > air_finished, start drowning
 .float		bubble_count;	// keeps track of the number of bubbles
-.string		deathtype;		// keeps track of how the player died
+.float		deathtype;		// keeps track of how the player died
+
+.vector 	inflictor_origin;
+.float 		inflictor_movetype;
+.vector 	inflictor_vel;
+
+.vector 	oldvelocity;
 
 // AVIÃOZINHO PLAYER FIELDS
 
@@ -958,10 +983,8 @@ void() SUB_Remove;
 //
 //	combat.qc
 //
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 
 
-float (entity e, float healamount, float ignore) T_Heal; // health function
 
 float(entity targ, entity inflictor) CanDamage;
 

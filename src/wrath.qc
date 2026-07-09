@@ -201,7 +201,7 @@ void()	wrath_die15 =[ $wrthdt15, wrath_die15 ]
 	ThrowGib ("progs/wrthgib1.mdl", self.health);
 	ThrowGib ("progs/wrthgib2.mdl", self.health);
 	ThrowGib ("progs/wrthgib3.mdl", self.health);
-	T_RadiusDamage (self, self, 5, world);
+	T_RadiusDamage (self, self, 5, DMGTYPE_EXPLOSION, world);
         self.solid = SOLID_NOT;self.ammo_nails = 100;DropBackpack();
         self.solid = SOLID_NOT;self.ammo_cells = 100;DropBackpack();
         self.solid = SOLID_NOT;self.ammo_shells = 100;DropBackpack();
@@ -349,9 +349,9 @@ void() WrathMissileTouch =
 	}
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 110);	
+		T_Damage (other, self, self, 110, DMGTYPE_EXPLOSION);	
 		
-	T_RadiusDamage (self, self.owner, 20, world);
+	T_RadiusDamage (self, self.owner, 20, DMGTYPE_EXPLOSION, world);
 	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);

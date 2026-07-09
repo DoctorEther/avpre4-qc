@@ -48,9 +48,9 @@ void() hunter_rocket_touch =
     WriteCoord(MSG_BROADCAST, self.origin_z);
     if (other.health)
     {
-        T_Damage(other, self, self.owner, damg);
+        T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
     }
-    T_RadiusDamage(self, self.owner, 5, other); // Reduced to 20% of original (5 radius)
+    T_RadiusDamage(self, self.owner, 5, DMGTYPE_EXPLOSION, other); // Reduced to 20% of original (5 radius)
     remove(self);
 };
 
@@ -137,7 +137,7 @@ void() hunter_explode =
     ThrowGib("progs/gib1.mdl", self.health * 0.7);
     ThrowGib("progs/gib2.mdl", self.health * 1.2);
     ThrowGib("progs/gib3.mdl", self.health * 1.7);
-    T_RadiusDamage(self, self, 100, world);
+    T_RadiusDamage(self, self, 100, DMGTYPE_EXPLOSION, world);
     remove(self);
 };
 

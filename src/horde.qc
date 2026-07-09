@@ -390,7 +390,7 @@ void() PrecacheMonsters =
 // =================================================================
 void() GibMonster =
 {
-	T_Damage(self, world, world, 4000);
+	T_Damage(self, world, world, 4000, DMGTYPE_INSTANT);
 };
 
 // =================================================================

@@ -9,7 +9,7 @@ void() modeltrain_blocked =
 	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
-	T_Damage (other, self, self, self.dmg);
+	T_Damage (other, self, self, self.dmg, DMGTYPE_CRUSH);
 };
 
 void() modeltrain_use =

@@ -75,14 +75,14 @@ float(entity targ, entity inflictor) CanDamage =
 Killed
 ============
 */
-void(entity targ, entity attacker) Killed =
+void(entity targ, entity attacker, entity inflictor) Killed =
 {
 	local entity oself;
 
 	oself = self;
 	self = targ;
 	
-	if (self.health < -99)
+	if ((self.health < -99) && (self.classname == "player"))
 		self.health = -99;		// don't let sbar look bad if a player
 
 	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
@@ -202,7 +202,7 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
+void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype) T_Damage=
 {
 	local	vector	dir;
 	local	entity	oldself;
@@ -310,10 +310,18 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 		
 // do the damage
 	targ.health = targ.health - take;
-			
+		
+	// store inflictor info
+	targ.dmg_inflictor = inflictor;
+	
+	targ.inflictor_origin = inflictor.origin;
+	targ.inflictor_movetype = inflictor.movetype;
+	targ.inflictor_vel = inflictor.velocity;
+
 	if (targ.health <= 0)
 	{
-		Killed (targ, attacker);
+		targ.deathtype = dmgtype;
+		Killed (targ, attacker, inflictor);
 		return;
 	}
 
@@ -411,7 +419,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 				{	// eels take no damage from this attack
 					if (head.classname != "monster_eel" && 
 						(head.flags & FL_INWATER))					
-						T_Damage (head, inflictor, attacker, points);
+						T_Damage (head, inflictor, attacker, points, DMGTYPE_ENERGY);
 				}
 			}
 		}
@@ -424,7 +432,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 T_RadiusDamage
 ============
 */
-void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage =
+void(entity inflictor, entity attacker, float damage, float dmgtype, entity ignore) T_RadiusDamage =
 {
 	local	float 	points;
 	local	entity	head;
@@ -452,9 +460,9 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 					if (CanDamage (head, inflictor))
 					{	// shambler takes half damage from all explosions
 						if (head.classname == "monster_shambler")						
-							T_Damage (head, inflictor, attacker, points*0.5);
+							T_Damage (head, inflictor, attacker, points*0.5, dmgtype);
 						else
-							T_Damage (head, inflictor, attacker, points);
+							T_Damage (head, inflictor, attacker, points, dmgtype);
 					}
 				}
 			}
@@ -490,9 +498,9 @@ void(entity attacker, float damage) T_BeamDamage =
 				if (CanDamage (head, attacker))
 				{
 					if (head.classname == "monster_shambler")						
-						T_Damage (head, attacker, attacker, points*0.5);
+						T_Damage (head, attacker, attacker, points*0.5, DMGTYPE_EXPLOSION);
 					else
-						T_Damage (head, attacker, attacker, points);
+						T_Damage (head, attacker, attacker, points, DMGTYPE_EXPLOSION);
 				}
 			}
 		}

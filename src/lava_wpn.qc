@@ -130,7 +130,7 @@ local float old_armormask;
 			old_armormask = other.items2 & (IT2_ARMOR1|IT2_ARMOR2|IT2_ARMOR3);
 			other.armortype = 0;
 			other.armorvalue = 0;
-			T_Damage (other, self, self.owner, 9);
+			T_Damage (other, self, self.owner, 9, DMGTYPE_BALLISTIC);
 			other.armortype = old_armortype;
 			other.armorvalue = old_armorvalue;
 			other.items2 = other.items2 | old_armormask;
@@ -139,7 +139,7 @@ local float old_armormask;
 		{
 			if ( other.classname != "monster_lava_man")
 			{
-				T_Damage (other, self, self.owner, 15);
+				T_Damage (other, self, self.owner, 15, DMGTYPE_BALLISTIC);
 			}
 		}
 	}
@@ -193,7 +193,7 @@ local float old_armortype;
 //			old_armorvalue = other.armorvalue;
 			other.armortype = other.armortype * 0.5;
 //			other.armorvalue = 0;
-			T_Damage (other, self, self.owner, 18);
+			T_Damage (other, self, self.owner, 18, DMGTYPE_BALLISTIC);
 			
 			// if the damage didn't wipe out the armor, armortype 
 			if(other.armortype != 0)
@@ -206,7 +206,7 @@ local float old_armortype;
 		{
 			if ( other.classname != "monster_lava_man")
 			{
-				T_Damage (other, self, self.owner, 30);
+				T_Damage (other, self, self.owner, 30, DMGTYPE_BALLISTIC);
 			}
 		}
 	}

@@ -35,7 +35,7 @@ void() dread_flame_touch =
     self.movedir = '0 0 0';
     if (self.dmg > 0 && other.health > 0)
     {
-        T_Damage(other, self, self.owner, self.dmg);
+        T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN);
         self.dmg = 0;
     }
     remove(self);

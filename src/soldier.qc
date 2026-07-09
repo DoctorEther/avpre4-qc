@@ -602,7 +602,7 @@ void() moto_spike_touch =
 	{
 		damg = self.dmg;
 		spawn_touchblood(damg);
-		T_Damage(other, self, self.owner, damg);
+		T_Damage(other, self, self.owner, damg, DMGTYPE_BALLISTIC);
 	}
 	
 	// Remove o spike
@@ -692,7 +692,7 @@ void() moto_melee_attack =
 		ldmg = ldmg + 1;
 	
 	// Causa dano APENAS NO JOGADOR
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage (self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	
 	// REMOVIDO: Knockback que empurrava o jogador
 	// O jogador agora só toma dano, sem perder controle do movimento

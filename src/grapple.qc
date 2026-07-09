@@ -82,7 +82,7 @@ void() GrappleTrack =
 		
 //		sound (self, CHAN_WEAPON, "blob/land1.wav", 1, ATTN_NORM);
 		sound (self, CHAN_WEAPON, "pendulum/hit.wav", 1, ATTN_NORM);
-		T_Damage (self.enemy, self, self.owner, 1);
+		T_Damage (self.enemy, self, self.owner, 1, DMGTYPE_BALLISTIC);
 		makevectors (self.v_angle);
 		spray_x = 100 * crandom();
 		spray_y = 100 * crandom();
@@ -198,7 +198,7 @@ void () GrappleAnchor =
 		}
 
 		sound (self, CHAN_WEAPON, "player/axhit1.wav", 1, ATTN_NORM);
-		T_Damage (other, self, self.owner, 10);
+		T_Damage (other, self, self.owner, 10, DMGTYPE_BALLISTIC);
 	} else {
 		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 
@@ -206,7 +206,7 @@ void () GrappleAnchor =
 		// damage will only be done to PLAYERS... this way secret
 		// doors and triggers will only be damaged once.
 		if (other.takedamage)
-			T_Damage (other, self, self.owner, 1);
+			T_Damage (other, self, self.owner, 1, DMGTYPE_BALLISTIC);
 
 		self.velocity = '0 0 0';
 		self.avelocity = '0 0 0';

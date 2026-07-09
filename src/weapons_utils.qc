@@ -24,12 +24,7 @@ float lavaGunFired;
 
 //avião-dash
 
-void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-void () player_run;
-void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
-void(vector org, vector vel, float damage) SpawnBlood;
-void() SuperDamageSound;
-void W_FirePlasma();
+
 
 
 // called by worldspawn
@@ -96,7 +91,7 @@ void() W_FireAxe =
 	{
 		trace_ent.axhitme = 1;
 		SpawnBlood (org, '0 0 0', 20);
-		T_Damage (trace_ent, self, self, 20);
+		T_Damage (trace_ent, self, self, 20, DMGTYPE_MELEE);
 	}
 	else
 	{	// hit wall
@@ -214,7 +209,7 @@ void() ApplyMultiDamage =
 {
 	if (!multi_ent)
 		return;
-	T_Damage (multi_ent, self, self, multi_damage);
+	T_Damage (multi_ent, self, self, multi_damage, DMGTYPE_BALLISTIC);
 };
 
 void(entity hit, float damage) AddMultiDamage =
