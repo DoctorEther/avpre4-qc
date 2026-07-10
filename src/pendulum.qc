@@ -358,7 +358,6 @@ PEND_TRG - the pendulum must be triggered to start swinging. The delay value sti
 */
 void() pendulum =
 {
-	local vector 	center;
 
 	precache_model ("progs/pendulum.mdl");
 	precache_sound ("pendulum/swing.wav");

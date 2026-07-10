@@ -30,7 +30,7 @@ void() tag_token_respawn =
 	if(tagToken == world)
 		return;
 		
-	spawnPoint = SelectSpawnPoint();
+	spawnPoint = SelectSpawnPoint(FALSE);
 	setorigin(tagToken, spawnPoint.origin);
 	tag_token_owner = world;
 	tagToken.solid = SOLID_TRIGGER;

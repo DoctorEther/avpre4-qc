@@ -166,7 +166,6 @@ Set "sounds" to one of the following:
 void() func_plat =
 
 {
-local entity t;
 
 	if (!self.t_length)
 		self.t_length = 80;
@@ -380,8 +379,8 @@ entity(string name) getNextPath = {
 // searches for the next path_corner and sends the train on its way
 void() train_next = {
 	entity targ, first;
-	vector destang, displ;
-	float prevspeed, nextspeed, curspeed;
+	vector displ;
+	float prevspeed;
 
 	if (self.think == func_train_find) prevspeed = 0;
 	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) prevspeed = self.speed2;

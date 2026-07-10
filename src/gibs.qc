@@ -32,7 +32,6 @@ void(entity gib, string gibname) MakeGib =
 	changeModel(gib, gibname);
 	gib.type = "gib";
 	gib.avelocity = [random(),random(),random()] * 600;
-	float frm;
 
 	gib.flags = 0;
 }

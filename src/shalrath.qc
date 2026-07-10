@@ -24,11 +24,6 @@ SHAL-RATH
 
 ==============================================================================
 */
-$cd /raid/quake/id1/models/shalrath
-$origin 0 0 24
-$base base
-$skin skin
-$scale 0.7
 
 $frame attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8
 $frame attack9 attack10 attack11
@@ -40,8 +35,7 @@ $frame death1 death2 death3 death4 death5 death6 death7
 $frame	walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
 $frame	walk11 walk12
 
-void() shalrath_pain;
-void() ShalMissile;
+
 void() shal_stand     =[      $walk1,       shal_stand    ] {ai_stand();};
 
 void() shal_walk1     =[      $walk2,       shal_walk2    ] {
@@ -114,7 +108,7 @@ void() shal_death7      =[      $death7,        shal_death7    ]
 };
 
 
-void() shalrath_pain =
+void(entity attacker, float damage) shalrath_pain =
 {
 	if (self.pain_finished > time)
 		return;
@@ -148,8 +142,7 @@ void() shalrath_die =
 ShalMissile
 ================
 */
-void() ShalMissileTouch;
-void() ShalHome;
+
 void() ShalMissile =
 {
 	local	entity 	missile;

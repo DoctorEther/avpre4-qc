@@ -19,8 +19,6 @@
 
 // button and multiple button
 
-void() button_wait;
-void() button_return;
 
 void() button_wait =
 {
@@ -104,7 +102,6 @@ When a button is touched, it moves some distance in the direction of it's angle,
 */
 void() func_button =
 {
-local float		gtemp, ftemp;
 
 	if (self.sounds == 0)
 	{
@@ -158,9 +155,6 @@ local float		gtemp, ftemp;
 	vector movedir_fabs = { fabs(self.movedir[0]), fabs(self.movedir[1]), fabs(self.movedir[2]) };
 	self.pos2 = self.pos1 + ((movedir_fabs * self.size) - self.lip) * self.movedir;
 };
-
-void() button_press_think;
-
 
 void() button_press_done =
 {
@@ -233,7 +227,7 @@ When a button is touched, and the player pushes the "use" key/button, it moves s
 */
 void() func_button_press =
 {
-	local float		gtemp, ftemp;
+
 
 	if (self.sounds == 0)
 	{

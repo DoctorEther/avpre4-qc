@@ -19,7 +19,6 @@
 
 // overlord.qc
 
-$skin s_wrtrst
 $frame s_wrtfrm
 
 // walk
@@ -391,7 +390,7 @@ void()	overlord_pn_b06	=[	$s_wtpb06,	overlord_pn_b07	] {};
 void()	overlord_pn_b07	=[	$s_wtpb07,	overlord_run01  ] {};
 
 
-void() overlord_pain = 
+void(entity attacker, float damage) overlord_pain = 
 {
 	local float r;
 

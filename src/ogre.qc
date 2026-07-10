@@ -113,7 +113,7 @@ void() MultiGrenadeExplode;
 
 void() OgreFireGrenade =
 {
-	local	entity missile, mpuff;
+	local	entity missile;
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 

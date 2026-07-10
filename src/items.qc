@@ -170,8 +170,6 @@ void() item_health =
 
 void() health_touch =
 {
-	local	float amount;
-	local	string	s;
 	
 	if (other.classname != "player")
 		return;
@@ -1151,8 +1149,6 @@ KEYS
 
 void() key_touch =
 {
-local entity	stemp;
-local float		best;
 
 	if (other.classname != "player")
 		return;
@@ -1288,8 +1284,6 @@ END OF LEVEL RUNES
 
 void() sigil_touch =
 {
-local entity	stemp;
-local float		best;
 
 	if (other.classname != "player")
 		return;
@@ -1361,8 +1355,6 @@ void() random_regen;
 
 void() powerup_touch =
 {
-local entity	stemp;
-local float		best;
 
 	if (other.classname != "player")
 		return;
@@ -1532,7 +1524,6 @@ PLAYER BACKPACKS
 
 void() BackpackTouch =
 {
-	local string	s;
 	local	float	best, old, new;
 	local		entity	stemp;
 	local	float	acount;

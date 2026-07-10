@@ -60,11 +60,7 @@ float	STAGE_TO_POINT2 = 3;
 float 	STAGE_AT_POINT2 = 4;
 float	STAGE_FIRING	= 5;
 
-void(entity thePlayer) spawn_actor;
-void() actor_control;
-void(entity playerEnt) move_camera;
-void() time_crash;
-void() ending_remove_stuff;
+
 
 void() ending_for_coop =
 {
@@ -164,7 +160,6 @@ void(entity playerEnt) move_camera =
 void() ending_remove_stuff =
 {
 	local entity 	curEnt;
-	local entity	removeEnt;
 	
 	curEnt = find ( world, classname, "ltrail_start");
 	while(curEnt)
@@ -192,7 +187,6 @@ void() ending_remove_stuff =
 void() actor_run = 
 {
 	local vector 	dist;
-	local float		ang;
 	local entity	pointOne;
 	
 	if ( pointcontents (self.origin) == CONTENT_LAVA )
@@ -253,7 +247,7 @@ void() finale_check =
 void() actor_fire1 =[$rockatt1, actor_fire2 ] 
 	{ 
 		self.goalentity = theMachine;
-		theMachine.th_pain = time_crash;
+		theMachine.th_pain = time_crash_pain;
 		theMachine.th_die = time_crash;
 		theMachine.health = 1;
 		
@@ -330,7 +324,6 @@ void() actor_teleport =
 
 void() actor_control =
 {
-	local entity	timepod;
 	
 	if (actorStage == STAGE_START)
 	{
@@ -401,7 +394,7 @@ void(entity thePlayer) spawn_actor =
 		theActor.yaw_speed = 20;
 	theActor.view_ofs = '0 0 25';
 	theActor.flags = theActor.flags | FL_MONSTER;
-	actorStage == STAGE_START;
+	actorStage = STAGE_START;
 		
 	if ( pointcontents (theActor.origin) == CONTENT_LAVA )
 	{

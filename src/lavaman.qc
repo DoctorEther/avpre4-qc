@@ -47,7 +47,6 @@ $frame shocka9 shocka10
 //$frame shockc1 shockc2 shockc3 shockc4 shockc5 shockc6 shockc7 shockc8 
 //$frame shockc9 shockc10
 
-void(float AttackNumber) lavaman_missile;
 
 /*
 ===========
@@ -59,7 +58,7 @@ Returns FALSE if movement should continue
 */
 float() LavaManCheckAttack =
 {
-	local vector	spot1, spot2;	
+	local vector	spot1;	
 	local entity	targ;
 
 	ai_face();
@@ -284,7 +283,7 @@ void() lavaman_shocka8 =[ $shocka8, lavaman_shocka9 ] {};
 void() lavaman_shocka9 =[ $shocka9, lavaman_shocka10 ] {};
 void() lavaman_shocka10 =[ $shocka10, lavaman_run1 ] {};
 
-void() lavaman_pain =
+void(entity attacker, float damage) lavaman_pain =
 {
 	if ( self.pain_finished > time )
 		return;
@@ -361,7 +360,6 @@ void() lavaman_touch =
 void(float AttackNumber) lavaman_missile =
 {
 	local entity	fireball;
-	local vector	offang;
 	local vector	org, vec, d;
 	local float		t;
 

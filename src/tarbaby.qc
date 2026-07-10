@@ -56,12 +56,6 @@ $frame fly1 fly2 fly3 fly4
 
 $frame exp
 
-// Protótipos
-void() tbaby_die1;
-void() tbaby_kamikaze_check;
-void() tbaby_bomb_think;
-void() tbaby_bomb_touch;
-void() tbaby_kamikaze_attack;
 
 /* ---------- CHECAGEM KAMIKAZE: DISPARAR BOMBA A 130 UNITS ---------- */
 
@@ -347,7 +341,6 @@ void()  tbaby_jump6     =[      $jump6,tbaby_fly1       ] { tbaby_kamikaze_check
 
 //=============================================================================
 
-void()  tbaby_die2;
 
 void()  tbaby_die1      =[      $exp,           tbaby_die2      ] {
     self.takedamage = DAMAGE_NO;
@@ -369,7 +362,6 @@ void()  tbaby_die2      =[      $exp,           tbaby_run1      ]
 };
 
 //=============================================================================
-void() tbaby_mitosis;
 
 void() tbaby_checknew =
 {
@@ -414,7 +406,7 @@ void() tbaby_checknew =
     WriteLong (MSG_BROADCAST, total_monsters);
 };
 
-void() tbaby_mitosis =
+void(entity attacker, float damage) tbaby_mitosis =
 {
     local entity    newSpawn;
     
@@ -431,7 +423,7 @@ void() tbaby_mitosis =
             newSpawn.health = 100;
 
         newSpawn.owner = self;
-        self.th_pain = SUB_Null;
+        self.th_pain = SUB_NullPain;
         
         setmodel (newSpawn, "progs/tarbaby.mdl");
         newSpawn.solid = SOLID_SLIDEBOX;
@@ -500,7 +492,7 @@ void() monster_tarbaby =
         // modo kamikaze: skin 2, mais frágil, sem mitose
         self.skin = 2;
         self.health = 50;
-        self.th_pain = SUB_Null;
+        self.th_pain = SUB_NullPain;
     }
     else if (self.spawnflags & 8)
     {

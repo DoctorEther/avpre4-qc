@@ -137,6 +137,8 @@ void() time_fall =
 	self.think = time_fall;
 };
 
+void(entity attacker, float damage) time_crash_pain = {time_crash();}
+
 void() time_crash =
 {
 	self.takedamage = DAMAGE_NO;
@@ -152,10 +154,11 @@ void() time_crash =
 	SUB_UseTargets();
 };
 
+inline void() time_die = {time_pain(world, 0);}
+
 void(entity attacker, float take) time_pain =
 {	
 	local entity	painEnt;
-	local vector	painOrg;
 	local float 	painRnd;
 	
 	if ( self.health > 1100 )
@@ -183,7 +186,7 @@ void(entity attacker, float take) time_pain =
 	if ( self.health < 1000 )
 	{
 		self.pain_finished = 0;
-		self.th_pain = SUB_Null;
+		self.th_pain = SUB_NullPain;
 		self.th_die = SUB_Null;
 		cutscene_running = 1;
 		return;
@@ -217,7 +220,7 @@ void() item_time_machine =
 	self.th_stand = SUB_Null;
 	self.th_walk = SUB_Null;
 	self.th_run = SUB_Null;
-	self.th_die = time_pain;
+	self.th_die = time_die;
 	self.th_missile = SUB_Null;
 	self.th_pain = time_pain;
 	

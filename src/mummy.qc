@@ -176,7 +176,7 @@ mummyFireGrenade
 */
 void(vector st) mummyFireGrenade =
 {
-	local   entity missile, mpuff;
+	local   entity missile;
 	local   vector  org;
 
 	sound (self, CHAN_WEAPON, "zombie/z_shot1.wav", 1, ATTN_NORM);
@@ -449,6 +449,8 @@ void(entity attacker, float take) mummy_pain =
 
 void() mummy_sleep = [ $paine11, mummy_sleep ] { ai_stand(); };
 
+inline void(entity attacker, float damage) mummy_wake_pain = {mummy_wake();}
+
 void() mummy_wake =
 {
 	self.th_stand = mummy_stand1;
@@ -517,7 +519,7 @@ void() monster_mummy =
 		self.th_stand = mummy_sleep;
 		self.th_run = mummy_wake;
 		self.th_walk = mummy_wake;
-		self.th_pain = mummy_wake;
+		self.th_pain = mummy_wake_pain;
 		self.th_missile = mummy_wake;
 		walkmonster_start();
 	}

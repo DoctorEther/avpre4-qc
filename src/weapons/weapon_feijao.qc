@@ -88,7 +88,6 @@ void(vector org, vector dir) feijao_launch =
 void() W_FireFeijao =
 {
 	local vector	dir;
-	local entity	old;
 	
 	sound (self, CHAN_WEAPON, "weapons/feijoada.wav", 1, ATTN_NORM);
 

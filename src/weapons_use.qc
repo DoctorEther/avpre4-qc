@@ -900,7 +900,6 @@ ImpulseCommands
 */
 void() ImpulseCommands =
 {
-	local entity takeThisOut;
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon();
 	else if (self.impulse >= 60 && self.impulse <= 68)
@@ -976,7 +975,6 @@ void() W_WeaponFrame =
 	// Botões de "use"
 	local entity oldself;
 	oldself = self;
-	vector start, end;
 	traceline(self.origin + '0 0 22', self.origin + v_forward * 128, 0, self);
 	if (trace_ent && trace_ent.useractivate) 
 	{

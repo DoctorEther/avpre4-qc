@@ -19,10 +19,6 @@
 
 // morph.qc
 
-$skin aztec
-$skin pharoah
-$skin roman
-$skin florskin
 
 $frame mfstand1 
 //$frame mfup01 mfup02 mfup03 mfup04 mfup05 mfup06
@@ -69,14 +65,6 @@ float MORPH_AZTEC	= 2;
 float MORPH_EGYPT	= 4;
 float MORPH_GREEK	= 8;
 
-void() morph_teleport;
-void() morph_run1;
-void() morph_charge1;
-void() morph_sweep1;
-void() morph_ringattack01;
-void() morph_fire1;
-void() morph_missile_pick;
-float() MorphCheckAttack;
 
 // ========================
 // standing
@@ -538,7 +526,7 @@ void() morph_painB5 = [ $mfpbin05, morph_painB6 ] {};
 void() morph_painB6 = [ $mfpbin06, morph_painB7 ] {};
 void() morph_painB7 = [ $mfpbin07, morph_run1 ] {morph_teleport();};
 
-void() morph_pain =
+void(entity attacker, float damage) morph_pain =
 {
 	local float painChoice;
 
@@ -816,7 +804,6 @@ void() morph_teleport =
 {
 	local entity    theDest;
 	local entity	theChild;
-	local entity	selfTemp;
 	
 	if (self.owner)
 		return;

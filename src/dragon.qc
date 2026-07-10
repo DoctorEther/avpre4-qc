@@ -55,9 +55,6 @@ $frame drgdth07 drgdth08 drgdth09 drgdth10 drgdth11 drgdth12
 $frame drgdth13 drgdth14 drgdth15 drgdth16 drgdth17 drgdth18
 $frame drgdth19 drgdth20 drgdth21
 
-void() dragon_fireball;
-void() dragon_melee1;
-
 // ===================================
 // global variables
 // ===================================
@@ -78,7 +75,6 @@ float FIRE_FIREBALL =	2;
 // ===================================
 void() dragon_stop_attack =
 {
-	local entity tempDest;
 
 	if (self.dragonAttacking == FALSE)
 		return;
@@ -561,7 +557,7 @@ void() dragon_painF1 = [ $drgpan6a, dragon_painF2 ] {dragon_move(12);};
 void() dragon_painF2 = [ $drgpan6b, dragon_painF3 ] {dragon_move(12);};
 void() dragon_painF3 = [ $drgpan6c, dragon_walk2 ] {dragon_move(12);};
 
-void() dragon_pain =
+void(entity attacker, float damage) dragon_pain =
 {
 	local float r;
 

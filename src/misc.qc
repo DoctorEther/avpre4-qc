@@ -187,22 +187,18 @@ void() light_flame_small_white =
 Lava Balls
 */
 
-void() fire_fly;
-void() fire_touch;
-void() misc_fireball =
-{
-	
+void() misc_fireball = {
 	precache_model ("progs/lavaball.mdl");
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
 	self.think = fire_fly;
 	if (!self.speed)
-		self.speed == 1000;
+		self.speed = 1000;
 };
 
 void() fire_fly =
 {
-local entity	fireball;
+	local entity	fireball;
 
 	fireball = spawn();
 	fireball.solid = SOLID_TRIGGER;
@@ -508,7 +504,6 @@ void() bubble_remove =
 void() bubble_bob =
 {
 local float		rnd1, rnd2, rnd3;
-local vector	vtmp1, modi;
 
 	// PGM fix - 02/25/97 so bubbles won't go through walls
 	rnd1 = pointcontents(self.origin);
@@ -608,7 +603,7 @@ void() func_illusionary =
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
 	setmodel (self, self.model);
-	makestatic ();
+	makestatic(self);
 };
 
 /*QUAKED func_episodegate (0 .5 .8) ? E1 E2 E3 E4
@@ -733,7 +728,7 @@ void(string gibname) ThrowBall =
 
     if (opt_noheads)
     {
-        setmodel(self, "progs/gib.mdl");
+        setmodel(self, "progs/gib1.mdl");
         self.skin = FALSE;
     }
     else

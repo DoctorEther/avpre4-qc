@@ -5,7 +5,7 @@
 #define AV_SKATE_ROTATION_SPEED 0.04
 #define AV_SKATE_SPEED_LIMIT 1024
 
-void() AV_SkateUpdate() = {
+void() AV_SkateUpdate = {
 	if(!self.av_skating) return;
 	
 	if(!(self.flags & FL_ONGROUND)) return;
@@ -44,7 +44,7 @@ void() AV_SkateUpdate() = {
 	self.velocity_y = r_vec_y * s_speed;
 };
 
-void() AV_SwitchSkate() = {
+void() AV_SwitchSkate = {
 	self.av_skating = !self.av_skating;
 	
 	if(self.av_skating != self.av_camera_active) AV_SwitchCam();

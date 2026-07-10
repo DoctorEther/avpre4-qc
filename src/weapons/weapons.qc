@@ -120,7 +120,7 @@ W_FireRocket
 */
 void() W_FireRocket =
 {
-	local	entity missile, mpuff;
+	local	entity missile;
 	
 	self.currentammo = self.ammo_rockets1 = self.ammo_rockets1 - 1;
 	UpdateAmmoCounts(self);
@@ -164,9 +164,7 @@ AVIAO
 ================
 W_AVIAO
 ================
-*/
-void W_FirePlasma();
-/*
+
 
 ===============================================================================
 
@@ -313,7 +311,7 @@ W_FireGrenade
 */
 void() W_FireGrenade =
 {
-	local	entity missile, mpuff;
+	local	entity missile;
 	
 	self.currentammo = self.ammo_rockets1 = self.ammo_rockets1 - 1;
 	UpdateAmmoCounts(self);
@@ -359,11 +357,6 @@ void() W_FireGrenade =
 
 //=============================================================================
 
-void() spike_touch;
-void() superspike_touch;
-void() lavaspike_touch;
-void() superlavaspike_touch;
-
 /*
 ===============
 launch_spike
@@ -394,7 +387,6 @@ void(vector org, vector dir) launch_spike =
 void() W_FireSuperSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
@@ -413,7 +405,6 @@ void() W_FireSuperSpikes =
 void(float ox) W_FireSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	makevectors (self.v_angle);
 	
@@ -441,10 +432,9 @@ void(float ox) W_FireSpikes =
 	self.punchangle_x = -2;
 };
 
-.float hit_z;
+
 void() spike_touch =
 {
-local float rand;
 	if (other == self.owner)
 		return;
 
@@ -484,7 +474,6 @@ local float rand;
 
 void() superspike_touch =
 {
-local float rand;
 	if (other == self.owner)
 		return;
 

@@ -215,7 +215,7 @@ ZombieFireGrenade
 */
 void(vector st) ZombieFireGrenade =
 {
-	local	entity missile, mpuff;
+	local	entity missile;
 	local	vector	org;
 
 	sound (self, CHAN_WEAPON, "zombie/z_shot1.wav", 1, ATTN_NORM);
@@ -532,7 +532,7 @@ void(entity attacker, float take) zombie_pain =
 };
 
 void() zombie_sleep = [ $paine11, zombie_sleep ] { ai_stand(); };
-
+void(entity attacker, float damage) zombie_pain_wake = {zombie_wake();}
 void() zombie_wake =
 {
 	self.th_stand = zombie_stand1;
@@ -588,6 +588,8 @@ void() zombie_escape16 = [ $cruc_16, zombie_run1 ]
 
 	droptofloor();
 };
+
+void(entity attacker, float damage) zombie_pain_escape = {zombie_escape();}
 
 void() zombie_escape = 
 {
@@ -659,7 +661,7 @@ void() monster_zombie =
 		self.th_stand = zombie_sleep;
 		self.th_run = zombie_wake;
 		self.th_walk = zombie_wake;
-		self.th_pain = zombie_wake;
+		self.th_pain = zombie_pain_wake;
 		self.th_missile = zombie_wake;
 		setsize (self, '-16 -16 -24', '16 16 -16');
 
@@ -676,7 +678,7 @@ void() monster_zombie =
 		self.th_stand = zombie_cruc1;
 		self.th_run = zombie_escape;
 		self.th_walk = zombie_escape;
-		self.th_pain = zombie_escape;
+		self.th_pain = zombie_pain_escape;
 		self.th_missile = zombie_escape;
 
 		if (!self.delay)

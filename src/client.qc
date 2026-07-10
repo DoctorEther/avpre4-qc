@@ -19,22 +19,11 @@
 
 // updated to quake v1.06 10/8/96
 
-// prototypes
-void () W_WeaponFrame;
-void() W_SetCurrentAmmo;
-void() player_pain;
-void() player_stand1;
-void (vector org) spawn_tfog;
-void (vector org, entity death_owner) spawn_tdeath;
 
-// horde merge: forward declarations used below
-void() PlayerDie;
-void() respawn;
-void() GibMonster;
+
 
 float	modelindex_eyes, modelindex_player;
 
-void(entity targ, entity attacker) dmatch_score;
 
 /*
 =============================================================================
@@ -217,6 +206,7 @@ entity() FindIntermission =
 		return spot;
 	
 	objerror ("FindIntermission: no spot");
+	return world;
 };
 
 
@@ -448,7 +438,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity	pos;
 
 	if (other.classname != "player")
 		return;
@@ -929,10 +918,6 @@ PutClientInServer
 called each time a player is spawned
 ============
 */
-void() DecodeLevelParms;
-void() PlayerDie;
-
-void() player_touch;
 
 void() PutClientInServer =
 {
@@ -978,7 +963,7 @@ void() PutClientInServer =
 	DecodeLevelParms ();
 
 	// spawn selection must be after DecodeLevelParms because of team stuff
-	spot = SelectSpawnPoint ();
+	spot = SelectSpawnPoint (FALSE);
 	
 	W_SetCurrentAmmo ();
 
@@ -1190,7 +1175,6 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-    local entity    old_self;
     local float        forward;
 
     if ((self.flags & FL_ONGROUND))
@@ -1251,7 +1235,6 @@ void() PlayerDeathThink =
 
 void() PlayerJump =
 {
-	local vector start, end;
 	
 	if (self.flags & FL_WATERJUMP)
 		return;
@@ -1303,7 +1286,7 @@ WaterMove
 
 ============
 */
-.float	dmgtime;
+
 
 void() WaterMove =
 {
@@ -1423,7 +1406,6 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	local float mspeed, aspeed;
 	local float r;
 
 	if (intermission_running)
@@ -1774,12 +1756,9 @@ PlayerPostThink
 Called every frame after physics are run
 ================
 */
-void() xpackEnding;
 
 void() PlayerPostThink =
 {
-	local float mspeed, aspeed;
-	local float r;
 
 	if (self.view_ofs == '0 0 0')
 		return; // intermission or finale
@@ -1929,7 +1908,6 @@ called when a player dies
 void(entity targ, entity attacker) ClientObituary =
 {
 	local	float rnum;
-	local	string deathstring, deathstring2;
 	rnum = random();
 
 	if (targ.classname == "player")
