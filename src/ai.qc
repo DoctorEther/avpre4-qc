@@ -622,9 +622,6 @@ float() FacingIdeal =
 
 //=============================================================================
 
-float()	WizardCheckAttack;
-float()	DogCheckAttack;
-
 float() CheckAnyAttack =
 {
 	if (!enemy_vis)

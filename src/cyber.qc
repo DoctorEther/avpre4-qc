@@ -46,7 +46,6 @@ en = self.enemy;
 };
 
 
-void(float xco, float yco, float zco) SpawnExplosion;
 
 /*
 =====================
@@ -113,8 +112,7 @@ void(float offset) CyberMissile =
 
 };
 
-void() CyberhMissileTouch;
-void() CyberhHome;
+
 void() CyberhMissile =
 {
 	local	entity 	missile;
@@ -203,7 +201,6 @@ void() CyberhMissileTouch =
 };
 
 
-void() cyber_missile21; // To make jumping to last frames possible
 
 void() cyber_missile1  =[ $shoot1,     cyber_missile2  ] {ai_face();};
 void() cyber_missile2  =[ $shoot2,     cyber_missile3  ] {ai_face();CyberFireRLG();};

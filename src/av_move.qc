@@ -1,13 +1,5 @@
-// Foward declaration here so we can just use the normal jump here.
-void() PlayerJump;
 
 // --- AVIÃOZINHO PLAYER FIELDS ---------------------
-
-.float		jump_count;
-
-.float		dash_duration;
-.float		dash_cooldown;
-.float		dash_count;
 
 // FLAG
 float	FL_DASHING				= 262144;	// DASHING;

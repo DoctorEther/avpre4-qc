@@ -21,11 +21,6 @@
 
 float IsExplosionDamage;
 
-void() T_MissileTouch;
-void() info_player_start;
-void(entity targ, entity attacker) ClientObituary;
-
-void() monster_death_use;
 
 //============================================================================
 
@@ -189,10 +184,6 @@ void(entity targ, entity attacker, entity inflictor) Killed =
 	self = oself;
 };
 
-// ====
-// Function prototype for shield impact handler.
-// ====
-float(entity targ, entity inflictor, entity attacker, float damage) shield_hit;
 
 /*
 ============

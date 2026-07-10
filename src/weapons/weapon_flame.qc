@@ -1,5 +1,3 @@
-.float flame_time;
-.float inflamed;
 
 //função que "queima" o inimigo aos poucos
 void() hit_flame_think = {
@@ -23,7 +21,6 @@ void() hit_flame_think = {
 	T_Damage(self.owner, self, self, 1, DMGTYPE_BURN);
 }
 
-void() weapon_spawn_hit_flame;
 
 void() hit_flame_touch = {
 	if (other == self.owner || other.classname == "player") {

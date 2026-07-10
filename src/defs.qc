@@ -680,8 +680,43 @@ float	AS_MISSILE		= 4;
 .float		on_ladder;
 .float		ladder_step_finished;
 
-// AVIÃOZINHO GLOBAL FIELDS
-entity av_global_train;
+
+.float buttonuse;
+.float using;
+.void() useractivate;
+
+.vector movement;     // For dash direction
+.float just_dashed;   // For dash counting
+.float dash_cooldown; // For 1-second cooldown
+.float dash_reset_time; // Optional for timer-based reset
+.float dash_requested;
+.float is_dashing;
+.float dash_time;
+.float dash_duration;
+.float dash_count;
+.vector dash_dir;
+
+.float		jump_count;
+
+.float scale;
+
+// --- per-player state ---
+.float  dash_lock_until;
+.float  dash_streak_count;
+.float  dash_streak_expires;
+
+.float  is_dashing;
+.float  dash_time;
+
+.vector dash_dir;
+
+.float  dash_hull_active;
+.vector dash_saved_mins;
+.vector dash_saved_maxs;
+
+.float scrollspeed;
+.float returnpos;
+
 
 //
 // object stuff
@@ -811,6 +846,10 @@ entity av_global_train;
 .vector cmaxs;
 
 .float rand;
+
+.float flame_time;
+.float inflamed;
+
 
 //===========================================================================
 
@@ -968,57 +1007,6 @@ float checkextension( string s ) = #99;
 
 //============================================================================
 
-//
-// subs.qc
-//
-void(vector tdest, float tspeed, void() func) SUB_CalcMove;
-void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt;
-void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove;
-void()  SUB_CalcMoveDone;
-void() SUB_CalcAngleMoveDone;
-void() SUB_Null;
-void() SUB_UseTargets;
-void() SUB_Remove;
-
-//
-//	combat.qc
-//
-
-
-
-float(entity targ, entity inflictor) CanDamage;
-
-// 
-// new_items.qc
-//
-void(entity theEntity) UpdateAmmoCounts;
-
-//
-// dmatch.qc
-//
-void() tag_token_respawn;
-void() tag_token_touch;
-void() tag_token_drop;
-
-// sphere.qc
-void(entity ownerEntity) sphere_remove;
-
-//
-// horde.qc forward declarations
-//
-float() HordeGetPlayersAlive;
-float() HordeGetMonstersAlive;
-entity() HordeFindTarget;
-void(entity temp_player) horde_set_keys;
-void(float key_item) horde_key_spend;
-void() horde_spawn_powerup;
-void() horde_respawn_teammate;
-void() horde_respawn_all;
-void() remote_wavecheck;
-void() MonsterFade;
-void() GibMonster;
-void(vector org) spawn_tfog_silent;
-
 
 // -----------------------------------------------------------------------------------
 // AVIÃOZINHO
@@ -1045,20 +1033,7 @@ float(string s1, string s2, float len) strncmp = #228;
 float(string s1, string s2) strcasecmp = #229;
 float(string s1, string s2, float len) strncasecmp = #230;
 
-.float buttonuse;
-.float using;
-.void() useractivate;
 
-.vector movement;     // For dash direction
-.float just_dashed;   // For dash counting
-.float dash_cooldown; // For 1-second cooldown
-.float dash_reset_time; // Optional for timer-based reset
-.float dash_requested;
-.float is_dashing;
-.float dash_time;
-.vector dash_dir;
-
-.float scale;
 
 // ---------- tunables ----------
 float DASH_SPEED           = 600;
@@ -1067,20 +1042,3 @@ float DASH_STREAK_WINDOW   = 1.2; // time gap allowed between streak dashes
 float DASH_LONG_COOLDOWN   = 1.2; // lockout after 3rd dash
 float DASH_GROUND_EPS      = 4.5;   // lift off ground (units) at dash start
 float DASH_MINZ_LIFT       = 12;  // raise bbox bottom while dashing (units)
-
-// --- per-player state ---
-.float  dash_lock_until;
-.float  dash_streak_count;
-.float  dash_streak_expires;
-
-.float  is_dashing;
-.float  dash_time;
-
-.vector dash_dir;
-
-.float  dash_hull_active;
-.vector dash_saved_mins;
-.vector dash_saved_maxs;
-
-.float scrollspeed;
-.float returnpos;

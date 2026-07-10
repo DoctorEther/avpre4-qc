@@ -46,8 +46,6 @@ THINK FUNCTIONS
 =============================================================================
 */
 
-void() door_go_down;
-void() door_go_up;
 
 void() door_blocked =
 {
@@ -586,13 +584,6 @@ SECRET DOORS
 =============================================================================
 */
 
-void() fd_secret_move1;
-void() fd_secret_move2;
-void() fd_secret_move3;
-void() fd_secret_move4;
-void() fd_secret_move5;
-void() fd_secret_move6;
-void() fd_secret_done;
 
 float SECRET_OPEN_ONCE = 1;		// stays open
 float SECRET_1ST_LEFT = 2;		// 1st move is left of arrow

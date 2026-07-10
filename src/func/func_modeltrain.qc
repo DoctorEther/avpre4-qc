@@ -109,7 +109,6 @@ void() func_modeltrain =
 	setsize (self, '-16 -16 0', '16 16 56');
 	setorigin (self, self.origin);
 
-	av_global_train = self;
 	
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
