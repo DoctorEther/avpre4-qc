@@ -30,7 +30,7 @@ void(entity gib, string gibname) MakeGib =
 	gib.alpha = 1;
 	
 	changeModel(gib, gibname);
-	//gib.type = "gib";
+	gib.type = "gib";
 	gib.avelocity = [random(),random(),random()] * 600;
 	float frm;
 
@@ -115,6 +115,7 @@ void(string gibname, float dm) ThrowHead =
 	setorigin(self, self.origin);
 	self.touch = kick_touch;
 	self.view_ofs = '0 0 8';
+	self.type = "gib";
 	setsize (self, '-16 -16 0', '16 16 56');
 	//setsize (self, '0 0 0', '0 0 0');
 	
@@ -124,6 +125,7 @@ void(string gibname, float dm) ThrowHead =
 	self.velocity += GibVelocityFromInflictor(self, dm);
 	capGibVelocity(self);
 	
+
 	self.origin_z = self.absmax_z - 24;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	//self.type = "head";

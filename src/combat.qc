@@ -202,7 +202,7 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype) T_Damage=
+void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype) T_Damage =
 {
 	local	vector	dir;
 	local	entity	oldself;
@@ -266,6 +266,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 
 
 
+	// checks if entity has a custom damage calculation function
+	if (targ.th_damage)	{
+		oldself = self;
+		self = targ;
+		take = self.th_damage(inflictor, attacker, take, damage, dmgtype);
+		self = oldself;
+		if (take <= 0) return;
+	}
+
+
 // figure momentum add
 	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) )
 	{
@@ -307,8 +317,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 // rune power up (Earth Magic)
 	if (deathmatch)
 		take = RuneApplyEarth(take, targ);
-		
-// do the damage
+	
+	take = floor(take); // don't deal float damage
+	
+	// do the damage
 	targ.health = targ.health - take;
 		
 	// store inflictor info
@@ -458,11 +470,8 @@ void(entity inflictor, entity attacker, float damage, float dmgtype, entity igno
 				if (points > 0)
 				{
 					if (CanDamage (head, inflictor))
-					{	// shambler takes half damage from all explosions
-						if (head.classname == "monster_shambler")						
-							T_Damage (head, inflictor, attacker, points*0.5, dmgtype);
-						else
-							T_Damage (head, inflictor, attacker, points, dmgtype);
+					{	
+						T_Damage (head, inflictor, attacker, points, dmgtype);
 					}
 				}
 			}
@@ -497,10 +506,7 @@ void(entity attacker, float damage) T_BeamDamage =
 			{
 				if (CanDamage (head, attacker))
 				{
-					if (head.classname == "monster_shambler")						
-						T_Damage (head, attacker, attacker, points*0.5, DMGTYPE_EXPLOSION);
-					else
-						T_Damage (head, attacker, attacker, points, DMGTYPE_EXPLOSION);
+					T_Damage (head, attacker, attacker, points, DMGTYPE_EXPLOSION);
 				}
 			}
 		}

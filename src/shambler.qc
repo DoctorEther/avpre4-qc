@@ -321,6 +321,12 @@ void(entity attacker, float damage)	sham_pain =
 	sham_pain1 ();
 };
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) shambler_customdamage = {
+	if (dmgtype == DMGTYPE_EXPLOSION)
+		return damage * 0.5;
+	else
+		return damage;
+}
 
 //============================================================================
 
@@ -395,6 +401,7 @@ void() monster_shambler =
 	self.th_melee = sham_melee;
 	self.th_missile = sham_magic1;
 	self.th_pain = sham_pain;
+	self.th_damage = shambler_customdamage;
 	
 	// overload frags for lightning attack counts
 	self.frags = 0;

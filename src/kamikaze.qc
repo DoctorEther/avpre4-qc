@@ -42,63 +42,49 @@ float KAMIKAZE_IDLE_FRAME  = 0;
 
 
 // ---------------- DANO EM ÁREA CUSTOM ---------------------
-// Para o player: aplica dano direto na health para contornar
-// o pain_finished (imunidade temporária pós-hit do Quake C).
 // Kamikazes vizinhos NÃO recebem T_Damage aqui — eles são
 // detonados via touch/proximidade quando a onda de explosão
 // chega neles, evitando que o enemy deles seja corrompido.
 
-void(vector org, float radius, float damage, entity attacker) Kamikaze_RadiusDamage =
+void(float radius, float damage, entity attacker) Kamikaze_RadiusDamage =
 {
-    local entity ent;
-    local float  dist;
-    local float  points;
+    float   points;
+    float dist;
+    entity  head;
+    vector  org;
 
-    ent = findradius(org, radius);
+    org = self.origin + '0 0 16';
 
-    while (ent)
+    head = findradius(org, radius);
+    
+    while (head)
     {
-        // ignora outros kamikazes — eles explodem por touch/proximidade
-        // ignora gibs (FL_FLY = flag de gib no Quake C vanilla)
-        if (ent.takedamage && ent.classname != "monster_kamikaze"
-            && !(ent.flags & FL_FLY))
+        if (head != self && head.classname != "monster_kamikaze" &&
+            head.takedamage && head.health > 0)
         {
-            dist   = vlen(org - (ent.origin + (ent.mins + ent.maxs) * 0.5));
+            dist   = vlen(org - (head.origin + (head.mins + head.maxs) * 0.5));
             points = damage * (1 - dist / radius);
 
             if (points > 0)
             {
-                if (ent.classname == "player")
-                {
-                    ent.health = ent.health - points;
-                    ent.velocity = ent.velocity + normalize(ent.origin - org) * points * 12;
-
-                    if (ent.health <= 0)
-                    {
-                        ent.health        = -99;
-                        ent.pain_finished = 0;
-                        T_Damage(ent, world, attacker, 1, DMGTYPE_EXPLOSION);
-                    }
-                    else
-                    {
-                        ent.pain_finished = 0;
-                        if (ent.th_pain)
-                            ent.th_pain(attacker, points);
-                    }
-                }
-                else
-                {
-                    T_Damage(ent, world, attacker, points, DMGTYPE_EXPLOSION);
+                if (CanDamage (head, self))
+                {   
+                    T_Damage (head, self, attacker, points, DMGTYPE_EXPLOSION);
                 }
             }
         }
-        ent = ent.chain;
+        head = head.chain;
     }
 };
 
 
-// forward declaration — kamikaze_explode é definida depois do touch
-void() kamikaze_explode;
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) kamikaze_damage = {
+    // dano de outros monstros: devolve metade (mais resistente)
+    if (attacker.flags & FL_MONSTER && attacker.classname != "player")
+        return damage * 0.5;
+    else
+        return damage;
+}
 
 
 // ------------------------ TOUCH ---------------------------
@@ -106,19 +92,18 @@ void() kamikaze_explode;
 // • Toca player              → explode sempre
 // • Toca outro kamikaze      → explode só se o player está
 //                              dentro do raio (cadeia útil)
-// • Toca gib/corpse          → IGNORA (FL_FLY = gib flag)
+// • Toca gib/corpse          → ignora
 // • Toca monstro vivo        → explode
 // • Toca world/brush         → ignora
 
 void() kamikaze_touch =
 {
-    local float player_dist;
 
     if (other == world)
         return;
 
-    // ignora gibs e corpos no chão (FL_FLY é a flag de gib vanilla)
-    if (other.flags & FL_FLY)
+    // ignora gibs e corpos no chão
+    if (other.type == "gib")
         return;
 
     // ignora entidades sem vida (corpos de monstros mortos)
@@ -128,7 +113,7 @@ void() kamikaze_touch =
     // contato direto com o player: explode sempre
     if (other.classname == "player")
     {
-        kamikaze_explode();
+        T_Damage(self, other, other, self.health, DMGTYPE_INSTANT);
         return;
     }
 
@@ -139,17 +124,17 @@ void() kamikaze_touch =
         if (!self.enemy || self.enemy.health <= 0)
             return;
 
-        player_dist = vlen(self.origin - self.enemy.origin);
+        float player_dist = vlen(self.origin - self.enemy.origin);
 
         if (player_dist <= KAMIKAZE_BLAST_RADIUS)
-            kamikaze_explode();
+            T_Damage(self, other, other, self.health, DMGTYPE_INSTANT);
 
         return;
     }
 
     // monstro vivo ou outra entidade que tome dano
     if (other.takedamage)
-        kamikaze_explode();
+        T_Damage(self, other, other, self.health, DMGTYPE_INSTANT);
 };
 
 
@@ -178,61 +163,6 @@ void() kamikaze_scream =
 };
 
 
-// ---------------------- EXPLOSÃO --------------------------
-
-void() kamikaze_explode =
-{
-    local vector org;
-    local entity real_attacker;
-    local float  blast_damage;
-    local float  blast_radius;
-
-    if (self.solid == SOLID_NOT)
-        return;
-
-    // captura tudo ANTES de mutar qualquer campo do self
-    org = self.origin + '0 0 16';
-
-    if (self.enemy)
-        real_attacker = self.enemy;
-    else
-        real_attacker = world;
-
-    if (self.spawnflags & KAMIKAZE_TANK)
-    {
-        blast_damage = KAMIKAZE_TANK_BLAST_DAMAGE;
-        blast_radius = KAMIKAZE_TANK_BLAST_RADIUS;
-    }
-    else
-    {
-        blast_damage = KAMIKAZE_BLAST_DAMAGE;
-        blast_radius = KAMIKAZE_BLAST_RADIUS;
-    }
-
-    self.solid      = SOLID_NOT;
-    self.takedamage = DAMAGE_NO;
-    self.velocity   = '0 0 0';
-
-    if (self.health > 0)
-    {
-        self.health = 0;
-        killed_monsters = killed_monsters + 1;
-        WriteByte(MSG_BROADCAST, SVC_KILLEDMONSTER);
-    }
-
-    kamikaze_gibs();
-
-    WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-    WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-    WriteCoord(MSG_BROADCAST, org_x);
-    WriteCoord(MSG_BROADCAST, org_y);
-    WriteCoord(MSG_BROADCAST, org_z);
-
-    Kamikaze_RadiusDamage(org, blast_radius, blast_damage, real_attacker);
-
-    remove(self);
-};
-
 
 // --------------------- PROXIMIDADE ------------------------
 
@@ -246,7 +176,7 @@ void() kamikaze_checkdistance =
     dist = vlen(self.origin - self.enemy.origin);
 
     if (dist <= KAMIKAZE_ARM_DISTANCE)
-        kamikaze_explode();
+        T_Damage(self, self.enemy, self.enemy, self.health, DMGTYPE_INSTANT);
 };
 
 
@@ -271,7 +201,7 @@ void() kamikaze_idle =
 
 // ------------------------ WALK ----------------------------
 
-void() kamikaze_walk =
+void() kamikaze_run =
 {
     if (!self.enemy || self.enemy.health <= 0)
     {
@@ -297,7 +227,7 @@ void() kamikaze_walk =
     kamikaze_checkdistance();
 
     self.nextthink = time + KAMIKAZE_THINK_TIME;
-    self.think     = kamikaze_walk;
+    self.think     = kamikaze_run;
 };
 
 
@@ -315,30 +245,66 @@ void(entity attacker, float damage) kamikaze_pain =
 {
     if (self.spawnflags & KAMIKAZE_TANK)
     {
-        // dano de outros monstros: devolve metade (mais resistente)
-        if (attacker && (attacker.flags & FL_MONSTER) && attacker.classname != "player")
-        {
-            self.health = self.health + (damage * 0.5);
-            return;
-        }
+
 
         self.kam_hits = self.kam_hits + 1;
 
         if (self.kam_hits >= 3)
-            kamikaze_explode();
-
+            T_Damage(self, self.dmg_inflictor, attacker, self.health, DMGTYPE_INSTANT);
         return;
     }
 
     // versão padrão: qualquer hit explode
-    if (attacker && attacker != world)
+    if (attacker && attacker != world) {
         self.enemy = attacker;
-    kamikaze_explode();
+    }
+    
+    T_Damage(self, self.dmg_inflictor, attacker, self.health, DMGTYPE_INSTANT);
 };
 
 void() kamikaze_die =
 {
-    kamikaze_explode();
+    local vector org;
+    local entity real_attacker;
+    local float  blast_damage;
+    local float  blast_radius;
+
+    if (self.solid == SOLID_NOT)
+        return;
+
+    // captura tudo ANTES de mutar qualquer campo do self
+
+    if (self.enemy)
+        real_attacker = self.enemy;
+    else
+        real_attacker = world;
+
+    if (self.spawnflags & KAMIKAZE_TANK)
+    {
+        blast_damage = KAMIKAZE_TANK_BLAST_DAMAGE;
+        blast_radius = KAMIKAZE_TANK_BLAST_RADIUS;
+    }
+    else
+    {
+        blast_damage = KAMIKAZE_BLAST_DAMAGE;
+        blast_radius = KAMIKAZE_BLAST_RADIUS;
+    }
+
+    self.solid      = SOLID_NOT;
+    self.takedamage = DAMAGE_NO;
+    self.velocity   = '0 0 0';
+
+    kamikaze_gibs();
+
+    WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+    WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+    WriteCoord(MSG_BROADCAST, org_x);
+    WriteCoord(MSG_BROADCAST, org_y);
+    WriteCoord(MSG_BROADCAST, org_z);
+
+    Kamikaze_RadiusDamage(blast_radius, blast_damage, real_attacker);
+
+    remove(self);
 };
 
 
@@ -362,10 +328,11 @@ void() monster_kamikaze =
     setsize(self, '-20 -20 -24', '20 20 40');
 
     self.th_stand = kamikaze_idle;
-    self.th_walk  = kamikaze_walk;
-    self.th_run   = kamikaze_walk;
+    self.th_walk  = kamikaze_idle;
+    self.th_run   = kamikaze_run;
     self.th_pain  = kamikaze_pain;
     self.th_die   = kamikaze_die;
+    self.th_damage = kamikaze_damage;
 
     self.touch = kamikaze_touch;
 

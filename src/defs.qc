@@ -605,6 +605,8 @@ float num_players;	// active player count, maintained by ClientConnect/Disconnec
 .void(entity attacker, float damage)		th_pain;
 .void()		th_die;
 
+.float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) th_damage;
+
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
@@ -688,6 +690,7 @@ entity av_global_train;
 
 .float		t_length, t_width;
 
+.string 		type;
 
 //
 // doors, etc

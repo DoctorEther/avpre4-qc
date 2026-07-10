@@ -338,8 +338,6 @@ void() lavaman_touch =
 	damg = 40;
 	if (other.health)
 	{
-		if (other.classname == "monster_shambler")
-			damg = damg * 0.5;	// mostly immune
 		T_Damage (other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
