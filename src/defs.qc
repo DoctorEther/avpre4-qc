@@ -532,6 +532,8 @@ float	earthquake_intensity;
 float	cutscene_running;
 entity  tag_token_owner;
 
+nosave float *world_sounds; // hack to save track number modified by trigger_soundtrack
+
 //================================================
 //
 // MG1 horde mode globals (merged Sept 24 2021 - Feb 24 2022)
@@ -934,12 +936,6 @@ string(string s) precache_file2		= #77;		// registered version only
 void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// values at level start
 												// for coop respawn
-
-.float tracknum;
-
-.string soundorigin;
-
-.string soundsubtitle;
 
 
 float() finaleFinished = #0:ex_finaleFinished;

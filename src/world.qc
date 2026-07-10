@@ -206,7 +206,8 @@ void() worldspawn =
 		cvar_set ("sv_gravity", "800");
 
 // the area based ambient sounds MUST be the first precache_sounds
-
+	world_sounds = &world.sounds;
+	
 // player precaches	
 	W_Precache ();			// get weapon precaches
 	RunePrecache();			// precache the runes
