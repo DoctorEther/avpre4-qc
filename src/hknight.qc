@@ -88,19 +88,19 @@ void() hk_idle_sound;
 //   double jump v_z  = 380  → additional 90.2u, total ~135.8u above ground
 //   player bbox      = -24 to +32 (56u tall), origin 24u above ground
 //
-void(float yaw_offset, float spawn_z_offset) hknight_shot_dir =
+void(float yaw_offset, float spawn_z_offset, float pitch) hknight_shot_dir =
 {
 	local	vector	org, vec, ang;
 
 	// Use makevectors to get a horizontal direction for the given yaw.
 	// pitch=0, yaw=self.angles_y+offset, roll=0 -> v_forward is flat (z~=0).
-	ang_x = 0;
+	ang_x = pitch;
 	// yaw_offset é ângulo ABSOLUTO no mundo — não relativo ao facing do inimigo.
 	ang_y = yaw_offset;
 	ang_z = 0;
 	makevectors(ang);
 	vec = v_forward;
-	vec_z = 0; // ensure perfectly flat
+	//vec_z = 0; // ensure perfectly flat
 
 	// Spawn at the desired height above ground.
 	// Enemy origin is 24u above ground (bbox mins_z = -24).
@@ -125,19 +125,13 @@ void(float yaw_offset, float spawn_z_offset) hknight_shot_dir =
 // -----------------------------------------------------------------------
 void() hknight_ring_shot =
 {
-	local float s;
-	s = 10; // 360 / 36 spikes
-
 	// +8 from origin = 32u above ground (waist height)
-	hknight_shot_dir (s* 0,  8);  hknight_shot_dir (s* 1,  8);  hknight_shot_dir (s* 2,  8);  hknight_shot_dir (s* 3,  8);
-	hknight_shot_dir (s* 4,  8);  hknight_shot_dir (s* 5,  8);  hknight_shot_dir (s* 6,  8);  hknight_shot_dir (s* 7,  8);
-	hknight_shot_dir (s* 8,  8);  hknight_shot_dir (s* 9,  8);  hknight_shot_dir (s*10,  8);  hknight_shot_dir (s*11,  8);
-	hknight_shot_dir (s*12,  8);  hknight_shot_dir (s*13,  8);  hknight_shot_dir (s*14,  8);  hknight_shot_dir (s*15,  8);
-	hknight_shot_dir (s*16,  8);  hknight_shot_dir (s*17,  8);  hknight_shot_dir (s*18,  8);  hknight_shot_dir (s*19,  8);
-	hknight_shot_dir (s*20,  8);  hknight_shot_dir (s*21,  8);  hknight_shot_dir (s*22,  8);  hknight_shot_dir (s*23,  8);
-	hknight_shot_dir (s*24,  8);  hknight_shot_dir (s*25,  8);  hknight_shot_dir (s*26,  8);  hknight_shot_dir (s*27,  8);
-	hknight_shot_dir (s*28,  8);  hknight_shot_dir (s*29,  8);  hknight_shot_dir (s*30,  8);  hknight_shot_dir (s*31,  8);
-	hknight_shot_dir (s*32,  8);  hknight_shot_dir (s*33,  8);  hknight_shot_dir (s*34,  8);  hknight_shot_dir (s*35,  8);
+	vector angletoenemy = vectoangles(self.origin - self.enemy.origin);
+
+
+	for (float i = 0; i < 36; i++) {
+		hknight_shot_dir (i * 10,  8, angletoenemy_x);
+	}
 
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
@@ -148,30 +142,14 @@ void() hknight_ring_shot =
 // -----------------------------------------------------------------------
 void() hknight_dualring_shot =
 {
-	local float s;
-	s = 10;
+	vector angletoenemy = vectoangles(self.origin - self.enemy.origin);
 
-	// LOW ring — 20u above ground
-	hknight_shot_dir (s* 0,  -4);  hknight_shot_dir (s* 1,  -4);  hknight_shot_dir (s* 2,  -4);  hknight_shot_dir (s* 3,  -4);
-	hknight_shot_dir (s* 4,  -4);  hknight_shot_dir (s* 5,  -4);  hknight_shot_dir (s* 6,  -4);  hknight_shot_dir (s* 7,  -4);
-	hknight_shot_dir (s* 8,  -4);  hknight_shot_dir (s* 9,  -4);  hknight_shot_dir (s*10,  -4);  hknight_shot_dir (s*11,  -4);
-	hknight_shot_dir (s*12,  -4);  hknight_shot_dir (s*13,  -4);  hknight_shot_dir (s*14,  -4);  hknight_shot_dir (s*15,  -4);
-	hknight_shot_dir (s*16,  -4);  hknight_shot_dir (s*17,  -4);  hknight_shot_dir (s*18,  -4);  hknight_shot_dir (s*19,  -4);
-	hknight_shot_dir (s*20,  -4);  hknight_shot_dir (s*21,  -4);  hknight_shot_dir (s*22,  -4);  hknight_shot_dir (s*23,  -4);
-	hknight_shot_dir (s*24,  -4);  hknight_shot_dir (s*25,  -4);  hknight_shot_dir (s*26,  -4);  hknight_shot_dir (s*27,  -4);
-	hknight_shot_dir (s*28,  -4);  hknight_shot_dir (s*29,  -4);  hknight_shot_dir (s*30,  -4);  hknight_shot_dir (s*31,  -4);
-	hknight_shot_dir (s*32,  -4);  hknight_shot_dir (s*33,  -4);  hknight_shot_dir (s*34,  -4);  hknight_shot_dir (s*35,  -4);
-
-	// HIGH ring — 80u above ground
-	hknight_shot_dir (s* 0,  56);  hknight_shot_dir (s* 1,  56);  hknight_shot_dir (s* 2,  56);  hknight_shot_dir (s* 3,  56);
-	hknight_shot_dir (s* 4,  56);  hknight_shot_dir (s* 5,  56);  hknight_shot_dir (s* 6,  56);  hknight_shot_dir (s* 7,  56);
-	hknight_shot_dir (s* 8,  56);  hknight_shot_dir (s* 9,  56);  hknight_shot_dir (s*10,  56);  hknight_shot_dir (s*11,  56);
-	hknight_shot_dir (s*12,  56);  hknight_shot_dir (s*13,  56);  hknight_shot_dir (s*14,  56);  hknight_shot_dir (s*15,  56);
-	hknight_shot_dir (s*16,  56);  hknight_shot_dir (s*17,  56);  hknight_shot_dir (s*18,  56);  hknight_shot_dir (s*19,  56);
-	hknight_shot_dir (s*20,  56);  hknight_shot_dir (s*21,  56);  hknight_shot_dir (s*22,  56);  hknight_shot_dir (s*23,  56);
-	hknight_shot_dir (s*24,  56);  hknight_shot_dir (s*25,  56);  hknight_shot_dir (s*26,  56);  hknight_shot_dir (s*27,  56);
-	hknight_shot_dir (s*28,  56);  hknight_shot_dir (s*29,  56);  hknight_shot_dir (s*30,  56);  hknight_shot_dir (s*31,  56);
-	hknight_shot_dir (s*32,  56);  hknight_shot_dir (s*33,  56);  hknight_shot_dir (s*34,  56);  hknight_shot_dir (s*35,  56);
+	for (float i = 0; i < 36; i++) {
+		// LOW ring — 20u above ground
+		hknight_shot_dir (i * 10,  -4, angletoenemy_x);
+		// HIGH ring — 80u above ground
+		hknight_shot_dir (i * 10,  24, angletoenemy_x - 5);
+	}
 
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
@@ -544,22 +522,20 @@ void(entity attacker, float damage)	hknight_pain =
 	hknight_pain1 ();
 };
 
-float	hknight_type;
-
 void() hknight_melee =
 {
-	hknight_type = hknight_type + 1;
-
 	sound (self, CHAN_WEAPON, "hknight/slash1.wav", 1, ATTN_NORM);
-	if (hknight_type == 1)
+
+	if (self.cnt == 0)
 		hknight_slice1 ();
-	else if (hknight_type == 2)
+	else if (self.cnt == 1)
 		hknight_smash1 ();
-	else if (hknight_type == 3)
+	else
 	{
 		hknight_watk1 ();
-		hknight_type = 0;
+		self.cnt = 0;
 	}
+	self.cnt++;
 };
 
 void() hknight_pause =
