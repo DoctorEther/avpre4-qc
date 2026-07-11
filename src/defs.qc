@@ -673,6 +673,8 @@ float	AS_MISSILE		= 4;
 .float		dash_cooldown;
 .float		dash_timer;
 .float		dash_count;
+.vector 	av_dash_vel;
+
 
 .entity		feijao_manager;
 .float		feijao_count;

@@ -1533,10 +1533,10 @@ void() PlayerPreThink =
 			self.flags = self.flags | FL_JUMPRELEASED;
 	}
 	
-	if(self.flags & FL_DASHING && self.velocity_z <= 0.0) self.velocity_z = 0.0;
+	//if(self.flags & FL_DASHING && self.velocity_z <= 0.0) self.velocity_z = 0.0;
 	
 	if(self.flags & FL_DASHING && self.dash_duration <= time){
-		if(self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
+		//if(self.flags & FL_ONGROUND) self.flags = self.flags - FL_ONGROUND;
 		if(self.flags & FL_DASHING)  self.flags = self.flags - FL_DASHING;
 	}
 	
@@ -1546,6 +1546,7 @@ void() PlayerPreThink =
 	}
 	
 	AV_SkateUpdate();
+	AV_DashUpdate();
 	AV_UpdateDashHUD();
 };
 
@@ -1801,14 +1802,13 @@ void() PlayerPostThink =
 
 		self.killspree = 0;
 	}
-
+	
 	CheckPowerups();
 
 	// --- AVIÃOZINHO --------------------------------------
 
 	if(self.flags & FL_ONGROUND) self.jump_count = 0;
-	if(self.flags & FL_ONGROUND && self.flags & FL_DASHING) self.flags = self.flags - FL_DASHING;
-	if (!(self.flags & FL_ONGROUND)) self.jump_flag = self.velocity_z;
+	//if (!(self.flags & FL_ONGROUND)) self.jump_flag = self.velocity_z;
 
 	AV_CamUpdate();
 };

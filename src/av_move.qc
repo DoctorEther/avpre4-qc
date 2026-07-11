@@ -92,7 +92,7 @@ void() PlayerDoubleJump = {
 // --- DASH -----------------------------------------
 
 float AV_DASH_SPEED		= 650.0;
-float AV_DASH_DURATION	= 0.2;
+float AV_DASH_DURATION	= 0.35;
 float AV_DASH_COOLDOWN	= 1.25;
 
 #define STAT_DASH_INDEX 33
@@ -109,8 +109,7 @@ void() AV_UpdateDashHUD = {
 	WriteLong(MSG_ONE, (1 - (self.dash_cooldown - time) / AV_DASH_COOLDOWN) * 100);
 };
 
-void() PlayerDash =
-{
+void() PlayerDash = {
 	if(self.av_skating) return; //Can't double jump while skating.
 	if(self.dash_count >= 3) return; //Is dash available?
 	
@@ -120,16 +119,8 @@ void() PlayerDash =
 	self.dash_cooldown = time + AV_DASH_COOLDOWN;
 	self.dash_count = self.dash_count + 1;
 	
-	PushPlayer(AV_DASH_SPEED);
-	
-	if(self.velocity_z <= 0){
-		self.velocity_z = 128;
-		
-		if(self.flags & FL_ONGROUND){
-			self.jump_count = self.jump_count + 1;
-			self.flags = self.flags - FL_ONGROUND;
-		}
-	}
+	self.av_dash_vel = MovementVector() * AV_DASH_SPEED;
+	self.velocity_z = 0;
 	
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -139,3 +130,46 @@ void() PlayerDash =
 	
 	sound(self, CHAN_AUTO, "weapons/r_exp3.wav", 0.5, ATTN_NORM);
 };
+
+void(vector wish_dir) AV_Accelerate = { //Yup, a straight-up QC reimplementation of SV_AirAccelerate().
+	local float wish_speed = vlen(wish_dir);
+	if(wish_speed > 30) wish_speed = 30;
+	
+	local float current_speed = self.av_dash_vel_x * wish_dir_x + self.av_dash_vel_y * wish_dir_y;
+	local float add_speed = wish_speed - current_speed;
+	
+	if(add_speed <= 0) return;
+	
+	local float sv_accelerate = cvar("sv_accelerate");
+	local float accel_speed = sv_accelerate * wish_speed * frametime;
+	if (accel_speed > add_speed) accel_speed = add_speed;
+	
+	self.av_dash_vel = self.av_dash_vel + (wish_dir * accel_speed);
+}
+
+void() AV_DashUpdate = {
+	if(!(self.flags & FL_DASHING)) return;
+	
+	if(self.velocity_z > 0){
+		self.flags = self.flags - FL_DASHING;
+		return;
+	}
+	
+	//Get player's walk input.
+	local vector wasd;
+	wasd = self.movement;
+	
+	//Get player's viewing direction.
+	makevectors(self.angles);
+	local vector dir = v_forward;
+	dir_z = 0;
+	dir = normalize(dir);
+	
+	//Rotate walk input towards viewing direction.
+	local vector wish_dir;
+	wish_dir_x = wasd_x * dir_x + wasd_y * dir_y;
+	wish_dir_y = wasd_x * dir_y - wasd_y * dir_x;
+	
+	AV_Accelerate(wish_dir * 0.1);
+	self.velocity = self.av_dash_vel;
+}
