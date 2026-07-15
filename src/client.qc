@@ -1015,6 +1015,11 @@ void() PutClientInServer =
     stuffcmd(self, "-attack\n"); // prevent shooting after respawning
 };
 
+// GameHosted(): A SPIKEDAO extensio.
+
+void() GameHosted = {
+	AV_UpdateWeaponIcon();
+};
 
 /*
 =============================================================================
@@ -1544,7 +1549,7 @@ void() PlayerPreThink =
 		if(self.dash_count > 0) self.dash_cooldown = time + AV_DASH_COOLDOWN;
 		self.dash_count = self.dash_count - 1;
 	}
-	
+
 	AV_SkateUpdate();
 	AV_DashUpdate();
 	AV_UpdateDashHUD();

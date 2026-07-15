@@ -1,34 +1,31 @@
 void() feijao_explode =
 {
-	local entity tgt = self.movetarget;
+	local entity tgt = self.enemy;
 	
-	if(tgt.health <= 0){
-		tgt.feijao_manager = 0;
-		tgt.feijao_count   = 0;
+	tgt.feijao_manager	= 0;
+	tgt.feijao_count	= 0;
+	tgt.effects			= 0;
+	self.effects		= 0;
+	
+	if(tgt.health <= 0){	
 		remove(self);
 		return;
 	}
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.movetarget.origin_x);
-	WriteCoord (MSG_BROADCAST, self.movetarget.origin_y);
-	WriteCoord (MSG_BROADCAST, self.movetarget.origin_z);
+	WriteCoord (MSG_BROADCAST, self.enemy.origin_x);
+	WriteCoord (MSG_BROADCAST, self.enemy.origin_y);
+	WriteCoord (MSG_BROADCAST, self.enemy.origin_z);
 	
 	T_RadiusDamage (self, self.owner, tgt.feijao_count * 20, DMGTYPE_EXPLOSION, 0);
-	
-	tgt.feijao_manager = 0;
-	tgt.feijao_count   = 0;
-	
-	tgt.effects = 0;
 	
 	remove(self);
 }
 
 float AV_FEIJAO_TIME = 0.45;
 
-void() feijao_touch =
-{
+void() feijao_touch = {
 	if (other == self.owner)			return;
 	if (other.solid == SOLID_TRIGGER)	return;
 
@@ -57,15 +54,14 @@ void() feijao_touch =
 	setmodel(self, "");
 	setsize(self, '-8 -8 -8', '8 8 8');
 	
-	self.movetarget = other;
+	self.enemy = other;
 	other.feijao_manager = self;
 	
 	self.think = feijao_explode;
 	self.nextthink = time + AV_FEIJAO_TIME;
 };
 
-void(vector org, vector dir) feijao_launch =
-{
+void(vector org, vector dir) feijao_launch = {
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
@@ -85,8 +81,7 @@ void(vector org, vector dir) feijao_launch =
 	newmis.velocity = dir * 1000;
 };
 
-void() W_FireFeijao =
-{
+void() W_FireFeijao = {
 	local vector	dir;
 	
 	sound (self, CHAN_WEAPON, "weapons/feijoada.wav", 1, ATTN_NORM);
