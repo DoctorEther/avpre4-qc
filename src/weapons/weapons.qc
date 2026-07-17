@@ -447,11 +447,16 @@ void() spike_touch =
 		return;
 	}
 	
+
+	float damage;
+	if (self.dmg) damage = self.dmg;
+	else damage = 9;
+
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (9);
-		T_Damage (other, self, self.owner, 9, DMGTYPE_BALLISTIC);
+		spawn_touchblood (damage);
+		T_Damage (other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -485,12 +490,16 @@ void() superspike_touch =
 		remove(self);
 		return;
 	}
+
+	float damage;
+	if (self.dmg) damage = self.dmg;
+	else damage = 18;
 	
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (18);
-		T_Damage (other, self, self.owner, 18, DMGTYPE_BALLISTIC);
+		spawn_touchblood (damage);
+		T_Damage (other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
