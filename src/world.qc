@@ -404,8 +404,32 @@ void() worldspawn =
 	lightstyle(63, "a");
 };
 
+nosave float loadsavegamecallback_done;
+
+void() LoadSaveGameCallback =
+{
+	entity e;
+
+	e = find(world, classname, "player");
+	while (e) {
+		if (e.av_camera && e.av_camera_active) {
+			msg_entity = e;
+			WriteByte(MSG_ONE, 5);
+			WriteEntity(MSG_ONE, e.av_camera);
+		}
+		e = find(e, classname, "player");
+	}
+
+	dprint("oi\n");
+
+	loadsavegamecallback_done = 1;
+	
+} 
+
 void() StartFrame =
 {
+
+	framecount = framecount + 1;
 	teamplay = cvar("teamplay");
 	skill = cvar("skill");
 	cheats_allowed = cvar("sv_cheats");
@@ -418,8 +442,13 @@ void() StartFrame =
     } else {
         cvar_set("campaign", ftos(campaign));
     }
+
+	if (framecount == 3)
+		loadsavegamecallback_done = 1; //if this variable ever gets to zero again that means a savegame was loaded
+
+	if(!loadsavegamecallback_done && framecount > 3)
+		LoadSaveGameCallback();
     
-	framecount = framecount + 1;
 };
 
 /*

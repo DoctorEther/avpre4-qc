@@ -44,16 +44,64 @@ void() AV_SkateUpdate = {
 	self.velocity_y = r_vec_y * s_speed;
 };
 
-void() AV_SwitchSkate = {
-	self.av_skating = !self.av_skating;
-	
-	if(self.av_skating != self.av_camera_active) AV_SwitchCam();
-	
-	if(self.av_skating){
-		setmodel(self, "progs/splayer.mdl");
-	}else{
-		setmodel(self, "progs/player.mdl");
-	}
-	
+void(entity plr) AV_SkateOn = {
+	entity tmp = self;
+	self = plr;
+
+	self.av_skating = TRUE;
+	AV_CameraOn();
+
+	setmodel(self, "progs/splayer.mdl");
+	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
+
 	modelindex_player = self.modelindex;
+
+	self = tmp;
+}
+
+void(entity plr) AV_SkateOff = {
+	entity tmp = self;
+	self = plr;
+
+	self.av_skating = FALSE;
+	AV_CameraOff();
+
+	setmodel(self, "progs/player.mdl");
+	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	modelindex_player = self.modelindex;
+
+	self = tmp;
+}
+
+void() AV_SwitchSkate = {
+	if (self.av_skating)
+		AV_SkateOff(self);
+	else
+		AV_SkateOn(self);
+};
+
+
+//=================================================================================================
+
+
+void() skate_touch = {
+	if (self.estate != STATE_ACTIVE) return;
+	if (other.classname != "player") return;
+	// state 0 = turns skating ON, state 1 = turns skating OFF
+	// so state and av_skating need to be different for trigger to act
+
+	if (self.state == 0 && !other.av_skating) {
+		AV_SkateOn(other);
+	}
+	else if (self.state == 1 && other.av_skating) {
+		AV_SkateOff(other);
+	}
+};
+
+void() trigger_skate = {
+	InitTrigger();
+    self.touch = skate_touch;
+
+	SUB_CheckWaiting();
 };
