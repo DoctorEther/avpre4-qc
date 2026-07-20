@@ -628,6 +628,7 @@ float	AS_MISSILE		= 4;
 //
 .float		walkframe;
 
+.float 		intended_attack_finished;
 .float 		attack_finished;
 .float		pain_finished;
 

@@ -88,15 +88,15 @@ void() hk_idle_sound;
 //   double jump v_z  = 380  → additional 90.2u, total ~135.8u above ground
 //   player bbox      = -24 to +32 (56u tall), origin 24u above ground
 //
-void(float yaw_offset, float spawn_z_offset, float pitch) hknight_shot_dir =
+void(float yaw, float spawn_z_offset, float pitch, float vel, float damage) hknight_fire_shot =
 {
 	local	vector	org, vec, ang;
 
 	// Use makevectors to get a horizontal direction for the given yaw.
 	// pitch=0, yaw=self.angles_y+offset, roll=0 -> v_forward is flat (z~=0).
 	ang_x = pitch;
-	// yaw_offset é ângulo ABSOLUTO no mundo — não relativo ao facing do inimigo.
-	ang_y = yaw_offset;
+	// yaw é ângulo ABSOLUTO no mundo — não relativo ao facing do inimigo.
+	ang_y = yaw;
 	ang_z = 0;
 	makevectors(ang);
 	vec = v_forward;
@@ -112,7 +112,9 @@ void(float yaw_offset, float spawn_z_offset, float pitch) hknight_shot_dir =
 	newmis.classname = "knightspike";
 	setmodel (newmis, "progs/k_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
-	newmis.velocity = vec * 300;
+	newmis.velocity = vec * vel;
+	newmis.dmg = damage;
+
 	if (cvar("pr_checkextension"))
 		if (checkextension("EX_EXTENDED_EF"))
 			newmis.effects = newmis.effects | EF_CANDLELIGHT;
@@ -126,11 +128,11 @@ void(float yaw_offset, float spawn_z_offset, float pitch) hknight_shot_dir =
 void() hknight_ring_shot =
 {
 	// +8 from origin = 32u above ground (waist height)
-	vector angletoenemy = vectoangles(self.origin - self.enemy.origin);
+	vector angletoenemy = vectoangles(self.enemy.origin - self.origin);
+	angletoenemy_x = -angletoenemy_x;
 
-
-	for (float i = 0; i < 36; i++) {
-		hknight_shot_dir (i * 10,  8, angletoenemy_x);
+	for (float i = (angletoenemy_y - 45)/5; i < (angletoenemy_y + 45)/5; i++) {
+		hknight_fire_shot (i * 5,  8, angletoenemy_x, 300, 9);
 	}
 
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
@@ -142,19 +144,45 @@ void() hknight_ring_shot =
 // -----------------------------------------------------------------------
 void() hknight_dualring_shot =
 {
-	vector angletoenemy = vectoangles(self.origin - self.enemy.origin);
+	vector angletoenemy = vectoangles(self.enemy.origin - self.origin);
+	angletoenemy_x = -angletoenemy_x;
 
 	for (float i = 0; i < 36; i++) {
 		// LOW ring — 20u above ground
-		hknight_shot_dir (i * 10,  -4, angletoenemy_x);
+		hknight_fire_shot (i * 10,  -4, angletoenemy_x, 300, 9);
 		// HIGH ring — 80u above ground
-		hknight_shot_dir (i * 10,  24, angletoenemy_x - 5);
+		hknight_fire_shot (i * 10,  24, angletoenemy_x - 5, 300, 9);
 	}
 
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
 
-// Legacy single-direction shot kept for reference (unused by new attacks)
+void() hknight_vert_shot =
+{
+
+	float projDamage = 2;
+	float projSpeed = 600;
+	float leadTime = vlen(self.enemy.origin - self.origin)/projSpeed/2;
+
+	vector angletoenemy = vectoangles(self.enemy.origin + self.enemy.velocity*leadTime - self.origin);
+	angletoenemy_x = -angletoenemy_x;
+
+	for (float i = (angletoenemy_y - 5); i < (angletoenemy_y + 5); i = i + 5) {
+		
+		hknight_fire_shot (i,  -4, angletoenemy_x+2, projSpeed, projDamage);
+		hknight_fire_shot (i ,  0, angletoenemy_x, projSpeed, projDamage);
+		hknight_fire_shot (i,  4, angletoenemy_x-2, projSpeed, projDamage);
+		hknight_fire_shot (i,  8, angletoenemy_x-4, projSpeed, projDamage);
+		hknight_fire_shot (i,  12, angletoenemy_x-6, projSpeed, projDamage);
+		hknight_fire_shot (i,  16, angletoenemy_x-8, projSpeed, projDamage);
+		hknight_fire_shot (i,  20, angletoenemy_x-10, projSpeed, projDamage);
+	}
+
+	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
+};
+
+// Legacy single-direction shot
+
 void(float offset) hknight_shot =
 {
 	local	vector	offang;
@@ -356,6 +384,16 @@ void() hknight_die =
 		hknight_dieb1 ();
 };
 
+void() hknight_magic = {
+	float r = random();
+
+	if (enemy_range == RANGE_NEAR && r < 0.75) hknight_magicb1(); // vertical shot
+	else if (r < 0.5) hknight_magicc1(); // dual ring
+	else hknight_magica1(); // ringshot
+	
+	
+	self.intended_attack_finished = random();
+}
 
 //============================================================================
 
@@ -384,7 +422,7 @@ void()	hknight_magicb5 =[	$magicb5,	hknight_magicb6	] {ai_face();};
 void()	hknight_magicb6 =[	$magicb6,	hknight_magicb7	] {ai_face();};
 void()	hknight_magicb7 =[	$magicb7,	hknight_magicb8	] {ai_face();};
 void()	hknight_magicb8 =[	$magicb8,	hknight_magicb9	] {ai_face();};
-void()	hknight_magicb9 =[	$magicb9,	hknight_magicb10] {hknight_ring_shot();};
+void()	hknight_magicb9 =[	$magicb9,	hknight_magicb10] {hknight_vert_shot();};
 void()	hknight_magicb10 =[	$magicb10,	hknight_magicb11] {ai_face();};
 void()	hknight_magicb11 =[	$magicb11,	hknight_magicb12] {ai_face();};
 void()	hknight_magicb12 =[	$magicb12,	hknight_magicb13] {ai_face();};
@@ -547,7 +585,7 @@ void() hknight_pause =
 	self.th_walk = hknight_walk1;
 	self.th_run = hknight_run1;
 	self.th_melee = hknight_melee;
-	self.th_missile = hknight_magicc1;
+	self.th_missile = hknight_magic;
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
 	self.use = SUB_Null;
@@ -648,7 +686,7 @@ void() monster_hell_knight =
 		self.th_walk = hknight_walk1;
 		self.th_run = hknight_run1;
 		self.th_melee = hknight_melee;
-		self.th_missile = hknight_magicc1;
+		self.th_missile = hknight_magic;
 		self.th_pain = hknight_pain;
 		self.th_die = hknight_die;
 	
