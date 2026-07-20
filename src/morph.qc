@@ -286,44 +286,14 @@ void() morph_dualring =
 	s = 5; // 360 / 72 projéteis por anel — impenetrável
 
 	// LOW  -4u (20u acima do chão)
-	morph_ring_shot_dir (s* 0,  -4);  morph_ring_shot_dir (s* 1,  -4);  morph_ring_shot_dir (s* 2,  -4);  morph_ring_shot_dir (s* 3,  -4);
-	morph_ring_shot_dir (s* 4,  -4);  morph_ring_shot_dir (s* 5,  -4);  morph_ring_shot_dir (s* 6,  -4);  morph_ring_shot_dir (s* 7,  -4);
-	morph_ring_shot_dir (s* 8,  -4);  morph_ring_shot_dir (s* 9,  -4);  morph_ring_shot_dir (s*10,  -4);  morph_ring_shot_dir (s*11,  -4);
-	morph_ring_shot_dir (s*12,  -4);  morph_ring_shot_dir (s*13,  -4);  morph_ring_shot_dir (s*14,  -4);  morph_ring_shot_dir (s*15,  -4);
-	morph_ring_shot_dir (s*16,  -4);  morph_ring_shot_dir (s*17,  -4);  morph_ring_shot_dir (s*18,  -4);  morph_ring_shot_dir (s*19,  -4);
-	morph_ring_shot_dir (s*20,  -4);  morph_ring_shot_dir (s*21,  -4);  morph_ring_shot_dir (s*22,  -4);  morph_ring_shot_dir (s*23,  -4);
-	morph_ring_shot_dir (s*24,  -4);  morph_ring_shot_dir (s*25,  -4);  morph_ring_shot_dir (s*26,  -4);  morph_ring_shot_dir (s*27,  -4);
-	morph_ring_shot_dir (s*28,  -4);  morph_ring_shot_dir (s*29,  -4);  morph_ring_shot_dir (s*30,  -4);  morph_ring_shot_dir (s*31,  -4);
-	morph_ring_shot_dir (s*32,  -4);  morph_ring_shot_dir (s*33,  -4);  morph_ring_shot_dir (s*34,  -4);  morph_ring_shot_dir (s*35,  -4);
-	morph_ring_shot_dir (s*36,  -4);  morph_ring_shot_dir (s*37,  -4);  morph_ring_shot_dir (s*38,  -4);  morph_ring_shot_dir (s*39,  -4);
-	morph_ring_shot_dir (s*40,  -4);  morph_ring_shot_dir (s*41,  -4);  morph_ring_shot_dir (s*42,  -4);  morph_ring_shot_dir (s*43,  -4);
-	morph_ring_shot_dir (s*44,  -4);  morph_ring_shot_dir (s*45,  -4);  morph_ring_shot_dir (s*46,  -4);  morph_ring_shot_dir (s*47,  -4);
-	morph_ring_shot_dir (s*48,  -4);  morph_ring_shot_dir (s*49,  -4);  morph_ring_shot_dir (s*50,  -4);  morph_ring_shot_dir (s*51,  -4);
-	morph_ring_shot_dir (s*52,  -4);  morph_ring_shot_dir (s*53,  -4);  morph_ring_shot_dir (s*54,  -4);  morph_ring_shot_dir (s*55,  -4);
-	morph_ring_shot_dir (s*56,  -4);  morph_ring_shot_dir (s*57,  -4);  morph_ring_shot_dir (s*58,  -4);  morph_ring_shot_dir (s*59,  -4);
-	morph_ring_shot_dir (s*60,  -4);  morph_ring_shot_dir (s*61,  -4);  morph_ring_shot_dir (s*62,  -4);  morph_ring_shot_dir (s*63,  -4);
-	morph_ring_shot_dir (s*64,  -4);  morph_ring_shot_dir (s*65,  -4);  morph_ring_shot_dir (s*66,  -4);  morph_ring_shot_dir (s*67,  -4);
-	morph_ring_shot_dir (s*68,  -4);  morph_ring_shot_dir (s*69,  -4);  morph_ring_shot_dir (s*70,  -4);  morph_ring_shot_dir (s*71,  -4);
+	for (float i = 0; i < 72; i++) {
+		morph_ring_shot_dir (s* i,  -4);
+	}
 
 	// HIGH +56u (80u acima do chão)
-	morph_ring_shot_dir (s* 0,  56);  morph_ring_shot_dir (s* 1,  56);  morph_ring_shot_dir (s* 2,  56);  morph_ring_shot_dir (s* 3,  56);
-	morph_ring_shot_dir (s* 4,  56);  morph_ring_shot_dir (s* 5,  56);  morph_ring_shot_dir (s* 6,  56);  morph_ring_shot_dir (s* 7,  56);
-	morph_ring_shot_dir (s* 8,  56);  morph_ring_shot_dir (s* 9,  56);  morph_ring_shot_dir (s*10,  56);  morph_ring_shot_dir (s*11,  56);
-	morph_ring_shot_dir (s*12,  56);  morph_ring_shot_dir (s*13,  56);  morph_ring_shot_dir (s*14,  56);  morph_ring_shot_dir (s*15,  56);
-	morph_ring_shot_dir (s*16,  56);  morph_ring_shot_dir (s*17,  56);  morph_ring_shot_dir (s*18,  56);  morph_ring_shot_dir (s*19,  56);
-	morph_ring_shot_dir (s*20,  56);  morph_ring_shot_dir (s*21,  56);  morph_ring_shot_dir (s*22,  56);  morph_ring_shot_dir (s*23,  56);
-	morph_ring_shot_dir (s*24,  56);  morph_ring_shot_dir (s*25,  56);  morph_ring_shot_dir (s*26,  56);  morph_ring_shot_dir (s*27,  56);
-	morph_ring_shot_dir (s*28,  56);  morph_ring_shot_dir (s*29,  56);  morph_ring_shot_dir (s*30,  56);  morph_ring_shot_dir (s*31,  56);
-	morph_ring_shot_dir (s*32,  56);  morph_ring_shot_dir (s*33,  56);  morph_ring_shot_dir (s*34,  56);  morph_ring_shot_dir (s*35,  56);
-	morph_ring_shot_dir (s*36,  56);  morph_ring_shot_dir (s*37,  56);  morph_ring_shot_dir (s*38,  56);  morph_ring_shot_dir (s*39,  56);
-	morph_ring_shot_dir (s*40,  56);  morph_ring_shot_dir (s*41,  56);  morph_ring_shot_dir (s*42,  56);  morph_ring_shot_dir (s*43,  56);
-	morph_ring_shot_dir (s*44,  56);  morph_ring_shot_dir (s*45,  56);  morph_ring_shot_dir (s*46,  56);  morph_ring_shot_dir (s*47,  56);
-	morph_ring_shot_dir (s*48,  56);  morph_ring_shot_dir (s*49,  56);  morph_ring_shot_dir (s*50,  56);  morph_ring_shot_dir (s*51,  56);
-	morph_ring_shot_dir (s*52,  56);  morph_ring_shot_dir (s*53,  56);  morph_ring_shot_dir (s*54,  56);  morph_ring_shot_dir (s*55,  56);
-	morph_ring_shot_dir (s*56,  56);  morph_ring_shot_dir (s*57,  56);  morph_ring_shot_dir (s*58,  56);  morph_ring_shot_dir (s*59,  56);
-	morph_ring_shot_dir (s*60,  56);  morph_ring_shot_dir (s*61,  56);  morph_ring_shot_dir (s*62,  56);  morph_ring_shot_dir (s*63,  56);
-	morph_ring_shot_dir (s*64,  56);  morph_ring_shot_dir (s*65,  56);  morph_ring_shot_dir (s*66,  56);  morph_ring_shot_dir (s*67,  56);
-	morph_ring_shot_dir (s*68,  56);  morph_ring_shot_dir (s*69,  56);  morph_ring_shot_dir (s*70,  56);  morph_ring_shot_dir (s*71,  56);
+	for (float i = 0; i < 72; i++) {
+		morph_ring_shot_dir (s* i,  32);
+	}
 
 	sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
 };
@@ -331,13 +301,13 @@ void() morph_dualring =
 // Disparo no frame 3 — só 2 frames de windup visual
 void() morph_ringattack01 = [ $mfatc01, morph_ringattack02 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack02 = [ $mfatc02, morph_ringattack03 ] { ai_face(); self.nextthink = time + 0.08; };
-void() morph_ringattack03 = [ $mfatc03, morph_ringattack04 ] { morph_dualring(); self.nextthink = time + 0.08; };
+void() morph_ringattack03 = [ $mfatc03, morph_ringattack04 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack04 = [ $mfatc04, morph_ringattack05 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack05 = [ $mfatc05, morph_ringattack06 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack06 = [ $mfatc06, morph_ringattack07 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack07 = [ $mfatc07, morph_ringattack08 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack08 = [ $mfatc08, morph_ringattack09 ] { ai_face(); self.nextthink = time + 0.08; };
-void() morph_ringattack09 = [ $mfatc09, morph_ringattack10 ] { ai_face(); self.nextthink = time + 0.08; };
+void() morph_ringattack09 = [ $mfatc09, morph_ringattack10 ] { morph_dualring(); self.nextthink = time + 0.08;};
 void() morph_ringattack10 = [ $mfatc10, morph_ringattack11 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack11 = [ $mfatc11, morph_ringattack12 ] { ai_face(); self.nextthink = time + 0.08; };
 void() morph_ringattack12 = [ $mfatc12, morph_ringattack13 ] { ai_face(); self.nextthink = time + 0.08; };
