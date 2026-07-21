@@ -99,3 +99,71 @@ float(float value, float minValue, float maxValue) clamp = {
 
 	return value;
 };
+
+float(float a) saturate = { return clamp(a, 0, 1); }
+
+vector(vector a, vector b) cross_product = {
+	vector ret;
+	ret_x = a_y*b_z - a_z*b_y;
+	ret_y = a_z*b_x - a_x*b_z;
+	ret_z = a_x*b_y - a_y*b_x;
+	return ret;
+}
+
+
+vector(float num) SinCos =
+{
+	local vector angle, vf, vu, vr, result;
+
+	vf = v_forward;
+	vu = v_up;
+	vr = v_right;
+
+	angle = '0 1 0' * num;
+	makevectors(angle);
+	result = [v_forward_y, v_forward_x, v_forward_y / v_forward_x];   // technically SinCosTan
+
+	v_forward = vf;
+	v_up = vu;
+	v_right = vr;
+
+	return result;
+}
+
+float(float num) sin =
+{
+	vector temp;
+	temp = SinCos(num);
+	return temp_x;
+}
+
+float(float num) cos =
+{
+	vector temp;
+	temp = SinCos(num);
+	return temp_y;
+}
+
+float(float num) tan =
+{
+	vector temp;
+	temp = SinCos(num);
+	return temp_x / temp_y;
+}
+ 
+
+// rotates B around A
+vector(vector b, vector a, float r) rotateVectorAround =
+{
+	float sin, cos, dot;
+	vector cross, temp;
+	
+	cross = cross_product(a, b);
+	dot = a*b;
+	
+	temp = SinCos(r);
+	sin = temp_x;
+	cos = temp_y;
+	
+	return b*cos + cross*sin + a*dot*(1-cos);
+}

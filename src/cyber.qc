@@ -9,7 +9,9 @@ $origin 0 0 64
 $base base     
 $skin skin
 
-$frame stand1 stand2 stand3 stand4 stand5 stand6
+$frame stand1 stand2 stand3 stand4 stand5
+
+$frame null1 null2 null3 null4 null5
 
 $frame walk1 walk2 walk3 walk4 walk5 walk6 walk7
 
@@ -89,103 +91,216 @@ void() CyberDemonFireMissile =
 
 void(float offset) CyberMissile =
 { 
-    local   vector  offang; 
-    local   vector  org, vec; 
-        self.effects = self.effects | EF_MUZZLEFLASH;
-	offang = vectoangles (self.enemy.origin - self.origin);
+   local   vector  offang;
+   self.effects = self.effects | EF_MUZZLEFLASH;
+   makevectors(self.angles);
+
+   vector org = self.origin - v_forward*32 + v_right*32 + '0 0 56';
+   float projSpeed = 400;
+
+	float leadTime = vlen(self.enemy.origin - org)/projSpeed/2;
+
+	offang = vectoangles(self.enemy.origin + self.enemy.velocity*leadTime - org);
 	offang_y = offang_y + offset * 3;
 	
-	makevectors (offang);
-
-	org = self.origin - 15*normalize(self.velocity);
+	makevectors(offang);
 
 // set missile speed
-	vec = normalize (v_forward);
-	vec_z = 0 - vec_z + (random() - 0.1)*0.1;
+	vector vel = normalize (v_forward);
+	vel_z = 0 - vel_z + (random() - 0.1)*0.1;
 	
-	launch_spike (org, vec);
-	newmis.classname = "LaunchNails";
+	newmis = spawn ();
+	newmis.classname = "cybermissile";
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;	
+	setorigin (newmis, org);
 	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
-	newmis.velocity = vec*300;
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);	
+	newmis.angles = vectoangles(vel);
+	newmis.touch = spike_touch;
+	newmis.think = SUB_Remove;
+	newmis.nextthink = time + 6;
+	
+	newmis.velocity = vel*projSpeed;
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
 };
 
 
+void() cyber_missile1  =[ $shoot1,     cyber_missile2  ] {ai_face();};
+void() cyber_missile2  =[ $shoot2,     cyber_missile3  ] {ai_face();CyberFireRLG();};
+void() cyber_missile3  =[ $shoot3,     cyber_missile4  ]
+{
+   ai_face();
+   makevectors (self.angles);
+   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
+   if (trace_ent != self.enemy)
+      cyber_missile27 ();
+   if (self.enemy.health <= 0)
+      cyber_missile27 ();
+};
+void() cyber_missile4   =[ $shoot4,    cyber_missile5  ] {ai_face();};
+void() cyber_missile5   =[ $shoot5,    cyber_missile8  ] {ai_face();};
+void() cyber_missile8   =[ $shoot6,    cyber_missile9  ] {ai_face();CyberDemonFireMissile();};
+void() cyber_missile9   =[ $shoot7,    cyber_missile10 ] {ai_face();CyberMissile(0);};
+void() cyber_missile10  =[ $shoot8,    cyber_missile11 ] {ai_face();CyberMissile(1);CyberMissile(-1);CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile11  =[ $shoot8,    cyber_missile12 ] {ai_face();CyberMissile(8);CyberMissile(-8);CyberMissile(3);CyberMissile(-3);};
+void() cyber_missile12  =[ $shoot8,    cyber_missile13 ] {ai_face();};
+void() cyber_missile13  =[ $shoot5,    cyber_missile15 ] 
+{
+   ai_face();
+   makevectors (self.angles);
+   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
+   if (trace_ent != self.enemy)
+      cyber_missile27 ();
+   if (self.enemy.health <= 0)
+      cyber_missile27 ();
+};
+void() cyber_missile15 =[ $shoot6,     cyber_missile16 ] {ai_face();CyberDemonFireMissile();};
+void() cyber_missile16 =[ $shoot7,     cyber_missile17 ] {ai_face();CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile17 =[ $shoot8,     cyber_missile18 ] {ai_face();CyberMissile(-1);CyberMissile(1);CyberMissile(0);CyberMissile(-1);};
+void() cyber_missile18 =[ $shoot8,     cyber_missile19 ] {ai_face();CyberMissile(-4);CyberMissile(4);CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile19 =[ $shoot8,     cyber_missile20 ] {ai_face();};
+void() cyber_missile20 =[ $shoot5,     cyber_missile21 ]
+{
+   ai_face();
+   makevectors (self.angles);
+   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
+   if (trace_ent != self.enemy)
+      cyber_missile27 ();
+   if (self.enemy.health <= 0)
+      cyber_missile27 ();
+};
+void() cyber_missile21 =[ $shoot6,     cyber_missile22 ] {ai_face();CyberDemonFireMissile();};
+void() cyber_missile22 =[ $shoot7,     cyber_missile23 ] {ai_face();CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile23 =[ $shoot8,     cyber_missile24 ] {ai_face();CyberMissile(-3);CyberMissile(3);CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile24 =[ $shoot6,     cyber_missile25 ] {ai_face();CyberMissile(1);CyberMissile(-1);CyberMissile(1);CyberMissile(-1);};
+void() cyber_missile25 =[ $shoot7,     cyber_missile26 ] {ai_face();CyberMissile(-1);CyberMissile(1);};
+void() cyber_missile26 =[ $shoot8,     cyber_missile27 ] {ai_face();CyberMissile(0);};
+void() cyber_missile27 =[ $shoot4,     cyber_missile28 ] {ai_face();};
+void() cyber_missile28 =[ $shoot2,     cyber_run1      ] {ai_face();};
+
+
+
+
+//=================================================================================================
+
+
+
 void() CyberhMissile =
 {
-	local	entity 	missile;
-	local	float	dist, flytime;
-    local	vector	offang;
-	local	vector	org, vec;
-	
-	offang = vectoangles (self.enemy.origin - self.origin);
-	offang_y = offang_y ;
-
-	
-	makevectors (offang);
-
-	org = self.origin + self.mins + self.size*0.1 + v_forward * 1;
-
-
-	dist = vlen (self.enemy.origin - self.origin);
-	flytime = dist * 0.002;
-	if (flytime < 0.1)
-		flytime = 0.1;
-
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound (self, CHAN_WEAPON, "cyber/cyjump.wav", 1, ATTN_NORM);
 
-	missile = spawn ();
+	vector dir = normalize(self.enemy.origin - self.origin);
+	dir_z = 0 - dir_z + (random() - 0.1)*0.1;
+
+	entity missile = spawn();
 	missile.owner = self;
-
-       vec = normalize (v_forward);
-	vec_z = 0 - vec_z + (random() - 0.1)*0.1;
-
-
+	
 	missile.solid = SOLID_BBOX;
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	setmodel (missile, "progs/w_ball.mdl");
+	setsize (missile, '0 0 0', '0 0 0');
+	setorigin(missile, self.origin + '0 0 1');
 
-	setsize (missile, '0 0 0', '0 0 0');		
-
-	missile.origin = self.origin + '0 0 1';
-	missile.velocity = vec * 100;
+	missile.lifetime_finished = time + 5;
+	missile.velocity = dir * 200;
 	missile.avelocity = '200 200 200';
-	missile.nextthink = flytime + time;
-	missile.think = CyberhHome;
+	missile.nextthink = time + 0.2;
+	missile.think = ShalHome2;
 	missile.enemy = self.enemy;
 	missile.touch = CyberhMissileTouch;
 };
 
-void() CyberhHome =
+
+
+void() ShalHome2 =
 {
-	local vector	dir, vtemp;
-	vtemp = self.enemy.origin + '0 0 1';
-	if (self.enemy.health < 1)
-	{
-		remove(self);
+	// a voreball with perfect homing causes combat to effectively stop, forcing the player
+	// to run around around trying to shake it, often backpedaling through lots of empty map.
+	// limiting the voreball's turn rate so they can be dodged and forgotten about makes vores
+	// a more flexible enemy and more useful to the mapper
+	float dist, rate, dot;
+	
+	if (self.lifetime_finished < time) {
+		CyberhMissileExplode();
 		return;
 	}
-	dir = normalize(vtemp - self.origin);
-	if (skill == 3)
-		self.velocity = dir * 100;
-	else
-		self.velocity = dir * 450;
-	self.nextthink = time + 0.3;
-	self.think = CyberhHome;	
-};
 
-void() CyberhMissileTouch =
-{
-	if (other == self.owner)
-		return;		// don't explode on owner
-
-	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 5, DMGTYPE_EXPLOSION);	
-	T_RadiusDamage (self, self.owner, 5, DMGTYPE_EXPLOSION, world);
+	if (self.enemy.health <= 0) {
+		self.think = CyberhMissileExplode;
+		self.nextthink = self.lifetime_finished;
+		//remove(self);
+		return;
+	}
 	
+	if (!self.deadflag) {
+		if (self.owner.health <= 0)		// if our mama dies
+		{
+			self.deadflag = TRUE;
+			//setmodel(self, "progs/proj_voreball2.mdl");	// stop sparkling
+
+			//setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+		}
+	}
+	
+	self.think = ShalHome2;
+	self.nextthink = time + 0.1;
+	rate = 265; // arbitrary number yeah
+	dot = normalize(self.velocity) * normalize(self.enemy.origin - self.origin);
+	
+	// go faster at long distance to close the gap, so snipey vores have a better presence
+	dist = vlen(self.enemy.origin - self.origin);
+	dist = saturate( (dist-200) / 600 );
+	
+	// voreballs headed straight away from the player don't normally seem to be able to pick a direction to 
+	// turn and wobble more or less straight away - amp turn rate in these cases to force a 'decision'
+	if (dot < 0)
+	{
+		rate *= min(1.4, 1.4 + fabs(dot));
+	}
+	self.velocity = 220 * ShalTurnToward(self.enemy.origin, rate);
+	
+	
+	self.velocity *= 1 + dist;
+	self.velocity += [crandom(),crandom(),crandom()] * 16;
+
+
+	self.oldvelocity = self.velocity;	
+}
+
+
+vector(vector targ, float turnrate) ShalTurnToward =
+{
+	vector	vel, aimdir, temp, temp2, out;
+
+	temp = targ + '0 0 10';
+	aimdir = temp - self.origin;
+	aimdir = normalize(aimdir);
+	vel = normalize(self.velocity);
+	
+	temp = cross_product(vel, aimdir);
+	
+	// try to flatten the rotation to the horizontal plane unless the difference is extreme
+	if (fabs(temp_z) > 0.92)
+	{
+		temp_z *= 4;
+		temp = normalize(temp);
+	}
+	out = rotateVectorAround(vel, temp, turnrate * 0.1);
+	
+	// don't turn past the desired direction
+	temp2 = cross_product(out, aimdir);
+	if ((temp * temp2) < 0)
+		return aimdir;
+	return out;
+}
+
+
+void() CyberhMissileExplode = {
+	T_RadiusDamage (self, self.owner, 10, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -198,63 +313,20 @@ void() CyberhMissileTouch =
 	setmodel (self, "progs/s_explod.spr");
 	self.solid = SOLID_NOT;
 	s_explode1 ();
+}
+
+void() CyberhMissileTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (other.classname == "monster_zombie")
+		T_Damage (other, self, self.owner, 5, DMGTYPE_EXPLOSION);
+
+	CyberhMissileExplode();
+
 };
 
-
-
-void() cyber_missile1  =[ $shoot1,     cyber_missile2  ] {ai_face();};
-void() cyber_missile2  =[ $shoot2,     cyber_missile3  ] {ai_face();CyberFireRLG();};
-void() cyber_missile3  =[ $shoot3,     cyber_missile4  ]
-{
-   ai_face();
-   makevectors (self.angles);
-   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
-   if (trace_ent != self.enemy)
-      cyber_missile21 ();
-   if (self.enemy.health <= 0)
-      cyber_missile21 ();
-};
-void() cyber_missile4  =[ $shoot4,     cyber_missile5  ] {ai_face();CyberDemonFireMissile();};
-void() cyber_missile5  =[ $shoot5,     cyber_missile6  ] {ai_face();CyberMissile(0);};
-void() cyber_missile6  =[ $shoot6,     cyber_missile7  ] {ai_face();CyberMissile(1);CyberMissile(-1);CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile7  =[ $shoot7,     cyber_missile8  ] {ai_face();CyberMissile(8);CyberMissile(-8);CyberMissile(3);CyberMissile(-3);};
-void() cyber_missile8  =[ $shoot8,     cyber_missile9  ] {ai_face();};
-void() cyber_missile9  =[ $shoot3,     cyber_missile10 ] 
-{
-   ai_face();
-   makevectors (self.angles);
-   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
-   if (trace_ent != self.enemy)
-      cyber_missile21 ();
-   if (self.enemy.health <= 0)
-      cyber_missile21 ();
-};
-void() cyber_missile10 =[ $shoot4,     cyber_missile11 ] {ai_face();CyberDemonFireMissile();};
-void() cyber_missile11 =[ $shoot5,     cyber_missile12 ] {ai_face();CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile12 =[ $shoot6,     cyber_missile13 ] {ai_face();CyberMissile(-1);CyberMissile(1);CyberMissile(0);CyberMissile(-1);};
-void() cyber_missile13 =[ $shoot7,     cyber_missile14 ] {ai_face();CyberMissile(-4);CyberMissile(4);CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile14 =[ $shoot8,     cyber_missile15 ] {ai_face();};
-void() cyber_missile15 =[ $shoot3,     cyber_missile16 ]
-{
-   ai_face();
-   makevectors (self.angles);
-   traceline (self.origin + '0 0 30' + v_right * -5, self.enemy.origin + '0 0 1', FALSE, self);
-   if (trace_ent != self.enemy)
-      cyber_missile21 ();
-   if (self.enemy.health <= 0)
-      cyber_missile21 ();
-};
-void() cyber_missile16 =[ $shoot4,     cyber_missile17 ] {ai_face();CyberDemonFireMissile();};
-void() cyber_missile17 =[ $shoot5,     cyber_missile18 ] {ai_face();CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile18 =[ $shoot6,     cyber_missile19 ] {ai_face();CyberMissile(-3);CyberMissile(3);CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile19 =[ $shoot7,     cyber_missile20 ] {ai_face();CyberMissile(1);CyberMissile(-1);CyberMissile(1);CyberMissile(-1);};
-void() cyber_missile20 =[ $shoot8,     cyber_missile21 ] {ai_face();CyberMissile(-1);CyberMissile(1);};
-void() cyber_missile21 =[ $shoot3,     cyber_missile22 ] {ai_face();CyberMissile(0);};
-void() cyber_missile22 =[ $shoot2,     cyber_missile23 ] {ai_face();};
-void() cyber_missile23 =[ $shoot1,     cyber_run1 ]
-{
-   ai_face();
-};
 
 void() cyber_hmissile1  =[ $shoot1,     cyber_hmissile2  ] {ai_face();};
 void() cyber_hmissile2  =[ $shoot2,     cyber_hmissile3  ] {ai_face();};
@@ -310,6 +382,39 @@ void() cyber_hmissile23 =[ $shoot1,     cyber_run1 ]
    ai_face();
 };
 
+
+//=================================================================================================
+
+
+void(float offset) cyber_laser =
+{
+	local	vector	offang;
+	local	vector	org, vec;
+	
+	offang = vectoangles (self.enemy.origin - self.origin);
+	offang_y = offang_y + offset * 6;
+	
+	makevectors (offang);
+
+	org = self.origin + self.mins + self.size*0.5 + v_forward * 20;
+
+	vec = normalize (v_forward);
+	vec_z = 0 - vec_z + (random() - 0.5)*0.1;
+	
+	launch_spike (org, vec);
+	newmis.dmg = 5;
+	newmis.classname = "knightspike";
+	setmodel (newmis, "progs/k_spike.mdl");
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	newmis.velocity = vec*250;
+
+	if (cvar("pr_checkextension"))
+		if (checkextension("EX_EXTENDED_EF"))
+			newmis.effects = newmis.effects | EF_CANDLELIGHT;
+
+	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
+};
+
 void() cyber_lmissile1  =[ $shoot1,     cyber_lmissile2  ] {ai_face();};
 void() cyber_lmissile2  =[ $shoot2,     cyber_lmissile3  ] {ai_face();};
 void() cyber_lmissile3  =[ $shoot3,     cyber_lmissile4  ]
@@ -323,9 +428,16 @@ void() cyber_lmissile3  =[ $shoot3,     cyber_lmissile4  ]
       cyber_missile21 ();
 };
 void() cyber_lmissile4  =[ $shoot4,     cyber_lmissile5  ] {ai_face();CyberFireRLG();};
-void() cyber_lmissile5  =[ $shoot5,     cyber_lmissile6  ] {ai_face();hknight_shot(-1);hknight_shot(-1);hknight_shot(-15);hknight_shot(-1);hknight_shot(-1);hknight_shot(-30);hknight_shot(-35);hknight_shot(-40);hknight_shot(35);hknight_shot(30);hknight_shot(1);hknight_shot(1);hknight_shot(15);hknight_shot(1);hknight_shot(1);hknight_shot(0);};
-void() cyber_lmissile6  =[ $shoot6,     cyber_lmissile7  ] {ai_face();hknight_shot(-3);hknight_shot(-7);hknight_shot(-13);hknight_shot(-17);hknight_shot(-23);hknight_shot(-27);hknight_shot(-33);hknight_shot(-37);hknight_shot(32);hknight_shot(28);hknight_shot(22);hknight_shot(18);hknight_shot(12);hknight_shot(8);hknight_shot(3);hknight_shot(1);};
-void() cyber_lmissile7  =[ $shoot7,     cyber_lmissile8  ] {ai_face();hknight_shot(-1);hknight_shot(-1);hknight_shot(-15);hknight_shot(-1);hknight_shot(-1);hknight_shot(-30);hknight_shot(-35);hknight_shot(-40);hknight_shot(35);hknight_shot(30);hknight_shot(1);hknight_shot(1);hknight_shot(15);hknight_shot(1);hknight_shot(1);hknight_shot(0);};
+void() cyber_lmissile5  =[ $shoot5,     cyber_lmissile6  ] {
+		ai_face();
+		cyber_laser(-1);cyber_laser(-1);cyber_laser(-15);
+		cyber_laser(-1);cyber_laser(-1);cyber_laser(-30);
+		cyber_laser(-35);cyber_laser(-40);cyber_laser(35);
+		cyber_laser(30);cyber_laser(1);cyber_laser(1);
+		cyber_laser(15);cyber_laser(1);cyber_laser(1);
+		cyber_laser(0);};
+void() cyber_lmissile6  =[ $shoot6,     cyber_lmissile7  ] {ai_face();cyber_laser(-3);cyber_laser(-7);cyber_laser(-13);cyber_laser(-17);cyber_laser(-23);cyber_laser(-27);cyber_laser(-33);cyber_laser(-37);cyber_laser(32);cyber_laser(28);cyber_laser(22);cyber_laser(18);cyber_laser(12);cyber_laser(8);cyber_laser(3);cyber_laser(1);};
+void() cyber_lmissile7  =[ $shoot7,     cyber_lmissile8  ] {ai_face();cyber_laser(-1);cyber_laser(-1);cyber_laser(-15);cyber_laser(-1);cyber_laser(-1);cyber_laser(-30);cyber_laser(-35);cyber_laser(-40);cyber_laser(35);cyber_laser(30);cyber_laser(1);cyber_laser(1);cyber_laser(15);cyber_laser(1);cyber_laser(1);cyber_laser(0);};
 void() cyber_lmissile8  =[ $shoot8,     cyber_lmissile9  ] {ai_face();};
 void() cyber_lmissile9  =[ $shoot3,     cyber_lmissile10 ] 
 {
@@ -338,9 +450,9 @@ void() cyber_lmissile9  =[ $shoot3,     cyber_lmissile10 ]
       cyber_missile21 ();
 };
 void() cyber_lmissile10 =[ $shoot4,     cyber_lmissile11 ] {ai_face();CyberFireRLG();};
-void() cyber_lmissile11 =[ $shoot5,     cyber_lmissile12 ] {ai_face();hknight_shot(-3);hknight_shot(-7);hknight_shot(-1);hknight_shot(-17);hknight_shot(-23);hknight_shot(-2);hknight_shot(-3);hknight_shot(-3);hknight_shot(32);hknight_shot(28);hknight_shot(22);hknight_shot(1);hknight_shot(1);hknight_shot(8);hknight_shot(3);hknight_shot(1);};
+void() cyber_lmissile11 =[ $shoot5,     cyber_lmissile12 ] {ai_face();cyber_laser(-3);cyber_laser(-7);cyber_laser(-1);cyber_laser(-17);cyber_laser(-23);cyber_laser(-2);cyber_laser(-3);cyber_laser(-3);cyber_laser(32);cyber_laser(28);cyber_laser(22);cyber_laser(1);cyber_laser(1);cyber_laser(8);cyber_laser(3);cyber_laser(1);};
 void() cyber_lmissile12 =[ $shoot6,     cyber_lmissile13 ] {ai_face();CyberFireRLG();};
-void() cyber_lmissile13 =[ $shoot7,     cyber_lmissile14 ] {ai_face();hknight_shot(-3);hknight_shot(-7);hknight_shot(-13);hknight_shot(-1);hknight_shot(-2);hknight_shot(-2);hknight_shot(-3);hknight_shot(-3);hknight_shot(3);hknight_shot(2);hknight_shot(2);hknight_shot(1);hknight_shot(12);hknight_shot(8);hknight_shot(3);hknight_shot(1);};
+void() cyber_lmissile13 =[ $shoot7,     cyber_lmissile14 ] {ai_face();cyber_laser(-3);cyber_laser(-7);cyber_laser(-13);cyber_laser(-1);cyber_laser(-2);cyber_laser(-2);cyber_laser(-3);cyber_laser(-3);cyber_laser(3);cyber_laser(2);cyber_laser(2);cyber_laser(1);cyber_laser(12);cyber_laser(8);cyber_laser(3);cyber_laser(1);};
 void() cyber_lmissile14 =[ $shoot8,     cyber_lmissile15 ] {ai_face();};
 void() cyber_lmissile15 =[ $shoot3,     cyber_lmissile16 ]
 {
@@ -354,9 +466,9 @@ void() cyber_lmissile15 =[ $shoot3,     cyber_lmissile16 ]
 };
 void() cyber_lmissile16 =[ $shoot4,     cyber_lmissile17 ] {ai_face();};
 void() cyber_lmissile17 =[ $shoot5,     cyber_lmissile18 ] {ai_face();CyberFireRLG();};
-void() cyber_lmissile18 =[ $shoot6,     cyber_lmissile19 ] {ai_face();hknight_shot(-3);hknight_shot(-7);hknight_shot(-13);hknight_shot(-17);hknight_shot(-23);hknight_shot(-27);hknight_shot(-33);hknight_shot(-37);hknight_shot(32);hknight_shot(28);hknight_shot(22);hknight_shot(18);hknight_shot(12);hknight_shot(8);hknight_shot(3);hknight_shot(1);};
-void() cyber_lmissile19 =[ $shoot7,     cyber_lmissile20 ] {ai_face();hknight_shot(-1);hknight_shot(-1);hknight_shot(-15);hknight_shot(-1);hknight_shot(-1);hknight_shot(-30);hknight_shot(-35);hknight_shot(-40);hknight_shot(35);hknight_shot(30);hknight_shot(1);hknight_shot(1);hknight_shot(15);hknight_shot(1);hknight_shot(1);hknight_shot(0);};
-void() cyber_lmissile20 =[ $shoot8,     cyber_lmissile21 ] {ai_face();hknight_shot(-3);hknight_shot(-7);hknight_shot(-13);hknight_shot(-17);hknight_shot(-23);hknight_shot(-27);hknight_shot(-33);hknight_shot(-37);hknight_shot(32);hknight_shot(28);hknight_shot(22);hknight_shot(18);hknight_shot(12);hknight_shot(8);hknight_shot(3);hknight_shot(1);};
+void() cyber_lmissile18 =[ $shoot6,     cyber_lmissile19 ] {ai_face();cyber_laser(-3);cyber_laser(-7);cyber_laser(-13);cyber_laser(-17);cyber_laser(-23);cyber_laser(-27);cyber_laser(-33);cyber_laser(-37);cyber_laser(32);cyber_laser(28);cyber_laser(22);cyber_laser(18);cyber_laser(12);cyber_laser(8);cyber_laser(3);cyber_laser(1);};
+void() cyber_lmissile19 =[ $shoot7,     cyber_lmissile20 ] {ai_face();cyber_laser(-1);cyber_laser(-1);cyber_laser(-15);cyber_laser(-1);cyber_laser(-1);cyber_laser(-30);cyber_laser(-35);cyber_laser(-40);cyber_laser(35);cyber_laser(30);cyber_laser(1);cyber_laser(1);cyber_laser(15);cyber_laser(1);cyber_laser(1);cyber_laser(0);};
+void() cyber_lmissile20 =[ $shoot8,     cyber_lmissile21 ] {ai_face();cyber_laser(-3);cyber_laser(-7);cyber_laser(-13);cyber_laser(-17);cyber_laser(-23);cyber_laser(-27);cyber_laser(-33);cyber_laser(-37);cyber_laser(32);cyber_laser(28);cyber_laser(22);cyber_laser(18);cyber_laser(12);cyber_laser(8);cyber_laser(3);cyber_laser(1);};
 void() cyber_lmissile21 =[ $shoot3,     cyber_lmissile22 ] {ai_face();CyberFireRLG();};
 void() cyber_lmissile22 =[ $shoot2,     cyber_lmissile23 ] {ai_face();};
 void() cyber_lmissile23 =[ $shoot1,     cyber_run1 ]
@@ -365,14 +477,15 @@ void() cyber_lmissile23 =[ $shoot1,     cyber_run1 ]
 };
 
 
-void() cyber_attack =
- {      
-       if(random()>0.1)
-               cyber_missile1 ();
-       else if(random()>0.1)
-               cyber_hmissile1 ();
-         else
-               cyber_lmissile1 ();
+void() cyber_attack = {
+	float r = random();
+
+	if (r < 0.4)
+		cyber_missile1();
+	else if (r < 0.7)
+		cyber_hmissile1();
+	else
+		cyber_lmissile1();
  };
 
 
@@ -553,10 +666,8 @@ void() monster_cyber =
 
   setsize (self, '-16 -16 -24', '16 16 40');
    
-   if(skill ==3)
-   	self.health = 4000; // Approximately the Daikon health...
-   else
-	self.health = 4000; // Approximately the Daikon health...
+   
+	self.health = 3000;
    
    self.classname = "monster_cyber";
    self.th_stand   = cyber_stand1;
