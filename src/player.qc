@@ -179,11 +179,15 @@ void()	player_feijaoa = {
 // -------------------------------------------------------
 
 void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_shot2 =	[$shotatt2, player_shot3	] {self.weaponframe=2;};
-void()	player_shot3 =	[$shotatt3, player_shot4	] {self.weaponframe=3;};
-void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4;};
-void()	player_shot5 =	[$shotatt5, player_shot6	] {self.weaponframe=5;};
-void()	player_shot6 =	[$shotatt6, player_run	] {self.weaponframe=6;};
+void()	player_shot2 =	[$shotatt2, player_run	] {self.weaponframe=2;};
+
+
+void()	player_sshot1 =	[$shotatt1, player_sshot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH;};
+void()	player_sshot2 =	[$shotatt2, player_sshot3	] {self.weaponframe=2;};
+void()	player_sshot3 =	[$shotatt3, player_sshot4	] {self.weaponframe=3;};
+void()	player_sshot4 =	[$shotatt4, player_sshot5	] {self.weaponframe=4;};
+void()	player_sshot5 =	[$shotatt5, player_sshot6	] {self.weaponframe=5;};
+void()	player_sshot6 =	[$shotatt6, player_run	] {self.weaponframe=6;};
 
 void()	player_axe1 =	[$axatt1, player_axe2	] {self.weaponframe=1;};
 void()	player_axe2 =	[$axatt2, player_axe3	] {self.weaponframe=2;};

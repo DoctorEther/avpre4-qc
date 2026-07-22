@@ -315,7 +315,7 @@ void() W_Attack =
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
-		player_shot1 ();
+		player_sshot1 ();
 		W_FireSuperShotgun ();
 		self.attack_finished = time + RuneApplyHell(0.549, self); // MODIFICADO: era 0.523, agora 5% mais lento
 	}
