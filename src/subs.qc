@@ -96,7 +96,7 @@ local float		len, traveltime;
 	if (tdest == self.origin)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = self.ltime + 0.1;
+		self.nextthink = getLocalTime() + 0.1;
 		return;
 	}
 		
@@ -112,12 +112,12 @@ local float		len, traveltime;
 	if (traveltime < 0.1)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = self.ltime + 0.1;
+		self.nextthink = getLocalTime() + 0.1;
 		return;
 	}
 	
 // set nextthink to trigger a think when dest is reached
-	self.nextthink = self.ltime + traveltime;
+	self.nextthink = getLocalTime() + traveltime;
 
 // scale the destdelta vector by the time spent traveling to get velocity
 	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
