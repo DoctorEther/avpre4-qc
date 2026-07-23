@@ -167,3 +167,5 @@ vector(vector b, vector a, float r) rotateVectorAround =
 	
 	return b*cos + cross*sin + a*dot*(1-cos);
 }
+
+void(float val) nxth = {self.nextthink = getLocalTime() + val;}

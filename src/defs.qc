@@ -759,7 +759,8 @@ float	AS_MISSILE		= 4;
 // misc
 //
 .float		cnt; 			// misc flag
-	
+.entity  	sibling;		// general usage entity field
+.vector 	prev_origin;
 //
 // subs
 //

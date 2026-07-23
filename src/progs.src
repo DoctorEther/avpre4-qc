@@ -97,6 +97,7 @@ func_road.qc
 morph.qc
 kamikaze.qc
 cyber.qc
+dasher.qc
 
 ending.qc
 mummy.qc
