@@ -1,8 +1,6 @@
 .string path_corner_trigger;
 .string trigger_target;
 
-void() modeltrain_next;
-void() func_modeltrain_find;
 
 void() modeltrain_blocked =
 {
@@ -99,7 +97,7 @@ void() func_modeltrain =
 
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_PUSH;
+	self.movetype = MOVETYPE_NOCLIP;
 	self.blocked = modeltrain_blocked;
 	self.use = modeltrain_use;
 	self.classname = "modeltrain";
