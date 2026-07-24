@@ -1564,8 +1564,7 @@ void() BackpackTouch =
 	other.ammo_cells1 = other.ammo_cells1 + self.ammo_cells1;
 
 	other.ammo_lava_nails = other.ammo_lava_nails + self.ammo_lava_nails;
-	other.ammo_multi_rockets = other.ammo_multi_rockets +
-									self.ammo_multi_rockets;
+	other.ammo_multi_rockets = other.ammo_multi_rockets + self.ammo_multi_rockets;
 	other.ammo_plasma = other.ammo_plasma + self.ammo_plasma;
 	
 	new = self.items;

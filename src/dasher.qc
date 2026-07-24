@@ -240,6 +240,8 @@ void() dasher_dash_start = {
 	self.think = dasher_dash_think;
 	self.nextthink = time + 0.0001;
 
+	kill_dasher_blur();
+	spawn_dasher_blur();
 	self.sibling.think = update_dasher_blur2;
 	self.sibling.sibling.think = update_dasher_blur2;
 	self.sibling.sibling.sibling.think = update_dasher_blur2;
@@ -274,56 +276,37 @@ void() dasher_dash_think = {
 	self.nextthink = time + 0.0001;  //make sure it runs on every server frame
 }
 
+entity() create_blur_entity = {
+	entity ent1 = spawn();
 
-void() spawn_dasher_blur = {
-	makevectors(self.angles);
-	
-	entity ent1 = self.sibling = spawn();
+	ent1.classname = "dasher_blur";
 	ent1.movetype = MOVETYPE_NOCLIP;
 	setmodel(ent1, "progs/dasher.mdl");
 	setsize(ent1, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin(ent1, self.origin + v_right * 32);
+	setorigin(ent1, self.origin);
 
 	ent1.think = update_dasher_blur;
 	ent1.nextthink = time + 0.0001;
 	ent1.air_finished = time + 0.5;
 	ent1.owner = self;
-	//ent1.velocity = -v_forward*64;
 	ent1.frame = self.frame;
 	ent1.angles = self.angles;
 	ent1.alpha = 0.7;
 	ent1.cnt = 1;
 
-	entity ent2 = ent1.sibling = spawn();
-	ent2.movetype = MOVETYPE_NOCLIP;
-	setmodel(ent2, "progs/dasher.mdl");
-	setsize(ent2, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin(ent2, self.origin - v_right * 32);
+	return ent1;
+}
+
+void() spawn_dasher_blur = {
+	makevectors(self.angles);
 	
-	ent2.think = update_dasher_blur;
-	ent2.nextthink = time + 0.0001;
-	ent2.air_finished = time + 0.5;
-	ent2.owner = self;
-	//ent2.velocity = v_forward*64;
-	ent2.frame = self.frame;
-	ent2.angles = self.angles;
-	ent2.alpha = 0.7;
+	entity ent1 = self.sibling = create_blur_entity();
+	ent1.cnt = 1;
+
+	entity ent2 = ent1.sibling = create_blur_entity();
 	ent2.cnt = 2;
 
-	entity ent3 = ent2.sibling = spawn();
-	ent3.movetype = MOVETYPE_NOCLIP;
-	setmodel(ent3, "progs/dasher.mdl");
-	setsize(ent3, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin(ent3, self.origin + v_up * 32);
-
-	ent3.think = update_dasher_blur;
-	ent3.nextthink = time + 0.0001;
-	ent3.air_finished = time + 0.5;
-	ent3.owner = self;
-	//ent3.velocity = -v_up*64;
-	ent3.frame = self.frame;
-	ent3.angles = self.angles;
-	ent3.alpha = 0.7;
+	entity ent3 = ent2.sibling = create_blur_entity();
 	ent3.cnt = 3;
 }
 
@@ -366,12 +349,10 @@ void() update_dasher_blur2 = {
 }
 
 void() kill_dasher_blur = {
-	entity e = self.sibling;
-	if (e) {
-		remove(e.sibling.sibling);
-		remove(e.sibling);
-		remove(e);
-	}
+	if (self.sibling.sibling.sibling.classname == "dasher_blur") remove(self.sibling.sibling.sibling);
+	if (self.sibling.sibling.classname == "dasher_blur") remove(self.sibling.sibling);
+	if (self.sibling.classname == "dasher_blur") remove(self.sibling);
+	
 	self.sibling = world;
 }
 
