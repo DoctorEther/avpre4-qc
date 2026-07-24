@@ -86,6 +86,7 @@ void()	dasher_walk14	=[	$walk14,	dasher_walk1	] {ai_walk(10);};
 //===========================================================================
 
 void()	dasher_run1	=[	$run1,		dasher_run2	] { //9
+	self.touch = SUB_Null;
 	self.yaw_speed = 20;
 	dasher_idle_sound();
 	ai_run (16);
@@ -184,7 +185,7 @@ void() dasher_punch_hit =
 	if (vlen(delta) > 60)
 		return;
 		
-	ldmg = 5 + random() * 5;
+	ldmg = 3 + random() * 3;
 	T_Damage (self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 };
 
@@ -213,24 +214,23 @@ void()	dasher_punch10	=[	$punch10,	dasher_run1	] {ai_face();}; //51
 
 
 void() dasher_dash_touch = {
-	if (!other) return;
-
-	self.touch = SUB_Null;
 	if (other.takedamage && other.health > 0){
+		self.touch = SUB_Null;
 		T_Damage (other, self, self, 30, DMGTYPE_MELEE);
+		dasher_dash7();
 	}
-	dasher_dash7();
 }
 
 void() dasher_dash_start = {
-	// predict arriving time at only half the speed to give its enemy some leeway
-	float leadTime = vlen(self.enemy.origin - self.origin)/800/2;
+	float spd = 800;
+	// predict at only half the speed to give its enemy some leeway
+	float leadTime = vlen(self.enemy.origin - self.origin)/spd/2;
 	
 	self.angles_y = vectoyaw(self.enemy.origin + self.enemy.velocity*leadTime - self.origin);
 	makevectors(self.angles);
 
 	self.flags &~= FL_ONGROUND;
-	self.velocity = self.pos1 = v_forward * 800;
+	self.velocity = self.pos1 = v_forward * spd;
 	self.prev_origin = self.origin;
 	self.air_finished = time + 0.1;
 
@@ -238,10 +238,15 @@ void() dasher_dash_start = {
 	self.touch = dasher_dash_touch;
 	self.think = dasher_dash_think;
 	self.nextthink = time + 0.0001;
+
+	self.sibling.think = update_dasher_blur2;
+	self.sibling.sibling.think = update_dasher_blur2;
+	self.sibling.sibling.sibling.think = update_dasher_blur2;
 }
 
 void() dasher_dash_think = {
 	float mvdist;
+	// check movement distance every few milliseconds to see if didnt bump into anything
 	if (time > self.air_finished) {
 		mvdist = vlen([self.origin_x, self.origin_y, 0] - [self.prev_origin_x, self.prev_origin_y, 0]);
 
@@ -253,7 +258,7 @@ void() dasher_dash_think = {
 		self.prev_origin = self.origin;
 	}
 	
-	// don't change Z velocity so it stays down
+	// don't change Z velocity so it stays on the ground
 	self.velocity_x = self.pos1_x;
 	self.velocity_y = self.pos1_y;
 	// remove the onground flag on every frame to let it sliiiide
@@ -269,19 +274,121 @@ void() dasher_dash_think = {
 }
 
 
+void() spawn_dasher_blur = {
+	makevectors(self.angles);
+	
+	entity ent1 = self.sibling = spawn();
+	ent1.movetype = MOVETYPE_NOCLIP;
+	setmodel(ent1, "progs/dasher.mdl");
+	setsize(ent1, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin(ent1, self.origin + v_right * 32);
+
+	ent1.think = update_dasher_blur;
+	ent1.nextthink = time + 0.0001;
+	ent1.air_finished = time + 0.5;
+	ent1.owner = self;
+	//ent1.velocity = -v_forward*64;
+	ent1.frame = self.frame;
+	ent1.angles = self.angles;
+	ent1.alpha = 0.7;
+	ent1.cnt = 1;
+
+	entity ent2 = ent1.sibling = spawn();
+	ent2.movetype = MOVETYPE_NOCLIP;
+	setmodel(ent2, "progs/dasher.mdl");
+	setsize(ent2, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin(ent2, self.origin - v_right * 32);
+	
+	ent2.think = update_dasher_blur;
+	ent2.nextthink = time + 0.0001;
+	ent2.air_finished = time + 0.5;
+	ent2.owner = self;
+	//ent2.velocity = v_forward*64;
+	ent2.frame = self.frame;
+	ent2.angles = self.angles;
+	ent2.alpha = 0.7;
+	ent2.cnt = 2;
+
+	entity ent3 = ent2.sibling = spawn();
+	ent3.movetype = MOVETYPE_NOCLIP;
+	setmodel(ent3, "progs/dasher.mdl");
+	setsize(ent3, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin(ent3, self.origin + v_up * 32);
+	
+	ent3.think = update_dasher_blur;
+	ent3.nextthink = time + 0.0001;
+	ent3.air_finished = time + 0.5;
+	ent3.owner = self;
+	//ent3.velocity = -v_up*64;
+	ent3.frame = self.frame;
+	ent3.angles = self.angles;
+	ent3.alpha = 0.7;
+	ent3.cnt = 3;
+}
+
+
+void() update_dasher_blur = {
+	float perc = (self.air_finished - time)/0.5;
+	self.angles = self.owner.angles;
+	self.frame = self.owner.frame;
+	makevectors(self.owner.angles);
+
+	if (self.cnt == 1) {
+		setorigin(self, self.owner.origin + v_right * 32*perc);
+	}
+	else if (self.cnt == 2) {
+		setorigin(self, self.owner.origin - v_right * 32*perc);
+	}
+	else {
+		setorigin(self, self.owner.origin + v_up * 32*perc);
+	}
+	self.think = update_dasher_blur;
+	self.nextthink = time + 0.0001;
+}
+
+void() update_dasher_blur2 = {
+	self.angles = self.owner.angles;
+	self.frame = self.owner.frame;
+	makevectors(self.owner.angles);
+
+	if (self.cnt == 1) {
+		setorigin(self, self.owner.origin - v_forward * 10);
+	}
+	else if (self.cnt == 2) {
+		setorigin(self, self.owner.origin - v_forward * 20);
+	}
+	else {
+		setorigin(self, self.owner.origin - v_forward * 30);
+	}
+	self.think = update_dasher_blur2;
+	self.nextthink = time + 0.0001;
+}
+
+void() kill_dasher_blur = {
+	entity e = self.sibling;
+	if (e) {
+		remove(e.sibling.sibling);
+		remove(e.sibling);
+		remove(e);
+	}
+	self.sibling = world;
+}
+
 void()	dasher_dash1	=[	$knee1,		dasher_dash2	] {
 	self.yaw_speed = 100;
 	ai_face();
 	SUB_AttackFinished(3);
+	kill_dasher_blur();
+	spawn_dasher_blur();
 
 }; //17
 void()	dasher_dash2	=[	$knee2,		dasher_dash3	] {ai_face();}; //18
 void()	dasher_dash3	=[	$knee3,		dasher_dash4	] {ai_face();}; //19
 void()	dasher_dash4	=[	$knee4,		dasher_dash5	] {ai_face();}; //20
-void()	dasher_dash5	=[	$knee5,		dasher_dash6	] {}; //21
-void()	dasher_dash6	=[	$knee6,		dasher_dash7	] {dasher_dash_start();}; //22
+void()	dasher_dash5	=[	$knee5,		dasher_dash6	] {ai_face();}; //21
+void()	dasher_dash6	=[	$knee6,		dasher_dash7	] {dasher_dash_start(); }; //22
 
-void()	dasher_dash7	=[	$knee7,		dasher_dash8	] {self.yaw_speed = 20;	self.touch = SUB_Null;}; //23
+void()	dasher_dash7	=[	$knee7,		dasher_dash8	] {self.yaw_speed = 20;	kill_dasher_blur(); self.touch = SUB_Null;}; //23
 void()	dasher_dash8	=[	$knee8,		dasher_dash9	] {ai_forward(4);}; //24
 void()	dasher_dash9	=[	$knee9,		dasher_dash10	] {}; //25
 void()	dasher_dash10	=[	$knee10,	dasher_dash11	] {}; //26
@@ -294,10 +401,12 @@ void(entity attacker, float damage)	dasher_pain =
 {
 	if (self.pain_finished > time)
 		return;
+	kill_dasher_blur();
+	self.touch = SUB_Null;
 
 	sound (self, CHAN_VOICE, "dasher/pain1.wav", 1, ATTN_NORM);
 	
-	self.touch = SUB_Null;
+	
 
 	if (time - self.pain_finished > 5)
 	{	// allways go into pain frame if it has been a while
