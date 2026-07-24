@@ -357,6 +357,9 @@ local float	rsnd;
 		sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_dragon")
 		sound (self, CHAN_VOICE, "dragon/see.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_dasher")
+        sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+
 };
 
 void() FoundTarget =

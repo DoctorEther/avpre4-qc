@@ -147,6 +147,7 @@ void()	dasher_dieb11	=[	$deathb11,	dasher_dieb11	] {  // 96
 void() dasher_die =
 {
 	self.touch = SUB_Null;
+	kill_dasher_blur();
 // check for gib
 	if (self.health < -40)
 	{
@@ -314,7 +315,7 @@ void() spawn_dasher_blur = {
 	setmodel(ent3, "progs/dasher.mdl");
 	setsize(ent3, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(ent3, self.origin + v_up * 32);
-	
+
 	ent3.think = update_dasher_blur;
 	ent3.nextthink = time + 0.0001;
 	ent3.air_finished = time + 0.5;

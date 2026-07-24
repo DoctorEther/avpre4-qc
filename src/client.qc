@@ -2185,7 +2185,8 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint ("$qc_ks_guardian2", targ.netname);
 				if (attacker.classname == "monster_mummy")
 					bprint ("$qc_ks_mummy", targ.netname);
-
+				if (attacker.classname == "monster_dasher")
+					bprint ("$qc_ks_dasher", targ.netname);
 				return;
 			}
 
