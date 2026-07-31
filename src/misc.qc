@@ -228,6 +228,32 @@ void() fire_touch =
 
 //============================================================================
 
+void() misc_explosion = {
+	self.use = misc_explosion_use;
+}
+
+void() misc_explosion_boom = {
+	if (self.dmg) T_RadiusDamage(self, self, self.dmg, DMGTYPE_EXPLOSION, world);
+	if (self.spawnflags & 1) sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM); // extra loud flag
+	
+	entity expl = spawn();
+	setorigin(expl, self.origin);
+
+	entity oself = self;
+	self = expl;
+	BecomeExplosion();
+	self = oself;
+}
+
+void() misc_explosion_use = {
+	if (self.estate != STATE_ACTIVE) return;
+
+	self.think = misc_explosion_boom;
+	self.nextthink = getLocalTime() + self.delay + random()*self.rand;
+}
+
+
+//============================================================================
 
 void() barrel_explode =
 {
