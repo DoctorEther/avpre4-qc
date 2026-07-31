@@ -650,6 +650,8 @@ float	AS_MISSILE		= 4;
 .float		shield_time, antigrav_time;
 .entity		shield_entity;
 
+.float 		hurt_started;
+
 .float		axhitme;
 
 .float		show_hostile;	// set to time+0.2 whenever a client fires a

@@ -633,8 +633,8 @@ void() CheatCommand =
 		IT_SUPER_NAILGUN |
 		IT_GRENADE_LAUNCHER |
 		IT_ROCKET_LAUNCHER |
-		IT_AVIAO |
-		IT_KEY1 | IT_KEY2;
+		IT_AVIAO;// |
+		//IT_KEY1 | IT_KEY2;
 
 	self.ammo_cells1 = 200;
 	self.items = self.items | IT_LIGHTNING;
