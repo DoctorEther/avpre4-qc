@@ -643,6 +643,21 @@ void() CheatCommand =
 	self.impulse = 0;
 	W_SetCurrentAmmo ();
 };
+/*
+============
+Give keys cheat
+============
+*/
+void() GiveKeysCommand =
+{
+	if ( ( deathmatch || coop ) && cheats_allowed == 0 ) { // mal: allow impulse 9 IF cheats allowed
+		return;
+	}
+
+	self.items = self.items | IT_KEY1 | IT_KEY2;
+
+	self.impulse = 0;
+};
 
 /*
 ============
@@ -925,6 +940,8 @@ void() ImpulseCommands =
 		ServerflagsCommand();
 	else if (self.impulse == 12)
 		CycleWeaponReverseCommand();
+	else if (self.impulse == 13)
+		GiveKeysCommand();
 	else if (self.impulse == 20)
 		TossBackpack();
 	else if (self.impulse == 21)
