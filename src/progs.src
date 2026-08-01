@@ -74,7 +74,7 @@ oldone.qc		// registered
 
 new_ai.qc
 eel.qc
-invis_sw.qc
+sword.qc
 newitems.qc
 newplats.qc
 newmisc.qc
