@@ -43,18 +43,18 @@ $frame attack7 attack8 attack9 attack10
 $frame death1 death2 death3 death4 death5 death6 death7 death8
 $frame death9 death10 death11 death12 death13 death14
 
-$frame fdeath1 fdeath2 fdeath3 fdeath4 fdeath5 fdeath6 fdeath7 fdeath8
-$frame fdeath9 fdeath10 fdeath11
+$frame death15 fdeath1 fdeath2 fdeath3 fdeath4 fdeath5 fdeath6 fdeath7 fdeath8
+$frame fdeath9 fdeath10 
 
-$frame paina1 paina2 paina3 paina4
+$frame fdeath11 paina1 paina2 paina3 //paina4
 
-$frame painb1 painb2 painb3 painb4 painb5
+//$frame painb1 painb2 painb3 painb4 painb5
 
-$frame painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8
+//$frame painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8
 
-$frame paind1 paind2 paind3 paind4 paind5 paind6 paind7 paind8
-$frame paind9 paind10 paind11 paind12 paind13 paind14 paind15 paind16
-$frame paind17 paind18 paind19
+//$frame paind1 paind2 paind3 paind4 paind5 paind6 paind7 paind8
+//$frame paind9 paind10 paind11 paind12 paind13 paind14 paind15 paind16
+//$frame paind17 paind18 paind19
 
 void() Laser_Touch =
 {
@@ -110,11 +110,6 @@ void(vector org, vector vec) LaunchLaser =
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
 
-	if (self.classname == "monster_morph")
-	{
-		if (!self.owner)
-			newmis.skin = 1;
-	}
 	
 	setorigin (newmis, org);
 
@@ -202,23 +197,24 @@ SUB_CheckRefire (enf_atk1);
 void()	enf_paina1	=[	$paina1,	enf_paina2	] {};
 void()	enf_paina2	=[	$paina2,	enf_paina3	] {};
 void()	enf_paina3	=[	$paina3,	enf_paina4	] {};
-void()	enf_paina4	=[	$paina4,	enf_run1	] {};
+void()	enf_paina4	=[	$paina3,	enf_run1	] {};
 
-void()	enf_painb1	=[	$painb1,	enf_painb2	] {};
-void()	enf_painb2	=[	$painb2,	enf_painb3	] {};
-void()	enf_painb3	=[	$painb3,	enf_painb4	] {};
-void()	enf_painb4	=[	$painb4,	enf_painb5	] {};
-void()	enf_painb5	=[	$painb5,	enf_run1	] {};
+void()	enf_painb1	=[	$paina1,	enf_painb2	] {};
+void()	enf_painb2	=[	$paina2,	enf_painb3	] {};
+void()	enf_painb3	=[	$paina3,	enf_painb4	] {};
+void()	enf_painb4	=[	$paina1,	enf_painb5	] {};
+void()	enf_painb5	=[	$paina2,	enf_run1	] {};
 
-void()	enf_painc1	=[	$painc1,	enf_painc2	] {};
-void()	enf_painc2	=[	$painc2,	enf_painc3	] {};
-void()	enf_painc3	=[	$painc3,	enf_painc4	] {};
-void()	enf_painc4	=[	$painc4,	enf_painc5	] {};
-void()	enf_painc5	=[	$painc5,	enf_painc6	] {};
-void()	enf_painc6	=[	$painc6,	enf_painc7	] {};
-void()	enf_painc7	=[	$painc7,	enf_painc8	] {};
-void()	enf_painc8	=[	$painc8,	enf_run1	] {};
+void()	enf_painc1	=[	$paina1,	enf_painc2	] {};
+void()	enf_painc2	=[	$paina2,	enf_painc3	] {};
+void()	enf_painc3	=[	$paina3,	enf_painc4	] {};
+void()	enf_painc4	=[	$paina1,	enf_painc5	] {};
+void()	enf_painc5	=[	$paina2,	enf_painc6	] {};
+void()	enf_painc6	=[	$paina3,	enf_painc7	] {};
+void()	enf_painc7	=[	$paina1,	enf_painc8	] {};
+void()	enf_painc8	=[	$paina2,	enf_run1	] {};
 
+/*
 void()	enf_paind1	=[	$paind1,	enf_paind2	] {};
 void()	enf_paind2	=[	$paind2,	enf_paind3	] {};
 void()	enf_paind3	=[	$paind3,	enf_paind4	] {};
@@ -238,7 +234,7 @@ void()	enf_paind16	=[	$paind16,	enf_paind17	] {ai_pain(1);};
 void()	enf_paind17	=[	$paind17,	enf_paind18	] {ai_pain(1);};
 void()	enf_paind18	=[	$paind18,	enf_paind19	] {};
 void()	enf_paind19	=[	$paind19,	enf_run1	] {};
-
+*/
 void(entity attacker, float damage)	enf_pain =
 {
 	local float r;
@@ -253,26 +249,26 @@ void(entity attacker, float damage)	enf_pain =
 	else
 		sound (self, CHAN_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
 
-	if (r < 0.2)
+	if (r < 0.3)
 	{
 		self.pain_finished = time + 1;
 		enf_paina1 ();
 	}
-	else if (r < 0.4)
+	else if (r < 0.7)
 	{
 		self.pain_finished = time + 1;
 		enf_painb1 ();
 	}
-	else if (r < 0.7)
+	else // if (r < 0.7)
 	{
 		self.pain_finished = time + 1;
 		enf_painc1 ();
 	}
-	else
+	/*else
 	{
 		self.pain_finished = time + 2;
 		enf_paind1 ();
-	}
+	}*/
 };
 
 //============================================================================
