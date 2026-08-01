@@ -262,8 +262,12 @@ void() player_nail1   =[$nailatt1, player_nail2  ]
 	if (!self.button0)
 		{player_run ();return;}
 	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
+	
+	if (
+		(self.weapon == IT_NAILGUN && self.weaponframe == 7) ||
+		(self.weapon != IT_NAILGUN && self.weaponframe == 9)
+	) self.weaponframe = 1;
+		
 	SuperDamageSound();
 	W_FireSpikes (4);
 	self.attack_finished = time + 0.2;

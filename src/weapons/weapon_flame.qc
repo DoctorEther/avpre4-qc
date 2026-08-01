@@ -73,7 +73,7 @@ void() weapon_flame_touch =
 void() weapon_flame_fly =
 {
 	self.frame = self.frame + 1;
-	if (self.frame > 7 || pointcontents(self.origin) != CONTENT_EMPTY)
+	if (self.frame >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
 	{
 		remove(self);
 		return;
