@@ -358,7 +358,7 @@ local float	rsnd;
 	else if (self.classname == "monster_dragon")
 		sound (self, CHAN_VOICE, "dragon/see.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_dasher")
-        sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+        sound (self, CHAN_VOICE, "dasher/sight.wav", 1, ATTN_NORM);
 
 };
 

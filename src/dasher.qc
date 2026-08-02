@@ -152,7 +152,7 @@ void() dasher_die =
 	if (self.health < -40)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_hellkn.mdl", self.health);
+		ThrowHead ("progs/h_dasher.mdl", self.health);
 	
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -163,7 +163,7 @@ void() dasher_die =
 
 // regular death
 
-	sound (self, CHAN_VOICE, "dasher/death1.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "dasher/death.wav", 1, ATTN_NORM);
 
 	if (random() > 0.5)
 		dasher_die1 ();
@@ -188,6 +188,8 @@ void() dasher_punch_hit =
 		
 	ldmg = 3 + random() * 3;
 	T_Damage (self.enemy, self, self, ldmg, DMGTYPE_MELEE);
+
+	sound (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM);
 };
 
 
@@ -196,7 +198,11 @@ void()	dasher_punch2	=[	$punch2,	dasher_punch3	] {ai_face();}; //43
 void()	dasher_punch3	=[	$punch3,	dasher_punch4	] {ai_face();}; //44
 void()	dasher_punch4	=[	$punch4,	dasher_punch5	] {ai_face();}; //45
 void()	dasher_punch5	=[	$punch5,	dasher_punch6	] {ai_face();}; //46
-void()	dasher_punch6	=[	$punch6,	dasher_punch7	] {ai_charge(20); dasher_punch_hit();}; //47
+void()	dasher_punch6	=[	$punch6,	dasher_punch7	] {
+	ai_charge(20);
+	dasher_punch_hit();
+	sound (self, CHAN_VOICE, "zombie/z_shot1.wav", 1, ATTN_NORM);
+}; //47
 void()	dasher_punch7	=[	$punch7,	dasher_punch8	] {ai_charge(20); dasher_punch_hit();}; //48
 void()	dasher_punch8	=[	$punch8,	dasher_punch9	] { //49
 	if (time <= self.attack_finished && vlen(self.enemy.origin - self.origin) < 80) {
@@ -218,6 +224,7 @@ void() dasher_dash_touch = {
 	if (other.takedamage && other.health > 0){
 		self.touch = SUB_Null;
 		T_Damage (other, self, self, 30, DMGTYPE_MELEE);
+		sound (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM);
 		dasher_dash7();
 	}
 }
@@ -362,6 +369,7 @@ void()	dasher_dash1	=[	$knee1,		dasher_dash2	] {
 	SUB_AttackFinished(3);
 	kill_dasher_blur();
 	spawn_dasher_blur();
+	sound(self, CHAN_VOICE, "dasher/dasher_charge.wav", 1, ATTN_NORM);
 
 }; //17
 void()	dasher_dash2	=[	$knee2,		dasher_dash3	] {ai_face();}; //18
@@ -383,13 +391,7 @@ void(entity attacker, float damage)	dasher_pain =
 {
 	if (self.pain_finished > time)
 		return;
-	kill_dasher_blur();
-	self.touch = SUB_Null;
-
-	sound (self, CHAN_VOICE, "dasher/pain1.wav", 1, ATTN_NORM);
 	
-	
-
 	if (time - self.pain_finished > 5)
 	{	// allways go into pain frame if it has been a while
 		dasher_pain1 ();
@@ -404,11 +406,11 @@ void(entity attacker, float damage)	dasher_pain =
 	dasher_pain1 ();
 };
 
-void()	dasher_pain1	=[	$painb1,		dasher_pain2	]
-	{
-
-			sound (self, CHAN_VOICE, "dasher/pain1.wav", 1, ATTN_NORM);
-	};
+void()	dasher_pain1	=[	$painb1,		dasher_pain2	] {
+	self.touch = SUB_Null;
+	kill_dasher_blur();
+	sound (self, CHAN_VOICE, "dasher/pain.wav", 1, ATTN_NORM);
+};
 void()	dasher_pain2	=[	$painb2,		dasher_pain3	] {};
 void()	dasher_pain3	=[	$painb3,		dasher_pain4	] {};
 void()	dasher_pain4	=[	$painb4,		dasher_pain5	] {};
@@ -435,24 +437,20 @@ void() monster_dasher =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/dasher.mdl");
-	precache_model2 ("progs/k_spike.mdl");
-	precache_model2 ("progs/h_hellkn.mdl");
+	precache_model ("progs/dasher.mdl");
+	precache_model ("progs/h_dasher.mdl");
 
 
-	precache_sound2 ("dasher/death1.wav");
-	precache_sound2 ("dasher/pain1.wav");
-	precache_sound2 ("dasher/sight1.wav");
-	precache_sound2 ("dasher/idle.wav");
+	precache_sound ("zombie/z_shot1.wav");
+	precache_sound ("zombie/z_hit.wav");
+	precache_sound ("dasher/dasher_charge.wav");
+	precache_sound ("dasher/sight.wav");
+	precache_sound ("dasher/idle.wav");
+	precache_sound ("dasher/pain.wav");
+	precache_sound ("dasher/death.wav");
 
 	
-	
-	precache_sound2 ("dasher/attack1.wav");
-	precache_sound2 ("dasher/grunt.wav");
-
-	precache_sound ("knight/sword1.wav");
-	precache_sound ("knight/sword2.wav");
-	
+		
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
