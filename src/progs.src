@@ -4,6 +4,7 @@
 #pragma autoproto 
 
 defs.qc
+//qsextensions.qc
 teamplay.qc		// ZOID - teamplay stuff
 runes.qc
 motd.qc

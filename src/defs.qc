@@ -1012,7 +1012,8 @@ float walkpathtogoal( float movedist, vector goal ) = #0:ex_walkpathtogoal;
 float checkextension( string s ) = #99;
 
 //============================================================================
-
+// QSS misc stuff
+float(float value, float exp) pow = #97;
 
 // -----------------------------------------------------------------------------------
 // AVIÃOZINHO

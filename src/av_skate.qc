@@ -10,13 +10,15 @@ void() AV_SkateUpdate = {
 	
 	if(!(self.flags & FL_ONGROUND)) return;
 	
+	float framefactor = frametime/0.013888; // baseline is 72fps, modulate parameters according to that
+
 	//DELAY HORIZONTAL FRICTION
 	if(self.movement_x || self.movement_y){
-		self.velocity_x = self.velocity_x * AV_SKATE_FRICTION_SMOD;
-		self.velocity_y = self.velocity_y * AV_SKATE_FRICTION_SMOD;
+		self.velocity_x = self.velocity_x * pow(AV_SKATE_FRICTION_SMOD, framefactor);
+		self.velocity_y = self.velocity_y * pow(AV_SKATE_FRICTION_SMOD, framefactor);
 	}else{
-		self.velocity_x = self.velocity_x * AV_SKATE_FRICTION_WMOD;
-		self.velocity_y = self.velocity_y * AV_SKATE_FRICTION_WMOD;
+		self.velocity_x = self.velocity_x * pow(AV_SKATE_FRICTION_WMOD, framefactor);
+		self.velocity_y = self.velocity_y * pow(AV_SKATE_FRICTION_WMOD, framefactor);
 	}
 	
 	//ROTATE VELOCITY TOWARDS LOOKING VECTOR
@@ -35,8 +37,8 @@ void() AV_SkateUpdate = {
 	
 	v_vec = normalize(v_vec);
 	
-	r_vec_x = v_vec_x + (l_vec_x - v_vec_x) * AV_SKATE_ROTATION_SPEED;
-	r_vec_y = v_vec_y + (l_vec_y - v_vec_y) * AV_SKATE_ROTATION_SPEED;
+	r_vec_x = v_vec_x + (l_vec_x - v_vec_x) * AV_SKATE_ROTATION_SPEED * framefactor;
+	r_vec_y = v_vec_y + (l_vec_y - v_vec_y) * AV_SKATE_ROTATION_SPEED * framefactor;
 	
 	r_vec = normalize(r_vec);
 	
