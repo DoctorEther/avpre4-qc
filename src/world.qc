@@ -350,6 +350,7 @@ void() worldspawn =
 	
 	precache_model ("progs/plasma.mdl");
 	precache_model ("progs/v_plasma.mdl");
+	precache_model ("progs/flame.mdl");
 	
 //ZOID--
 	// hook for CTF
