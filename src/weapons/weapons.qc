@@ -97,7 +97,7 @@ void() T_MissileTouch =
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 120, DMGTYPE_EXPLOSION, other);
+	T_RadiusDamage (self, self.owner, 120, 1, DMGTYPE_EXPLOSION, other);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -240,7 +240,7 @@ void() W_FireLightning =
 		cells = self.ammo_cells1;
 		self.ammo_cells1 = 0;
 		W_SetCurrentAmmo ();
-		T_RadiusDamage (self, self, 35*cells, DMGTYPE_ENERGY, world);
+		T_RadiusDamage (self, self, 35*cells, 1, DMGTYPE_ENERGY, world);
 		return;
 	}
 
@@ -278,7 +278,7 @@ void() W_FireLightning =
 
 void() GrenadeExplode =
 {
-	T_RadiusDamage (self, self.owner, 120, DMGTYPE_EXPLOSION, world);
+	T_RadiusDamage (self, self.owner, 120, 1, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);

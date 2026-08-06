@@ -300,7 +300,7 @@ vector(vector targ, float turnrate) ShalTurnToward =
 
 
 void() CyberhMissileExplode = {
-	T_RadiusDamage (self, self.owner, 10, DMGTYPE_EXPLOSION, world);
+	T_RadiusDamage (self, self.owner, 10, 1, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);

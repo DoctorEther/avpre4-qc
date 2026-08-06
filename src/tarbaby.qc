@@ -138,7 +138,7 @@ void() tbaby_bomb_touch =
     }
 
     // Explosão curta distância
-    T_RadiusDamage(self, self.owner, 40, DMGTYPE_EXPLOSION, world); // dano 40, ajusta se quiser
+    T_RadiusDamage(self, self.owner, 40, 1, DMGTYPE_EXPLOSION, world); // dano 40, ajusta se quiser
     sound(self, CHAN_WEAPON, "blob/death1.wav", 1, ATTN_NORM);
 
     WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
@@ -347,7 +347,7 @@ void()  tbaby_die1      =[      $exp,           tbaby_die2      ] {
 };
 void()  tbaby_die2      =[      $exp,           tbaby_run1      ] 
 {
-    T_RadiusDamage (self, self, 120, DMGTYPE_EXPLOSION, world);
+    T_RadiusDamage (self, self, 120, 1, DMGTYPE_EXPLOSION, world);
 
     sound (self, CHAN_VOICE, "blob/death1.wav", 1, ATTN_NORM);
     self.origin = self.origin - 8*normalize(self.velocity);

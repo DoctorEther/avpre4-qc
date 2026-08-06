@@ -435,7 +435,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 T_RadiusDamage
 ============
 */
-void(entity inflictor, entity attacker, float damage, float dmgtype, entity ignore) T_RadiusDamage =
+void(entity inflictor, entity attacker, float damage, float range_mult, float dmgtype, entity ignore) T_RadiusDamage =
 {
 	local	float 	points;
 	local	entity	head;
@@ -443,7 +443,7 @@ void(entity inflictor, entity attacker, float damage, float dmgtype, entity igno
 
 	IsExplosionDamage = 1;
 
-	head = findradius(inflictor.origin, damage+40);
+	head = findradius(inflictor.origin, damage*range_mult + 40);
 	
 	while (head)
 	{
@@ -455,7 +455,7 @@ void(entity inflictor, entity attacker, float damage, float dmgtype, entity igno
 				points = 0.5*vlen (inflictor.origin - org);
 				if (points < 0)
 					points = 0;
-				points = damage - points;
+				points = damage - points/range_mult;
 				if (head == attacker)
 					points = points * 0.5;
 				if (points > 0)

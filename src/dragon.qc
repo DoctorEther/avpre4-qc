@@ -374,9 +374,9 @@ void() FireballTouch =
 		return;		// don't explode on owner
 
 	if (self.owner.classname == "monster_dragon")
-		T_RadiusDamage (self, self.owner, 90, DMGTYPE_EXPLOSION, self.owner);
+		T_RadiusDamage (self, self.owner, 90, 1, DMGTYPE_EXPLOSION, self.owner);
 	else
-		T_RadiusDamage (self, self.owner, 30, DMGTYPE_EXPLOSION, world);
+		T_RadiusDamage (self, self.owner, 30, 1, DMGTYPE_EXPLOSION, world);
 	
 	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);

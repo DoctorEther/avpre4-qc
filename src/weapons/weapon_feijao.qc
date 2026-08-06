@@ -1,64 +1,106 @@
-void() feijao_explode =
-{
-	local entity tgt = self.enemy;
-	
-	tgt.feijao_manager	= 0;
-	tgt.feijao_count	= 0;
-	tgt.effects			= 0;
-	self.effects		= 0;
-	
-	if(tgt.health <= 0){	
-		remove(self);
+.entity		feijao_manager;
+
+void(entity e) feijao_manager_spawn = {
+	if (e.feijao_manager.classname == "feijao_manager")
 		return;
-	}
+
+	entity mgr = spawn();
+	mgr.classname = "feijao_manager";
+	mgr.owner = e;
+	setmodel(mgr, e.model);
+	setsize(mgr, '0 0 0', '0 0 0');
+	setorigin(mgr, e.origin);
+	mgr.angles = e.angles;
+	mgr.frame = e.frame;
+	mgr.skin = e.skin;
+	mgr.alpha = 0.3;
+	mgr.scale = 1.1;
+	mgr.effects = EF_ADDITIVE;
+	e.feijao_manager = mgr;
+	mgr.think = feijao_manager_think;
+	mgr.nextthink = time + 0.0001;
+}
+
+void(entity e) feijao_manager_remove = {
+	if (e.feijao_manager.classname != "feijao_manager")
+		return;
+
+	remove (e.feijao_manager);
+	e.feijao_manager = world;
+}
+
+void() feijao_manager_explode =
+{
+	entity tgt = self.owner;
+		
+	/*if (tgt.health <= 0){	
+		feijao_manager_remove(self.owner);
+		return;
+	}*/
+	setorigin(self, self.owner.origin);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.enemy.origin_x);
-	WriteCoord (MSG_BROADCAST, self.enemy.origin_y);
-	WriteCoord (MSG_BROADCAST, self.enemy.origin_z);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+
+	float damage = min(self.count, 8) * 20;
+	float range_mult = max(1, 60/damage); // mininum 60units range
+
+	T_RadiusDamage (self, self.enemy, damage, range_mult, DMGTYPE_EXPLOSION, 0);
+
+	tgt.effects = 0;
 	
-	T_RadiusDamage (self, self.owner, tgt.feijao_count * 20, DMGTYPE_EXPLOSION, 0);
-	
-	remove(self);
+	feijao_manager_remove(self.owner);
 }
 
-float AV_FEIJAO_TIME = 0.45;
+void() feijao_manager_think = {
+	if (time > self.attack_finished) {
+		feijao_manager_explode();
+		return;
+	}
+	self.alpha = 0.3 + self.count/6 * 0.7;
+	setorigin(self, self.owner.origin);
+	self.angles = self.owner.angles;
+	self.frame = self.owner.frame;
+	self.skin = self.owner.skin;
+	self.nextthink = time + 0.0001;
+}
+
+float AV_FEIJAO_TIME = 0.5;
 
 void() feijao_touch = {
-	if (other == self.owner)			return;
-	if (other.solid == SOLID_TRIGGER)	return;
+	
+	if (other.solid == SOLID_TRIGGER) return;
 
-	if (pointcontents(self.origin) == CONTENT_SKY) { remove(self); return; }
-	if (!other.takedamage){ remove(self); return; }
+	if (pointcontents(self.origin) == CONTENT_SKY || !other.takedamage) {
+		remove(self);
+		return; 
+	}
 	
 	spawn_touchblood (9);
-	T_Damage (other, self, self.owner, 6, DMGTYPE_EXPLOSION);
-	other.feijao_count = other.feijao_count + 1;
+	T_Damage (other, self, self.owner, 6, DMGTYPE_BALLISTIC);
 	
-	if(other.feijao_manager != 0){
-		if(other.feijao_count < 6)
-			other.feijao_manager.nextthink = time + AV_FEIJAO_TIME;
-		else
-			other.feijao_manager.nextthink = time + 0.001;
-			
+	// don't stick to shootable buttons, doors etc
+	if (other.takedamage != DAMAGE_AIM) {
 		remove(self);
 		return;
 	}
+
+	feijao_manager_spawn(other); // spawns controller if doesn't exist
+	other.feijao_manager.enemy = self.owner;
+	if (other.feijao_manager.count < 20) {
+		other.feijao_manager.count++;
+		other.feijao_manager.attack_finished = time + AV_FEIJAO_TIME;
+	}
+	else
+		other.feijao_manager.attack_finished = time + 0.001;
+			
 	
 	other.effects = EF_DIMLIGHT;
 	
-	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_NONE;
-	self.velocity = '0 0 0';
-	setmodel(self, "");
-	setsize(self, '-8 -8 -8', '8 8 8');
-	
-	self.enemy = other;
-	other.feijao_manager = self;
-	
-	self.think = feijao_explode;
-	self.nextthink = time + AV_FEIJAO_TIME;
+	remove(self);
 };
 
 void(vector org, vector dir) feijao_launch = {

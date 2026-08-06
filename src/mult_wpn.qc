@@ -31,9 +31,9 @@ void() MultiGrenadeTouch;
 void() MiniGrenadeExplode =
 {
 	if ( self.owner.classname == "player")
-		T_RadiusDamage (self, self.owner, 90, DMGTYPE_EXPLOSION, world);
+		T_RadiusDamage (self, self.owner, 90, 1, DMGTYPE_EXPLOSION, world);
 	else
-		T_RadiusDamage (self, self.owner, 60, DMGTYPE_EXPLOSION, world);
+		T_RadiusDamage (self, self.owner, 60, 1, DMGTYPE_EXPLOSION, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
@@ -216,7 +216,7 @@ void() MultiRocketExplode =
 	}
 
 	// Don't apply radius damage to the other monster, because all damage was done in the impact
-	T_RadiusDamage(self, self.owner, 27, DMGTYPE_EXPLOSION, other);
+	T_RadiusDamage(self, self.owner, 27, 1, DMGTYPE_EXPLOSION, other);
 
 	// Set the explosion position slightly behind the missile to simulate impact
 	self.origin = self.origin - 8 * normalize(self.velocity);
@@ -504,7 +504,7 @@ void() PlasmaTouch =
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 70, DMGTYPE_ENERGY, other);
+	T_RadiusDamage (self, self.owner, 70, 1, DMGTYPE_ENERGY, other);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION2);
@@ -578,7 +578,7 @@ void() W_FirePlasma =
 		cells = self.ammo_plasma;
 		self.ammo_plasma = 0;
 		W_SetCurrentAmmo ();
-		T_RadiusDamage (self, self, 35*cells, DMGTYPE_ENERGY, world);
+		T_RadiusDamage (self, self, 35*cells, 1, DMGTYPE_ENERGY, world);
 		return;
 	}
 	self.currentammo = self.ammo_plasma = self.ammo_plasma - 1;

@@ -31,7 +31,7 @@ void() sphere_impact =
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-    T_RadiusDamage (self, self, 300, DMGTYPE_EXPLOSION, other);
+    T_RadiusDamage (self, self, 300, 1, DMGTYPE_EXPLOSION, other);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);

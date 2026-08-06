@@ -446,6 +446,12 @@ float 	EF_QUADLIGHT    = 16;
 float 	EF_PENTALIGHT   = 32;
 float	EF_CANDLELIGHT	= 64;
 
+float EF_ADDITIVE = 32;
+float EF_BLUE = 64;
+float EF_RED = 128;
+float EF_FULLBRIGHT = 512;
+float EF_NOSHADOW = 4096;
+float EF_NOMODELFLAGS = 8388608;
 
 // messages
 float	MSG_BROADCAST	= 0;		// unreliable to all
@@ -678,9 +684,6 @@ float	AS_MISSILE		= 4;
 .float		dash_count;
 .vector 	av_dash_vel;
 
-
-.entity		feijao_manager;
-.float		feijao_count;
 
 .float		on_ladder;
 .float		ladder_step_finished;
@@ -959,7 +962,9 @@ void(string s) changelevel = #70;
 
 void(string var, string val) cvar_set = #72;	// sets cvar.value
 
-void(entity client, string s, ...) centerprint = #0:ex_centerprint;	// sprint, but in middle
+//void(entity client, string s, ...) centerprint = #0:ex_centerprint;	// sprint, but in middle
+
+void(entity client, string s1) centerprint = #73;
 
 // Print a centerprint to every connected player (horde merge).
 void centerprint_all(string s)
