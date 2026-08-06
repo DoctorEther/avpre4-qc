@@ -72,15 +72,17 @@ void() weapon_flame_touch =
 
 void() weapon_flame_fly =
 {
-	self.frame = self.frame + 1;
-	if (self.frame >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
+	//self.frame = self.frame + 1;
+	//if (self.frame >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
+	self.skin = self.skin + 1;
+	if (self.skin >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
 	{
 		remove(self);
 		return;
 	}
 	//self.velocity = self.velocity + '0 0 15' - (self.movedir * 0.12);
 	
-	self.nextthink = time + 0.1;
+	self.nextthink = time + 0.125;
 };
 
 void(vector org, vector vec) weapon_make_flame =
@@ -88,24 +90,26 @@ void(vector org, vector vec) weapon_make_flame =
 	local entity flame;
 	flame = spawn();
 	flame.owner = self;
-	setmodel(flame, "progs/s_flame.spr");
+	//setmodel(flame, "progs/s_flame.spr");
+	setmodel(flame, "progs/flame.mdl");
 	setorigin(flame, org);
 	flame.movetype = MOVETYPE_FLY;
 	flame.solid = SOLID_BBOX;
 	
-	local vector variance;
-	variance = '-10 -10 0' + random() * '20 20 0';
-	flame.movedir = normalize(vec) * 550 + variance;
-	flame.velocity = flame.movedir;
-	
-	local float roll;
-	roll = 350 + random() * 20;
+	vector variance = '-10 -10 0' + random() * '20 20 0';
+	flame.velocity = normalize(vec) * 550 + variance;
+	//flame.avelocity_z = 10;
+	float roll = 350 + random() * 20;
+	flame.scale = 0.75;
+	flame.angles = self.v_angle;
+	flame.angles_x = -flame.angles_x;
 	flame.angles_z = anglemod(roll);
-	
+	flame.effects = EF_ADDITIVE;// + EF_DIMLIGHT;
+	flame.alpha = 0.6;
 	flame.nextthink = time + 0.1;
 	flame.think = weapon_flame_fly;
 	flame.touch = weapon_flame_touch;
-	flame.classname = "weapon_flame";
+	flame.classname = "flame";
 	flame.frame = 0;
 	setsize(flame, '0 0 0', '0 0 0');
 };
