@@ -1,3 +1,21 @@
+void(string s, string ss) dprint2 = 
+	{ dprint(s); dprint(ss); }
+void(string s, string ss, string sss) dprint3 = 
+	{ dprint(s); dprint(ss); dprint(sss); }
+void(string s, string ss, string sss, string ssss) dprint4 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); }
+void(string s, string ss, string sss, string ssss, string sssss) dprint5 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss) dprint6 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss) dprint7 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss) dprint8 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) dprint9 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); dprint(sssssssss); }
+
+
 entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 	entity closest, next;
 	float closestdist, nextdist;
@@ -169,3 +187,71 @@ vector(vector b, vector a, float r) rotateVectorAround =
 }
 
 void(float val) nxth = {self.nextthink = getLocalTime() + val;}
+
+
+
+// high precision vectoyaw/atan2
+// (bxy + y^2) / (x^2 + 2bxy + y^2)
+// b = 0.596227
+float(vector vec) vectoyaw2 = {
+    float b = 0.596227;
+
+    // Extract the sign bits
+    float ux_s  =  vec_x < 0 ? -1 : 1;
+    float uy_s  =  vec_y < 0 ? -1 : 1;
+
+    // Determine the quadrant offset
+    float q;
+    if (ux_s >= 0 && uy_s >= 0) q = 0;
+    else if (ux_s < 0 && uy_s >= 0) q = 1;
+    else if (ux_s < 0 && uy_s < 0) q = 2;
+    else q = 3;
+
+    // Calculate the arctangent in the first quadrant
+    float bxy_a = fabs( b * vec_x * vec_y );
+    float num = bxy_a + vec_y * vec_y;
+    float atan_1q =  num / ( vec_x * vec_x + bxy_a + num );
+
+    // Translate it to the proper quadrant
+    float uatan_2q = ux_s < 0 ? 1 - atan_1q : atan_1q;
+    if (q >= 2) uatan_2q = 1 - uatan_2q;
+    return (q + uatan_2q) * 90;
+}
+
+// high precision vectoangles
+vector(vector vec) vectoangles2 = {
+	float yaw, forward, pitch;
+	
+	if (vec_x == 0 && vec_y == 0)
+	{
+		yaw = 0;
+		if (vec_z > 0) pitch = 90;
+		else pitch = 270;
+	}
+	else {
+		yaw = vectoyaw2(vec);
+		forward = vlen([vec_x, vec_y, 0]);
+		pitch = vectoyaw2([forward, vec_z, 0]);
+	}
+	return [pitch, yaw, 0];
+}
+
+
+
+// normalizes an angle vector to the 0/+359 range
+vector(vector ang) normalizeAngles = {
+	ang_x = ang_x - floor(ang_x/360) * 360;
+	ang_y = ang_y - floor(ang_y/360) * 360;
+	ang_z = ang_z - floor(ang_z/360) * 360;
+
+	return ang;
+};
+
+// normalizes an angle vector to the -180/+179 range
+vector(vector ang) normalizeAngles180 = {
+	ang_x = ang_x - floor((ang_x+180)/360) * 360;
+	ang_y = ang_y - floor((ang_y+180)/360) * 360;
+	ang_z = ang_z - floor((ang_z+180)/360) * 360;
+
+	return ang;
+};

@@ -277,6 +277,9 @@ float 	FL_OBJECTIVE			= 131072; 	// mal: any item marked with this is an objecti
 // AVIÃOZINHO
 float	FL_DASHING				= 262144;	// DASHING;
 
+float 	FL_NEVERTELEPORT		= 524288; 	// never teleport
+float 	FL_PROJECTILE			= 1048576;
+
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
 //float	MOVETYPE_ANGLENOCLIP	= 1;
