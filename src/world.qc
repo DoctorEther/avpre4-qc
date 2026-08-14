@@ -358,6 +358,7 @@ void() worldspawn =
 	precache_model ("progs/v_grpple.mdl");
 //	precache_model ("progs/bit.mdl");
 //--ZOID
+	precache_model ("progs/misc_empty.mdl");
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
