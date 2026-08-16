@@ -7,15 +7,21 @@ void(entity e) feijao_manager_spawn = {
 	entity mgr = spawn();
 	mgr.classname = "feijao_manager";
 	mgr.owner = e;
-	setmodel(mgr, e.model);
+
+	setmodel(mgr, "progs/feijao_overlay_large.mdl");
+	setsize(mgr, '0 0 0', '0 0 0');
+	
+	if (e.size_x > 32)
+		mgr.scale = 1;
+	else
+		mgr.scale = 0.7;
+	//	setmodel(mgr, "progs/feijao_overlay_small.mdl");
+	mgr.movetype = MOVETYPE_NOCLIP;
 	setsize(mgr, '0 0 0', '0 0 0');
 	setorigin(mgr, e.origin);
+	mgr.cnt = random() * 180;
 	mgr.angles = e.angles;
-	mgr.frame = e.frame;
-	mgr.skin = e.skin;
-	mgr.alpha = 0.3;
-	mgr.scale = 1.1;
-	mgr.effects = EF_ADDITIVE;
+	mgr.angles_y += mgr.cnt;
 	e.feijao_manager = mgr;
 	mgr.think = feijao_manager_think;
 	mgr.nextthink = time + 0.0001;
@@ -45,7 +51,7 @@ void() feijao_manager_explode =
 	WriteCoord (MSG_BROADCAST, self.origin_y);
 	WriteCoord (MSG_BROADCAST, self.origin_z);
 
-	float damage = min(self.count, 8) * 20;
+	float damage = min(self.count, 20) * 9;
 	float range_mult = max(1, 60/damage); // mininum 60units range
 
 	T_RadiusDamage (self, self.enemy, damage, range_mult, DMGTYPE_EXPLOSION, 0);
@@ -56,15 +62,19 @@ void() feijao_manager_explode =
 }
 
 void() feijao_manager_think = {
+	if (self.owner.health <= 0) {
+		setmodel(self, "");
+		setsize(self, '0 0 0', '0 0 0');
+	}
+
 	if (time > self.attack_finished) {
 		feijao_manager_explode();
 		return;
 	}
-	self.alpha = 0.3 + self.count/6 * 0.7;
+	self.frame = min(self.count, 11);
 	setorigin(self, self.owner.origin);
 	self.angles = self.owner.angles;
-	self.frame = self.owner.frame;
-	self.skin = self.owner.skin;
+	self.angles_y += self.cnt;
 	self.nextthink = time + 0.0001;
 }
 
@@ -80,7 +90,7 @@ void() feijao_touch = {
 	}
 	
 	spawn_touchblood (9);
-	T_Damage (other, self, self.owner, 6, DMGTYPE_BALLISTIC);
+	T_Damage (other, self, self.owner, 4, DMGTYPE_BALLISTIC);
 	
 	// don't stick to shootable buttons, doors etc
 	if (other.takedamage != DAMAGE_AIM) {
@@ -90,7 +100,7 @@ void() feijao_touch = {
 
 	feijao_manager_spawn(other); // spawns controller if doesn't exist
 	other.feijao_manager.enemy = self.owner;
-	if (other.feijao_manager.count < 20) {
+	if (other.feijao_manager.count < 30) {
 		other.feijao_manager.count++;
 		other.feijao_manager.attack_finished = time + AV_FEIJAO_TIME;
 	}
@@ -110,7 +120,7 @@ void(vector org, vector dir) feijao_launch = {
 	newmis.solid = SOLID_BBOX;
 
 	newmis.angles = vectoangles(dir);
-	newmis.effects = EF_DIMLIGHT;
+	//newmis.effects = EF_DIMLIGHT;
 	
 	newmis.touch = feijao_touch;
 	newmis.classname = "spike";
