@@ -1027,11 +1027,9 @@ float(float value, float exp) pow = #97;
 // AVIÃOZINHO
 // CUSTOM FUNCTIONS
 // -----------------------------------------------------------------------------------
-//void(string name) unlock_achievement                           		= #50;
-//void(string name, int value) update_stat                          	= #71;
+void(string name) unlock_achievement                           		= #50;
+void(string name, int value) update_stat                          	= #71;
 
-void(string name) unlock_achievement                           		= {};
-void(string name, int value) update_stat                          	= {};
 // -----------------------------------------------------------------------------------
 // STRING FUNCTIONS
 // -----------------------------------------------------------------------------------
