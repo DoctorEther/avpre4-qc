@@ -6,7 +6,7 @@ void() hit_flame_think = {
 	self.nextthink = time + 0.03;
 	self.flame_time = self.flame_time + 1;
 	// quantidade de frames da animação = 7
-	self.frame = self.flame_time % 7;
+	self.frame = self.flame_time % 6;
 	// quantidade de frames em que o efeito de fogo fica no inimigo
 	if (self.flame_time > 56)
 	{
@@ -37,7 +37,7 @@ void() weapon_spawn_hit_flame = {
 	flame = spawn();
 	// sprite da chama
 	setmodel(flame, "progs/s_flame.spr");
-	setsize(flame, '16 16 16', '16 16 16');
+	setsize(flame, '0 0 0', '0 0 0');
 	flame.solid = SOLID_TRIGGER;
 	flame.owner = other;
 	flame.movetype = MOVETYPE_NONE;
@@ -75,6 +75,8 @@ void() weapon_flame_fly =
 	//self.frame = self.frame + 1;
 	//if (self.frame >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
 	self.skin = self.skin + 1;
+
+	if (self.skin >= 4) self.effects &~= EF_DIMLIGHT;
 	if (self.skin >= 6 || pointcontents(self.origin) != CONTENT_EMPTY)
 	{
 		remove(self);
@@ -85,6 +87,9 @@ void() weapon_flame_fly =
 	self.nextthink = time + 0.125;
 };
 
+// globals, yes, control dimlight effect on flames
+float flameNumber;
+float lastFlame;
 void(vector org, vector vec) weapon_make_flame =
 {
 	local entity flame;
@@ -92,8 +97,9 @@ void(vector org, vector vec) weapon_make_flame =
 	flame.owner = self;
 	//setmodel(flame, "progs/s_flame.spr");
 	setmodel(flame, "progs/flame.mdl");
+	setsize(flame, '0 0 0', '0 0 0');
 	setorigin(flame, org);
-	flame.movetype = MOVETYPE_FLY;
+	flame.movetype = MOVETYPE_FLYMISSILE;
 	flame.solid = SOLID_BBOX;
 	
 	vector variance = '-10 -10 0' + random() * '20 20 0';
@@ -104,14 +110,24 @@ void(vector org, vector vec) weapon_make_flame =
 	flame.angles = self.v_angle;
 	flame.angles_x = -flame.angles_x;
 	flame.angles_z = anglemod(roll);
-	flame.effects = EF_ADDITIVE;// + EF_DIMLIGHT;
+	flame.effects = EF_ADDITIVE;
 	flame.alpha = 0.6;
 	flame.nextthink = time + 0.1;
 	flame.think = weapon_flame_fly;
 	flame.touch = weapon_flame_touch;
 	flame.classname = "flame";
 	flame.frame = 0;
-	setsize(flame, '0 0 0', '0 0 0');
+	
+
+	if (flameNumber == 0 || time > lastFlame + 1) {
+		flame.effects |= EF_DIMLIGHT;
+		flameNumber = 0;
+	}
+	if (flameNumber > 4) flameNumber = 0;
+	else flameNumber++;
+
+	lastFlame = time;
+
 };
 
 void() w_fire_flames =
