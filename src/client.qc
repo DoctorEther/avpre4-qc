@@ -774,18 +774,28 @@ entity SelectSpawnPointEX(float forceSpawn) {
 			return world; // didn't find anything for solo horde, fall through
 	}
 
-	// choose a info_player_deathmatch point
+	// choose an active info_player_coop point
 	if ( coop ) {
-		lastspawn = find( lastspawn, classname, "info_player_coop" );
+		float loops;
 
-		if ( lastspawn == world ) {
-			lastspawn = find( lastspawn, classname, "info_player_start" );
-		}
+		while (loops < 2) {
+			lastspawn = find(lastspawn, classname, "info_player_coop");
+			if (lastspawn.estate == STATE_ACTIVE)
+				return lastspawn;
 
-		if ( lastspawn != world ) {
-			return lastspawn;
+			// reached end of edict list and returned world, so we loop through
+			// if it gets to the second loop it means no valid/active coop point was found
+			if (!lastspawn) {
+				loops++;
+				lastspawn = find(lastspawn, classname, "info_player_coop");
+			}
 		}
-	} else if ( deathmatch ) {
+		dprint("No info_player_coop found, looking for info_player_start\n");
+		// if no coop spot is found, go through standard info_player_start logic at the end of the function
+	}
+
+	// choose a info_player_deathmatch point
+	else if ( deathmatch ) {
 
 		// find all spots that don't have visible players nearby
 		spots = world;
