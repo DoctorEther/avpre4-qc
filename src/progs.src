@@ -39,6 +39,7 @@ monsters.qc
 doors.qc
 buttons.qc
 triggers.qc
+setstate.qc
 teleport.qc
 plats.qc
 misc.qc

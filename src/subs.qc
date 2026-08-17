@@ -230,7 +230,7 @@ match (string)self.target and call their .use function
 */
 void() SUB_UseTargets =
 {
-	local entity t, stemp, otemp, act;
+	entity t;
 
 //
 // check for a delay
@@ -293,33 +293,39 @@ void() SUB_UseTargets =
 //
 // fire targets
 //
-	if (self.target != "")
-	{
-		act = activator;
-		t = world;
-		do
-		{
-			t = find (t, targetname, self.target);
-			if (!t)
-			{
-				return;
-			}
-			stemp = self;
-			otemp = other;
-			self = t;
-			other = stemp;
-			if (self.use != SUB_Null)
-			{
-				if (self.use)
-					self.use ();
-			}
-			self = stemp;
-			other = otemp;
-			activator = act;
-		} while ( 1 );
-	}
-	
+	if (self.target != "") SUB_UseSpecificTarget(self.target, targetname);
+	if (self.target2 != "") SUB_UseSpecificTarget(self.target2, targetname);
+	if (self.target3 != "") SUB_UseSpecificTarget(self.target3, targetname);
+	if (self.target4 != "") SUB_UseSpecificTarget(self.target4, targetname);
 
+
+};
+
+void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
+{
+	entity t, stemp, otemp, act;
+
+	act = activator;
+	t = find (world, matchfield, matchstring);
+	while (t != world)
+	{
+		stemp = self;
+		otemp = other;
+		self = t;
+		other = stemp;
+		if (self.use && self.use != SUB_Null)
+		{
+			self.use();
+			//if (developer) {
+			//	dprint6(self.classname, " with targetname '", matchstring, "'' fired by ", act.classname, "\n");
+			//	eprint(self);
+			//}
+		}
+		self = stemp;
+		other = otemp;
+		activator = act;
+		t = find (t, matchfield, matchstring);
+	}
 };
 
 /*
@@ -351,7 +357,6 @@ void(float normal) SUB_AttackFinished =
 		self.attack_finished = time + normal;
 };
 
-float (entity targ) visible;
 
 void (void() thinkst) SUB_CheckRefire =
 {

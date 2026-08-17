@@ -377,8 +377,14 @@ float	STATE_BOTTOM	= 1;
 float	STATE_UP		= 2;
 float	STATE_DOWN		= 3;
 
+float 	STATE_CLOSED   = 4;
+float 	STATE_OPEN     = 5;
+float 	STATE_OPENING  = 6;
+float 	STATE_CLOSING  = 7;
+
 float 	STATE_ACTIVE      = 0;
 float 	STATE_INACTIVE    = 1;
+float 	STATE_INVISIBLE = 8;
 
 vector	VEC_ORIGIN = '0 0 0';
 vector	VEC_HULL_MIN = '-16 -16 -24';
@@ -617,6 +623,9 @@ float num_players;	// active player count, maintained by ClientConnect/Disconnec
 
 .float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) th_damage;
 
+
+
+
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
@@ -850,7 +859,17 @@ float	AS_MISSILE		= 4;
 .float    spawn_deferred;
 .float grapple;
 
+
+// entity state
 .float estate;
+.void(float newstate, float stateflags) th_setstate; // setstate callback. Function must handle changing the setstate field manually
+.float estate_orig_solid;
+.float estate_orig_move;
+.float estate_orig_mdlindex;
+
+.string 	target2, target3, target4, targetname2;
+
+
 .float is_waiting;
 .void() dormant_use;
 

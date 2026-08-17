@@ -15,6 +15,23 @@ void(string s, string ss, string sss, string ssss, string sssss, string ssssss, 
 void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) dprint9 = 
 	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); dprint(sssssssss); }
 
+/*
+=============
+SUB_CallAsSelf
+
+wrap the self/oself shuffle for code cleanliness elsewhere
+===============
+*/
+void(void() fun, entity newself) SUB_CallAsSelf =
+{
+	local entity oself;
+	
+	oself = self;
+	self = newself;
+	fun();
+	self = oself;	
+}
+
 
 entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 	entity closest, next;
