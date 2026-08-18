@@ -101,6 +101,9 @@ void(string matchstring, .string matchfield, float action, float flags) target_s
 	while (t != world) {
 		if (!(t.classname == "func_door" && t.owner != t)) {
 
+			//dprint3("Setting state ", ftos(action), " to entity:\n");
+			//eprint(t);
+
 			/*
 			toggle active:
 			invisible -> active

@@ -652,14 +652,25 @@ entity() SelectSpawnPointRogue =
 	if (spot)
 		return spot;
 		
-// choose a info_player_deathmatch point
-	if (coop)
-	{
-		lastspawn = find(lastspawn, classname, "info_player_coop");
-		if (lastspawn == world)
-			lastspawn = find (lastspawn, classname, "info_player_start");
-		if (lastspawn != world)
-			return lastspawn;
+
+	// choose an active info_player_coop point
+	if ( coop ) {
+		float loops;
+
+		while (loops < 2) {
+			lastspawn = find(lastspawn, classname, "info_player_coop");
+			if (lastspawn.estate == STATE_ACTIVE)
+				return lastspawn;
+
+			// reached end of edict list and returned world, so we loop through
+			// if it gets to the second loop it means no valid/active coop point was found
+			if (!lastspawn) {
+				loops++;
+				lastspawn = find(lastspawn, classname, "info_player_coop");
+			}
+		}
+		dprint("No info_player_coop found, looking for info_player_start\n");
+		// if no coop spot is found, go through standard info_player_start logic at the end of the function
 	}
 	else if (deathmatch)
 	{
@@ -780,8 +791,11 @@ entity SelectSpawnPointEX(float forceSpawn) {
 
 		while (loops < 2) {
 			lastspawn = find(lastspawn, classname, "info_player_coop");
-			if (lastspawn.estate == STATE_ACTIVE)
+			if (lastspawn.estate == STATE_ACTIVE){
+				dprint("Found info_player_coop:\n");
+				//eprint(lastspawn);
 				return lastspawn;
+			}
 
 			// reached end of edict list and returned world, so we loop through
 			// if it gets to the second loop it means no valid/active coop point was found
