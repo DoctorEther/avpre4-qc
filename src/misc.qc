@@ -773,6 +773,7 @@ void(string gibname) ThrowBall =
     self.view_ofs = '0 0 8';
     setsize(self, '0 0 -1', VEC_ORIGIN);
     self.origin_z = (self.origin_z - 24);
+    setorigin(self, self.origin);
     self.flags = (self.flags - (self.flags & FL_ONGROUND));
     self.avelocity = (crandom() * '0 600 0');
     self.classname = "ball";

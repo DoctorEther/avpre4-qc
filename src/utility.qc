@@ -272,3 +272,45 @@ vector(vector ang) normalizeAngles180 = {
 
 	return ang;
 };
+
+
+
+//faster version of id's anglemod
+float(float v) anglemod =
+{
+	return v - floor(v/360) * 360;
+}
+
+float(float v) anglemod180 =
+{
+	return v - floor((v+180)/360) * 360;
+}
+
+float(float anga, float angb) angledif =
+{
+	float dif;
+	dif = fabs(anga - angb);
+	if (dif > 180)
+		dif = 360 - dif;
+	return dif;
+}
+
+vector(vector anga, vector angb) anglesdif =
+{
+	vector dif;
+	dif = anga - angb;
+	if (dif_x > 180)
+		dif_x = 360 - dif_x;
+	if (dif_y > 180)
+		dif_y = 360 - dif_y;
+	if (dif_z > 180)
+		dif_z = 360 - dif_z;
+	return dif;
+}
+
+float(vector ang, vector base_ang, vector offset) isInAngle = {
+	if (angledif(ang_x, anglemod180(base_ang_x)) > offset_x || angledif(ang_y, anglemod180(base_ang_y)) > offset_y)
+		return FALSE;
+	else
+		return TRUE;
+};
