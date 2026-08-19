@@ -109,3 +109,6 @@ timemach.qc
 bots/bot.qc				// bot support
 
 horde.qc				// MG1 horde mode merge
+
+// --- AVIÃOZINHO PRE-4 FINAL ------------------------
+trigger_finale.qc
