@@ -556,3 +556,128 @@ void() trigger_monsterjump =
 
 
 
+
+/*
+=============================================================
+
+trigger_textstory
+
+=============================================================
+*/
+float TEXTSTORY_SILENT = 1;
+float TEXTSTORY_NOFADE = 2;
+
+void(entity controller) textstory_hide = {
+	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
+
+	//self.enemy.suppressCenterPrint = FALSE;
+	centerprint(self.enemy, "");
+
+	if (controller.noise2 != "") 
+		sound(self.enemy, CHAN_BODY, controller.noise2, 1, ATTN_NORM);
+	
+	//if (!(controller.spawnflags & TEXTSTORY_NOFADE))
+	//	csf_fade_clear(self.enemy, 0.5, 110);
+};
+
+void(entity controller) textstory_show = {
+	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
+
+	//self.enemy.suppressCenterPrint = TRUE;
+	string msg;
+
+	//if (controller.mapvar && read_mapvar(controller.mapvar)){
+	//	msg = controller.message2;
+	//}
+	//else {
+		msg = controller.message;
+	//}
+
+	centerprint(self.enemy, msg);
+
+	if (!self.state) {
+		if (controller.noise1 != "")
+			sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
+
+		//if (!(controller.spawnflags & TEXTSTORY_NOFADE))
+		//	csf_fade(self.enemy, 160, '0 0 0', 1, 110);
+	}
+
+
+	self.state = 1;
+};
+
+//----------------------------------------
+
+void() trigger_textstory_hide = {
+	textstory_hide(self);
+
+	self.pain_finished = 0;
+	self.enemy = world;
+	self.state = 0;
+};
+
+void() trigger_textstory_show = {
+	textstory_show(self);	
+
+	if (time > self.pain_finished)
+		self.think = trigger_textstory_hide;
+	else
+		self.think = trigger_textstory_show;
+	self.nextthink = time + 0.2;
+
+};
+
+void() trigger_textstory_touch = {
+	
+	if (!(other.flags & FL_CLIENT)) return;
+	if (self.estate != STATE_ACTIVE) return;
+
+	// don't show message if another player is already triggering it
+	if (other != self.enemy && self.state == 1) return;
+
+	if (self.mangle && !isInAngle(other.v_angle, self.mangle, self.view_ofs))
+		return;
+
+	if (!self.pain_finished) {
+		self.pain_finished = time + self.wait;
+	}
+
+	if (self.attack_finished < time) {
+
+		self.attack_finished = time + 0.1;
+		self.enemy = other;
+
+		trigger_textstory_show();
+	}
+};
+
+void() trigger_textstory = {
+	//if (!SUB_InitEntity()) return;
+	
+	InitTrigger();
+	self.touch = trigger_textstory_touch;
+
+	if (self.view_ofs == '0 0 0')
+		self.view_ofs = '90 90 0';
+
+	if (self.noise1 == "")
+		self.noise1 = "misc/talk.wav";
+
+	if (self.noise2 == "")
+		self.noise2 = "misc/null.wav";
+
+	if (self.spawnflags & TEXTSTORY_SILENT) {
+		self.noise1 = string_null;
+		self.noise2 = string_null;
+	}
+
+	if (!self.wait) self.wait = 2;
+	
+	if (self.noise1 != "")
+		precache_sound (self.noise1);
+	if (self.noise2 != "")
+		precache_sound (self.noise2);
+
+	SUB_CheckWaiting();
+};
