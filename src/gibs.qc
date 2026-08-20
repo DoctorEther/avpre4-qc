@@ -203,7 +203,8 @@ void() kick_touch =
 	if (other.classname != "player")
 		return;
 	
-	if(self.model == "progs/ball.mdl" && self.classname == "ball") bprint("GOOOOOOOL!!!\n");
+	self.enemy = other;
+	//if(self.model == "progs/ball.mdl" && self.classname == "ball") bprint("GOOOOOOOL!!!\n");
 	
 	//randomize sound
 	if (random()< 0.8)

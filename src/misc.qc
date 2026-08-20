@@ -751,39 +751,49 @@ void() misc_noisemaker =
 
 void(string gibname) ThrowBall =
 {
-
-    if (opt_noheads)
+    
+	if (opt_noheads)
     {
         setmodel(self, "progs/gib1.mdl");
-        self.skin = FALSE;
+        self.skin = 0;
     }
     else
     {
         setmodel(self, gibname);
     }
-    self.frame = FALSE;
-    if ((gibname == "progs/h_ogre.mdl"))
+
+    if (gibname == "progs/h_ogre.mdl")
     {
-        self.skin = FALSE;
+        self.skin = 0;
     }
+
+    self.frame = 0;
     self.movetype = MOVETYPE_BOUNCE;
     self.solid = SOLID_TRIGGER;
-    self.takedamage = FALSE;
-    self.solid = 1;
+    self.takedamage = 0;
     self.touch = kick_touch;
     self.view_ofs = '0 0 8';
     setsize(self, '0 0 -1', VEC_ORIGIN);
     self.origin_z = (self.origin_z - 24);
     setorigin(self, self.origin);
-    self.flags = (self.flags - (self.flags & FL_ONGROUND));
-    self.avelocity = (crandom() * '0 600 0');
-    self.classname = "ball";
-};
+    self.flags &~= FL_ONGROUND;
+    //self.avelocity = (crandom() * '0 600 0');
+    //self.classname = "ball";
+    
+}
 
 void() football = 
 {
-    ThrowBall("progs/ball.mdl");
-    return;
+    self.movetype = MOVETYPE_BOUNCE;
+    self.solid = SOLID_TRIGGER;
+    
+    self.touch = kick_touch;
+    precache_model("progs/ball.mdl");
+    setmodel(self, "progs/ball.mdl");
+    setsize(self, '0 0 0', VEC_ORIGIN);
+    //self.origin_z = (self.origin_z - 24);
+    //setorigin(self, self.origin);
+    self.flags &~= FL_ONGROUND;
 };
 
 

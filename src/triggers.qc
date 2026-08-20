@@ -82,9 +82,9 @@ void() multi_trigger =
 		found_secrets = found_secrets + 1;
 		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
 
-		msg_entity = self.enemy;
-		WriteByte (MSG_ONE, SVC_ACHIEVEMENT);
-		WriteString(MSG_ONE, "ACH_FIND_SECRET");
+		//msg_entity = self.enemy;
+		//WriteByte (MSG_ONE, SVC_ACHIEVEMENT);
+		//WriteString(MSG_ONE, "ACH_FIND_SECRET");
 	}
 
 	if (self.noise)
@@ -93,8 +93,12 @@ void() multi_trigger =
 // don't trigger again until reset
 	self.takedamage = DAMAGE_NO;
 
-	activator = self.enemy;
-	
+	if (self.enemy.classname == "football") {
+		if (self.enemy.enemy.classname != "player") activator = self.enemy;
+		else activator = self.enemy.enemy;
+	}
+	else activator = self.enemy;
+	//dprint("Using targets\n");
 	SUB_UseTargets();
 
 	if (self.wait > 0)	
@@ -128,7 +132,10 @@ void() multi_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
-	if (other.classname != "player")
+	if (other.classname != "player" && !(self.spawnflags & 65536))
+		return;
+
+	if (self.spawnflags & 65536 && other.classname != "football") // football only
 		return;
 	
 // if the trigger has an angles field, check player's facing direction
@@ -443,7 +450,7 @@ void() trigger_hurt =
 	if (!self.wait)
 		self.wait = 1;
 	if (!self.style)
-		self.style = 1;
+		self.style = 1; // DMGTYPE_GENERIC
 
 
 	SUB_CheckWaiting();
