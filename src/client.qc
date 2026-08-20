@@ -1362,11 +1362,11 @@ void() WaterMove =
 		if (self.dmgtime < time)
 		{
 			if (self.radsuit_finished > time)
-				self.dmgtime = time + 1;
+				self.dmgtime = time + 2;
 			else
-				self.dmgtime = time + 0.2;
+				self.dmgtime = time + 0.5;
 
-			T_Damage (self, world, world, 10*self.waterlevel, DMGTYPE_LAVA);
+			T_Damage (self, world, world, 2*self.waterlevel, DMGTYPE_LAVA);
 		}
 	}
 	else if (self.watertype == CONTENT_SLIME)
@@ -1374,7 +1374,7 @@ void() WaterMove =
 		if (self.dmgtime < time && self.radsuit_finished < time)
 		{
 			self.dmgtime = time + 1;
-			T_Damage (self, world, world, 4*self.waterlevel, DMGTYPE_SLIME);
+			T_Damage (self, world, world, 1*self.waterlevel, DMGTYPE_SLIME);
 		}
 	}
 	

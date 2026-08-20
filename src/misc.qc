@@ -767,6 +767,7 @@ void(string gibname) ThrowBall =
         self.skin = FALSE;
     }
     self.movetype = MOVETYPE_BOUNCE;
+    self.solid = SOLID_TRIGGER;
     self.takedamage = FALSE;
     self.solid = 1;
     self.touch = kick_touch;

@@ -409,7 +409,7 @@ void() hurt_touch =
 		return;
 
 	if (other.takedamage) {
-		T_Damage (other, self, self, self.dmg, DMGTYPE_GENERIC);
+		T_Damage (other, self, self, self.dmg, self.style);
 		other.hurt_started = time;
 	}
 
@@ -442,6 +442,9 @@ void() trigger_hurt =
 		self.dmg = 5;
 	if (!self.wait)
 		self.wait = 1;
+	if (!self.style)
+		self.style = 1;
+
 
 	SUB_CheckWaiting();
 };
