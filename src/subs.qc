@@ -273,7 +273,7 @@ void() SUB_UseTargets =
 	    } 
 	    else 
 	    {
-	        stuffcmd(activator, "scr_centertime 7");
+	        //stuffcmd(activator, "scr_centertime 7");
 			centerprint (activator, self.message);
 			if (!self.noise)
 				sound (activator, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
