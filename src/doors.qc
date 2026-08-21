@@ -413,6 +413,68 @@ void() LinkDoors =
 };
 
 
+//=================================================================================================
+
+void(entity e) door_set_open = {
+	entity starte;
+	entity oself = self;
+	self = starte = e;
+	if (self.state == STATE_DOWN || self.state == STATE_BOTTOM) {
+		do {
+			door_go_up ();
+			self = self.enemy;
+		} while ( (self != starte) && (self != world) );
+	}
+	self = oself;
+}
+
+void(entity e) door_set_close = {
+	entity starte;
+	entity oself = self;
+	self = starte = e;
+	if (self.state == STATE_UP || self.state == STATE_TOP) {
+		do {
+			door_go_down ();
+			self = self.enemy;
+		} while ( (self != starte) && (self != world) );
+	}
+	self = oself;
+}
+
+void(string tgt) target_setdoor_firetarget = {
+	entity e = find(world, targetname, tgt);
+	while (e != world) {
+		if (self.style == 1) door_set_close(e);
+		else door_set_open(e);
+
+		e = find(e, targetname, tgt);
+	}
+	
+	e = find(world, targetname2, tgt);
+	while (e != world) {
+		if (self.style == 1) door_set_close(e);
+		else door_set_open(e);
+
+		e = find(e, targetname2, tgt);
+	}
+}
+
+void() target_setdoor_use = {
+	if (self.estate != STATE_ACTIVE) return;
+
+	if (self.target != "") target_setdoor_firetarget(self.target);
+	if (self.target2 != "") target_setdoor_firetarget(self.target2);
+	if (self.target3 != "") target_setdoor_firetarget(self.target3);
+	if (self.target4 != "") target_setdoor_firetarget(self.target4);
+}
+
+void() target_setdoor = {
+	self.use = target_setdoor_use;
+}
+
+
+//=================================================================================================
+
 /*QUAKED func_door (0 .5 .8) ? START_OPEN x DOOR_DONT_LINK GOLD_KEY SILVER_KEY TOGGLE
 if two doors touch, they are assumed to be connected and operate as a unit.
 
