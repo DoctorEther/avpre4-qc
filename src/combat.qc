@@ -235,27 +235,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	if (deathmatch)
 		damage = RuneApplyBlack(damage, attacker);
 
-// save damage based on the target's armor level
-
-//ZOID--
-	if (TeamArmorDam(targ, inflictor, attacker, damage))
-		save = ceil(targ.armortype*damage);
-	else
-		save = 0;
-//--ZOID
-
-	if (save >= targ.armorvalue)
-	{
-		save = targ.armorvalue;
-		targ.armortype = 0;	// lost all armor
-		targ.items2 = targ.items2 - 
-						(targ.items2 & (IT2_ARMOR1 | IT2_ARMOR2 | IT2_ARMOR3));
-	}
-	
-	targ.armorvalue = targ.armorvalue - save;
-	take = ceil(damage-save);
-
-
 
 	// checks if entity has a custom damage calculation function
 	if (targ.th_damage)	{
@@ -288,6 +267,25 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		return;
 	}
 
+	// save damage based on the target's armor level
+
+//ZOID--
+	if (TeamArmorDam(targ, inflictor, attacker, damage))
+		save = ceil(targ.armortype*damage);
+	else
+		save = 0;
+//--ZOID
+	if (save >= targ.armorvalue)
+	{
+		save = targ.armorvalue;
+		targ.armortype = 0;	// lost all armor
+		targ.items2 = targ.items2 - 
+						(targ.items2 & (IT2_ARMOR1 | IT2_ARMOR2 | IT2_ARMOR3));
+	}
+	
+
+	targ.armorvalue = targ.armorvalue - save;
+	take = ceil(damage-save);
 	// add to the damage total for clients, which will be sent as a single
 // message at the end of the frame
 // FIXME: remove after combining shotgun blasts?
