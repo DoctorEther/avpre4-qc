@@ -407,6 +407,8 @@ float	SVC_CUTSCENE		= 34;
 
 float	SVC_ACHIEVEMENT		= 52;
 
+float	SVC_MODAL			= 87;
+
 float	STAT_TOTALMONSTERS	= 12;		// pgm black magic
 
 float	TE_SPIKE		= 0;
@@ -881,6 +883,8 @@ float	AS_MISSILE		= 4;
 .float flame_time;
 .float inflamed;
 
+.string  target_prompt1;
+.string  target_prompt2;
 
 //===========================================================================
 

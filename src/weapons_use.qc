@@ -962,8 +962,19 @@ void() ImpulseCommands =
 };
 
 //AVIÃOZINHO
-void() PreImpulseCommands =
-{
+void() PreImpulseCommands = {
+	if (self.impulse == 51) {
+		self.impulse = 0;
+	    dprint("yes\n");
+	    prompt_return(self, 1);
+
+	}
+	if (self.impulse == 52) {
+		self.impulse = 0;
+	    dprint("no\n");
+	    prompt_return(self, 2);
+	}
+	
 	if(self.impulse == 40) PlayerDoubleJump();
 	if(self.impulse == 41) PlayerDash();
 	

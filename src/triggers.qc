@@ -691,3 +691,72 @@ void() trigger_textstory = {
 
 	SUB_CheckWaiting();
 };
+
+//=================================================================================================
+
+void(entity plr) prompt_run = {
+	if (plr.classname != "player")
+		return;
+	
+	plr.target_prompt1 = self.target;
+    plr.target_prompt2 = self.target2;
+
+    msg_entity = plr;
+    WriteByte (MSG_ONE, SVC_MODAL); // svc_modal = 87
+    WriteString (MSG_ONE, self.message);
+    WriteString (MSG_ONE, self.noise1);
+    WriteString (MSG_ONE, self.noise2);
+
+}
+
+void(entity plr, float opt) prompt_return = {
+	activator = plr;
+
+	if (opt == 1 && plr.target_prompt1 != "")
+		SUB_UseSpecificTarget(plr.target_prompt1, targetname);
+
+	else if (opt == 2 && plr.target_prompt2 != "")
+		SUB_UseSpecificTarget(plr.target_prompt2, targetname);
+
+	plr.target_prompt1 = string_null;
+	plr.target_prompt2 = string_null;
+}
+
+void() prompt_use = {
+
+	if (self.estate != STATE_ACTIVE) return;
+
+	if (activator.classname != "player")
+		return;
+
+	prompt_run(activator);
+}
+
+void() target_prompt = {
+	self.use = prompt_use;
+}
+
+
+void() trigger_prompt_touch = {
+
+	if (self.estate != STATE_ACTIVE) return;
+
+	if (other.classname != "player")
+		return;
+
+	if (time < self.attack_finished)
+		return;
+
+	self.attack_finished = time + self.wait;
+	
+	prompt_run(other);
+}
+
+void() trigger_prompt = {
+	InitTrigger();
+	self.touch = trigger_prompt_touch;
+	self.use = prompt_use;
+	if (!self.wait) self.wait = 5;
+
+	SUB_CheckWaiting();
+}
