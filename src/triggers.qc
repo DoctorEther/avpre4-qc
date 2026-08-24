@@ -833,3 +833,80 @@ void() trigger_prompt = {
 
 	SUB_CheckWaiting();
 }
+
+
+
+
+/***********************************************
+
+target_move
+
+***********************************************/
+
+
+void() target_move_use = {
+
+	if (self.estate != STATE_ACTIVE) return;
+	entity t;
+	vector neworigin;
+
+	// move activator
+	if (self.spawnflags & 8)
+		t = activator;
+	else {
+		t = find(world, targetname, self.target);
+
+		if (!t) //targetname not found, search for targetname2
+			t = find(world, targetname2, self.target);
+	}
+
+	if (t) {
+		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
+			neworigin = self.origin + '0 0 1';
+		else
+			neworigin = self.origin;
+
+		// spawn teleport effect
+		if (self.spawnflags & 4) {
+			spawn_tfog(t.origin);
+		}
+
+		setorigin(t, neworigin);
+		//t.origin = self.origin;
+		// keep original angle
+		if (!(self.spawnflags & 1)) t.angles = self.mangle;
+		// keep original velocity
+		if (!(self.spawnflags & 2)) t.velocity = '0 0 0';
+		t.flags = t.flags - t.flags & FL_ONGROUND;
+
+		if (self.spawnflags & 4) {
+			vector tfog_org;
+			if (t.flags & FL_CLIENT) {
+				makevectors(t.v_angle);
+				tfog_org = t.origin + v_forward * 32;
+			}
+			else
+				tfog_org = t.origin;
+			spawn_tfog(tfog_org);
+		}
+	}
+
+};
+
+/*QUAKED target_move (1 .0 .5) (-8 -8 -8) (8 8 8) KEEP_ANGLE KEEP_VELOCITY
+Moves target entity to this spot and angle when triggered.
+Use spawnflag 1 to not change the entity's original angle.
+Spawnflag 2 keeps the entity's original velocity.
+*/
+void() target_move = {
+	
+	if (!self.target && !(self.spawnflags & 8))
+		objerror("No target set");
+
+	if (!self.targetname)
+		objerror("No targetname set");
+
+	self.use = target_move_use;
+	
+	if (!self.mangle) self.mangle = self.angles;
+};
