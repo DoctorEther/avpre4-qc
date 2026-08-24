@@ -56,6 +56,11 @@
 	target4(target_destination) : "Target"
 ]
 
+@baseclass = SingleTarget [ 
+	target(target_destination) : "Target" 
+	killtarget(target_destination) : "Killtarget"
+]
+
 @baseclass base(TargetsOnly) = Target [ 
 	//killtarget(target_destination) : "Killtarget"
 ]
@@ -646,11 +651,12 @@ Requisitos:
 	spawnflags(flags) = 
 	[ 
 		1 : "No touch" : 0 
+		65536 : "Football only" : 0
 	]
 	killtarget(string) : "KillTarget"
     message(string) : "Message"
 	health(integer) : "Health"
-        sounds(choices) : "Sounds" : 1 =
+    sounds(choices) : "Sounds" : 1 =
 	[
 		0 : "none"
 		1 : "secret"
@@ -829,6 +835,12 @@ This ideally should match the same size and shape of the trigger_teleport brush.
 	[
 		0 : "Default"
 		1 : "Wait for Trigger"
+	]
+	style(choices) : "Damage feedback style" : 1 =
+	[
+		1 : "Generic"
+		8 : "Lava"
+		16 : "Slime"
 	]
 ]
 
@@ -1203,5 +1215,92 @@ You can force the target entities to spawn disabled/locked/invisible with spawnf
 		2 : "Force inactive"
 		3 : "Toggle visible"
 		4 : "Force invisible"
+	]
+]
+
+@SolidClass base(Appearflags, Targetname) = trigger_textstory :
+"Trigger to show long centerprint texts. Message remains on screen while player is inside the trigger volume. Can have custom sounds, or be made silent.
+
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
+
+You can set it to be show the message only when the player is facing a certain angle within the trigger. Set the central angle with 'mangle', and the maximum angle offset with 'view_ofs' (both in 'pitch way 0' format)."
+
+[
+	mangle(string) : "Central view angle" : : "Central point of the viewcone, in 'pitch yaw 0' format"
+	view_ofs(string) : "Maximum angle offset" : : "Angle offsets from the central viewcone point in each direction, in 'pitch yaw 0' format"
+	message(string) : "Message" : : "Message to show on-screen."
+		noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
+	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+	wait(integer) : "Minimum message duration" : : "Minimum time the message will stay onscreen, even after the player leaves the trigger"
+	spawnflags(flags) = [
+		1: "Silent"
+		2: "Don't fade background"
+	]
+]
+
+@PointClass base(Appearflags, Targetname) = target_textstory :
+"Trigger to show long centerprint texts. Message remains on screen for the duration of 'wait'. Can have custom sounds, or be made silent.
+
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
+"
+[
+	wait(integer) : "Message duration" : 5
+	message(string) : "Message" : : "Message to show on-screen."
+	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
+	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+	spawnflags(flags) = [
+		1: "Silent"
+		2: "Fade background"
+	]
+]
+
+
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setdoor :
+"Sets a door directly to open or close."
+[
+	style(choices) : "Action type" : 0 = [
+		0 : "Set to open"
+		1 : "Set to close"
+	]
+]
+
+
+
+
+@SolidClass base(Appearflags, Targetname) = trigger_prompt :
+"Prompt"
+[
+	message(string) : "Message" : : "Prompt message"
+	noise1(string) : "'Yes' button text" : : "Message to show on the first button ('yes')"
+	noise2(string) : "'No' button text" : : "Message to show on the second button ('no')"
+	wait(integer) : "Wait between runs"
+	target(target_destination) : "Target to fire if 'yes'" 
+	target2(target_destination) : "Target to fire if 'no'" 
+]
+
+@PointClass base(Appearflags, Targetname) = target_prompt :
+"Prompt.
+"
+[
+	message(string) : "Message" : : "Prompt message"
+	noise1(string) : "'Yes' button text" : : "Message to show on the first button ('yes')"
+	noise2(string) : "'No' button text" : : "Message to show on the second button ('no')"
+	target(target_destination) : "Target to fire if 'yes'" 
+	target2(target_destination) : "Target to fire if 'no'" 
+]
+
+
+@PointClass base(SingleTarget, Targetname, Appearflags) color(255 0 128) size(-8 -8 -24, 8 8 40) = target_move : 
+"Moves target entity to this spot and angle when triggered. Can target another entity's 'targetname2' field.
+Use spawnflag 1 to not change the entity's original angle.
+Spawnflag 2 keeps the entity's original velocity."
+[
+	angle(integer) : "Angle"
+	mangle(string) : "Custom angles"
+	spawnflags(flags) = [
+		1 : "Keep original angle"
+		2 : "Keep original velocity"
+		4 : "Spawn teleport effect"
+		8 : "Move activator"
 	]
 ]
