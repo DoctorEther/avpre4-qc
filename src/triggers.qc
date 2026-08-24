@@ -692,6 +692,79 @@ void() trigger_textstory = {
 	SUB_CheckWaiting();
 };
 
+
+//-----------------------------
+
+void() target_textstory_helper_hide = {
+
+	textstory_hide(self.owner);
+	remove(self);
+};
+
+void() target_textstory_helper_show = {
+	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
+		remove(self);
+		return;
+	}
+
+	textstory_show(self.owner);
+
+	if (self.attack_finished < time) self.think = target_textstory_helper_hide;
+	
+	self.nextthink = time + 0.1;
+};
+
+void(entity tgt) target_textstory_spawn_helper = {
+	entity e;
+
+	e = spawn();
+	e.classname = "target_textstory_helper";
+	e.owner = self;
+	e.think = target_textstory_helper_show;
+	e.nextthink = time + 0.1;
+	e.attack_finished = time + self.wait;
+	e.enemy = tgt;
+};
+
+void() target_textstory_use = {
+
+	if (!(activator.flags & FL_CLIENT)) return;
+	if (self.estate != STATE_ACTIVE) return;
+	
+	
+	target_textstory_spawn_helper(activator);
+};
+
+void() target_textstory = {
+	
+	if (self.noise1 == "")
+		self.noise1 = "misc/talk.wav";
+	
+	if (self.noise2 == "")
+		self.noise2 = "misc/null.wav";
+
+	if (self.spawnflags & TEXTSTORY_SILENT) {
+		self.noise1 = "";
+		self.noise2 = "";
+	}
+
+	if (self.spawnflags & TEXTSTORY_NOFADE)
+		self.spawnflags = self.spawnflags - TEXTSTORY_NOFADE;
+	else
+		self.spawnflags = self.spawnflags | TEXTSTORY_NOFADE;
+
+	if (self.noise1 != "")
+		precache_sound (self.noise1);
+	if (self.noise2 != "")
+		precache_sound (self.noise2);
+
+	if (!self.wait)
+		self.wait = 5;
+
+	self.use = target_textstory_use;
+};
+
+
 //=================================================================================================
 
 void(entity plr) prompt_run = {
