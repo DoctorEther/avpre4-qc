@@ -96,7 +96,7 @@ void(vector org, vector vec) weapon_make_flame =
 	flame = spawn();
 	flame.owner = self;
 	//setmodel(flame, "progs/s_flame.spr");
-	setmodel(flame, "progs/flame.mdl");
+	setmodel(flame, "progs/flame_throw.mdl");
 	setsize(flame, '0 0 0', '0 0 0');
 	setorigin(flame, org);
 	flame.movetype = MOVETYPE_FLYMISSILE;
