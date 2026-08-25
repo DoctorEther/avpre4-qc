@@ -62,8 +62,8 @@ void() sword_atk5 = [ 9, sword_run1 ] { ai_charge(14); };
 
 //===========================================================================
 
-void() sword_die1 = [ $death1, sword_die2 ] {self.solid = SOLID_NOT;self.ammo_nails = 5;DropBackpack();};
-void() sword_die2 = [ $death1, sword_die2 ] {};
+void() sword_die1 = [ 13, sword_die2 ] {self.solid = SOLID_NOT;self.ammo_nails = 5;DropBackpack();};
+void() sword_die2 = [ 13, sword_die2 ] {};
 
 
 void() sword_die =
