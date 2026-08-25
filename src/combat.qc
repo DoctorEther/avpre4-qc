@@ -199,6 +199,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	local	entity	oldself;
 	local	float	save;
 	local	float	take;
+	float ignore_armor;
 	
 	if (!targ.takedamage)
 		return;
@@ -216,6 +217,12 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 			return;
 	}
 	IsExplosionDamage = 0;
+
+		//don't deplete armor if drowning/burning, or protected by biosuit/pentagram/godmode (note: in ID1 pentagram/godmode doesn't actually protect your armor)
+	if (dmgtype & DMGTYPE_BURN || dmgtype & DMGTYPE_DROWN || targ.invincible_finished >= time || targ.flags & FL_GODMODE)
+		ignore_armor = TRUE;
+	else
+		ignore_armor = FALSE;
 
 	if (targ.items2 & IT2_SHIELD)
 	{
@@ -235,6 +242,26 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	if (deathmatch)
 		damage = RuneApplyBlack(damage, attacker);
 
+	take = damage;
+	// save damage based on the target's armor level
+//ZOID--
+	if (TeamArmorDam(targ, inflictor, attacker, damage))
+		save = ceil(targ.armortype*damage);
+	else
+		save = 0;
+//--ZOID
+	if (save >= targ.armorvalue && !ignore_armor)
+	{
+		save = targ.armorvalue;
+		targ.armortype = 0;	// lost all armor
+		targ.items2 = targ.items2 - (targ.items2 & (IT2_ARMOR1 | IT2_ARMOR2 | IT2_ARMOR3));
+		
+		targ.armorvalue = targ.armorvalue - save;
+		take = ceil(damage-save);
+	}
+	
+
+	
 
 	// checks if entity has a custom damage calculation function
 	if (targ.th_damage)	{
@@ -267,25 +294,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		return;
 	}
 
-	// save damage based on the target's armor level
 
-//ZOID--
-	if (TeamArmorDam(targ, inflictor, attacker, damage))
-		save = ceil(targ.armortype*damage);
-	else
-		save = 0;
-//--ZOID
-	if (save >= targ.armorvalue)
-	{
-		save = targ.armorvalue;
-		targ.armortype = 0;	// lost all armor
-		targ.items2 = targ.items2 - 
-						(targ.items2 & (IT2_ARMOR1 | IT2_ARMOR2 | IT2_ARMOR3));
-	}
-	
-
-	targ.armorvalue = targ.armorvalue - save;
-	take = ceil(damage-save);
 	// add to the damage total for clients, which will be sent as a single
 // message at the end of the frame
 // FIXME: remove after combining shotgun blasts?
