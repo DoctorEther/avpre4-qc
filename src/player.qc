@@ -671,7 +671,7 @@ void() GibPlayer =
 void() PlayerDie =
 {
 	local	float	i;
-	
+	AV_SkateOff(self);
 	self.items = self.items - (self.items & IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes
 	self.invincible_finished = 0;
