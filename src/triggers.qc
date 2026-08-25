@@ -872,12 +872,25 @@ void() target_move_use = {
 		}
 
 		setorigin(t, neworigin);
-		//t.origin = self.origin;
+
 		// keep original angle
-		if (!(self.spawnflags & 1)) t.angles = self.mangle;
+		if (!(self.spawnflags & 1)) {
+			t.angles = self.mangle;
+			if (t.classname == "player") {
+				t.angles_x = -t.angles_x;
+				t.v_angle = t.angles;
+				t.fixangle = 1;
+			}
+		}
 		// keep original velocity
-		if (!(self.spawnflags & 2)) t.velocity = '0 0 0';
-		t.flags = t.flags - t.flags & FL_ONGROUND;
+
+		if (!(self.spawnflags & 2)) {
+			t.velocity = '0 0 0';
+			if (t.flags & FL_CLIENT)
+				t.flags &~= FL_DASHING;
+		}
+
+		t.flags &~= FL_ONGROUND;
 
 		if (self.spawnflags & 4) {
 			vector tfog_org;
