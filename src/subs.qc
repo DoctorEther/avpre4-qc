@@ -25,6 +25,18 @@ void(entity attacker, float damage) SUB_NullPain = {};
 
 void() SUB_Remove = {remove(self);};
 
+float() SUB_InitEntity = {
+	if (self.spawnflags & SPAWNFLAG_NOCOOP && coop){
+		remove(self);
+		return FALSE;
+	}
+	if (self.spawnflags & SPAWNFLAG_ONLYCOOP && !coop){
+		remove(self);
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 /*
 QuakeEd only writes a single float for angles (bad idea), so up and down are

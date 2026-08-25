@@ -513,6 +513,10 @@ float DMGTYPE_EXPLOSION = 4096; // general explosions
 float DMGTYPE_BURN_LONG = 8192; // keeps on burning for a few seconds
 
 
+
+float SPAWNFLAG_NOCOOP = 4096;
+float SPAWNFLAG_ONLYCOOP = 8192;
+
 /*
 enum class BotGoalReturnCode : int {
 	Error = 0,

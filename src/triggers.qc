@@ -165,6 +165,8 @@ set "message" to text string
 */
 void() trigger_multiple =
 {
+	if (!SUB_InitEntity()) return;
+
 	if (self.sounds == 1)
 	{
 		precache_sound ("misc/secret.wav");
@@ -224,6 +226,7 @@ set "message" to text string
 */
 void() trigger_once =
 {
+	if (!SUB_InitEntity()) return;
 	self.wait = -1;
 	trigger_multiple();
 };
@@ -235,6 +238,7 @@ This fixed size trigger cannot be touched, it can only be fired by other events.
 */
 void() trigger_relay =
 {
+	if (!SUB_InitEntity()) return;
 	self.use = SUB_UseTargets;
 };
 
@@ -252,6 +256,7 @@ set "message" to text string
 */
 void() trigger_secret =
 {
+	if (!SUB_InitEntity()) return;
 	total_secrets = total_secrets + 1;
 	self.wait = -1;
 	if (!self.message)
@@ -316,6 +321,7 @@ After the counter has been triggered "count" times (default 2), it will fire all
 */
 void() trigger_counter =
 {
+	if (!SUB_InitEntity()) return;
 	self.wait = -1;
 	if (!self.count)
 		self.count = 2;
@@ -347,6 +353,7 @@ Only used on start map.
 */
 void() trigger_setskill =
 {
+	if (!SUB_InitEntity()) return;
 	InitTrigger ();
 	self.touch = trigger_skill_touch;
 
@@ -395,6 +402,7 @@ Only fires if playing the registered version, otherwise prints the message
 */
 void() trigger_onlyregistered =
 {
+	if (!SUB_InitEntity()) return;
 	precache_sound ("misc/talk.wav");
 	InitTrigger ();
 	self.touch = trigger_onlyregistered_touch;
@@ -443,6 +451,7 @@ defalt dmg = 5
 */
 void() trigger_hurt =
 {
+	if (!SUB_InitEntity()) return;
 	InitTrigger ();
 	self.touch = hurt_touch;
 	if (!self.dmg)
@@ -506,6 +515,7 @@ speed: velocity of push. (default 1000)
 */
 void() trigger_push =
 {
+	if (!SUB_InitEntity()) return;
 	if (self.spawnflags & PUSH_TOGL)
 		self.use = trigger_push_use;
 	else
@@ -552,6 +562,7 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 */
 void() trigger_monsterjump =
 {
+	if (!SUB_InitEntity()) return;
 	if (!self.speed)
 		self.speed = 200;
 	if (!self.height)
@@ -681,7 +692,7 @@ void() trigger_textstory_touch = {
 };
 
 void() trigger_textstory = {
-	//if (!SUB_InitEntity()) return;
+	if (!SUB_InitEntity()) return;
 	
 	InitTrigger();
 	self.touch = trigger_textstory_touch;
@@ -724,7 +735,7 @@ void() target_textstory_helper_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
 		if (self.enemy.textstory_controller == self)
 			textstory_clearcontroller(self.enemy);
-		
+
 		remove(self);
 		return;
 	}
@@ -763,7 +774,7 @@ void() target_textstory_use = {
 };
 
 void() target_textstory = {
-	
+	if (!SUB_InitEntity()) return;
 	if (self.noise1 == "")
 		self.noise1 = "misc/talk.wav";
 	
@@ -833,6 +844,7 @@ void() prompt_use = {
 }
 
 void() target_prompt = {
+	if (!SUB_InitEntity()) return;
 	self.use = prompt_use;
 }
 
@@ -853,6 +865,7 @@ void() trigger_prompt_touch = {
 }
 
 void() trigger_prompt = {
+	if (!SUB_InitEntity()) return;
 	InitTrigger();
 	self.touch = trigger_prompt_touch;
 	self.use = prompt_use;
@@ -939,7 +952,7 @@ Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity.
 */
 void() target_move = {
-	
+	if (!SUB_InitEntity()) return;
 	if (!self.target && !(self.spawnflags & 8))
 		objerror("No target set");
 
