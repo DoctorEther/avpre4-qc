@@ -792,8 +792,8 @@ entity SelectSpawnPointEX(float forceSpawn) {
 		while (loops < 2) {
 			lastspawn = find(lastspawn, classname, "info_player_coop");
 			if (lastspawn && lastspawn.estate == STATE_ACTIVE){
-				dprint("Found info_player_coop:\n");
-				eprint(lastspawn);
+				//dprint("Found info_player_coop:\n");
+				//eprint(lastspawn);
 				return lastspawn;
 			}
 
