@@ -890,7 +890,7 @@ float	AS_MISSILE		= 4;
 .string  target_prompt1;
 .string  target_prompt2;
 
-.entity textstory_controller;
+.entity textstory_helper;
 
 //===========================================================================
 
