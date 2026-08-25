@@ -536,7 +536,7 @@ void() morph_die5 = [ $mfdth05, morph_die6 ] {};		// 126
 void() morph_die6 = [ $mfdth06, morph_die7 ] {};
 void() morph_die7 = [ $mfdth07, morph_die8 ] {};
 void() morph_die8 = [ $mfdth08, morph_die9 ] {};		// 129
-void() morph_die9 = [ $mfdth09, morph_die10 ] { self.skin = self.skin + 1; };
+void() morph_die9 = [ $mfdth09, morph_die10 ] {};
 void() morph_die10 = [ $mfdth10, morph_die11 ] {};
 void() morph_die11 = [ $mfdth11, morph_die12 ] {};
 void() morph_die12 = [ $mfdth12, morph_die13 ] {};		// 132
@@ -595,8 +595,7 @@ void() morph_wake11 = [ $start11, morph_wake12 ] {};
 void() morph_wake12 = [ $start12, morph_wake13 ] {};
 void() morph_wake13 = [ $start13, morph_wake14 ] {};
 void() morph_wake14 = [ $start14, morph_wake15 ] {};
-void() morph_wake15 = [ $start15, morph_wake16 ]
-	{ self.skin = 1; };
+void() morph_wake15 = [ $start15, morph_wake16 ] {};
 void() morph_wake16 = [ $start16, morph_wake17 ] {};
 void() morph_wake17 = [ $start17, morph_wake18 ] {};
 void() morph_wake18 = [ $start18, morph_wake20 ] {};
@@ -617,8 +616,7 @@ void() morph_wake31 = [ $start31, morph_stand1 ]
 {
 	self.solid = SOLID_SLIDEBOX;
 	self.takedamage = DAMAGE_AIM;		
-	self.skin = self.skin - 1;
-	if ( self.owner )
+		if ( self.owner )
 	{
 		self.think = morph_run1;
 		self.nextthink = time + 0.1;
@@ -736,7 +734,6 @@ void(entity theMorph) morph_setup =
 	}
 	
 //	theMorph.frame = $start01;
-	theMorph.skin = 2;
 };
 
 void() morph_wake =
