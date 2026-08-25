@@ -617,10 +617,23 @@ void(entity controller) textstory_show = {
 	self.state = 1;
 };
 
+void(entity tgt) textstory_clearcontroller = {
+	if (tgt.textstory_controller.classname == "trigger_textstory") {
+		tgt.textstory_controller.nextthink = 0;
+		tgt.textstory_controller = world;
+	}
+	else if (tgt.textstory_controller.classname == "target_textstory_helper") {
+		remove(tgt.textstory_controller);
+		tgt.textstory_controller = world;
+	}
+}
+
 //----------------------------------------
 
 void() trigger_textstory_hide = {
 	textstory_hide(self);
+
+	self.enemy.textstory_controller = world;
 
 	self.pain_finished = 0;
 	self.enemy = world;
@@ -628,7 +641,12 @@ void() trigger_textstory_hide = {
 };
 
 void() trigger_textstory_show = {
-	textstory_show(self);	
+	if (self.enemy.textstory_controller != self)
+		textstory_clearcontroller(self.enemy);
+
+	textstory_show(self);
+
+	self.enemy.textstory_controller = self;
 
 	if (time > self.pain_finished)
 		self.think = trigger_textstory_hide;
@@ -698,16 +716,25 @@ void() trigger_textstory = {
 void() target_textstory_helper_hide = {
 
 	textstory_hide(self.owner);
+	self.owner.textstory_controller = world;
 	remove(self);
 };
 
 void() target_textstory_helper_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
+		if (self.enemy.textstory_controller == self)
+			textstory_clearcontroller(self.enemy);
+		
 		remove(self);
 		return;
 	}
 
+	if (self.enemy.textstory_controller != self)
+		textstory_clearcontroller(self.enemy);
+
 	textstory_show(self.owner);
+
+	self.enemy.textstory_controller = self;
 
 	if (self.attack_finished < time) self.think = target_textstory_helper_hide;
 	
