@@ -787,10 +787,12 @@ void() football =
     self.movetype = MOVETYPE_BOUNCE;
     self.solid = SOLID_TRIGGER;
     
-    self.touch = kick_touch;
+    //self.touch = kick_touch;
     precache_model("progs/ball.mdl");
     setmodel(self, "progs/ball.mdl");
-    setsize(self, '0 0 0', VEC_ORIGIN);
+    setsize(self, '0 0 0', '0 0 0');
+
+    attachKickField(self);
     //self.origin_z = (self.origin_z - 24);
     //setorigin(self, self.origin);
     self.flags &~= FL_ONGROUND;
