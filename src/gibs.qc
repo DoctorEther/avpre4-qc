@@ -16,7 +16,7 @@ vector(float dm) GibVelocityForHealth =
 
 	v_x = 100 * crandom();
 	v_y = 100 * crandom();
-	v_z = 100 + 100 * random();
+	v_z = 75 + 150 * random();
 
 	voom = max(1, min(10, dm * dm / 5000));
 	
