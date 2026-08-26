@@ -2,6 +2,7 @@
 void() GibThink = {
 	self.alpha -= 0.015;
 	if (self.alpha <= 0) {
+		if (self.trigger_field.classname == "kick_touch_triggerfield") remove(self.trigger_field);
 		SUB_Remove();
 		return;
 	}
@@ -101,6 +102,7 @@ entity(string gibname, float dm) ThrowGib =
 	capGibVelocity(gib);
 
 	MakeGib(gib, gibname);
+	attachKickField(gib);
 	return gib;
 
 }
@@ -111,25 +113,23 @@ void(string gibname, float dm) ThrowHead =
 	self.movetype = MOVETYPE_BOUNCE;
 	self.takedamage = DAMAGE_NO;
 	self.solid = SOLID_TRIGGER; //make them SOLID_TRIGGER so they can be caught by a trigger_void
-	setorigin(self, self.origin);
-	self.touch = kick_touch;
+
 	self.view_ofs = '0 0 8';
 	self.type = "gib";
-	setsize (self, '-16 -16 0', '16 16 56');
-	//setsize (self, '0 0 0', '0 0 0');
+	
+	self.origin_z = self.absmax_z + 16;
+	setorigin(self, self.origin);
+	setsize (self, '0 0 0', '0 0 0');
 	
 	//self.velocity += GibVelocityForHealth(max(dm, -99));
 	self.velocity += GibVelocityForHealth(dm);
-
 	self.velocity += GibVelocityFromInflictor(self, dm);
 	capGibVelocity(self);
-	
 
-	self.origin_z = self.absmax_z - 24;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	//self.type = "head";
+	attachKickField(self);
+	
+	self.flags &~= FL_ONGROUND;
 	self.avelocity = crandom() * '0 600 0';
-	//self.nextthink = time + 5;
 	self.think = SUB_Null;
 }
 
@@ -225,4 +225,65 @@ void() kick_touch =
 
 	self.flags &~= FL_ONGROUND;
 	self.velocity = v;
+};
+
+
+void(entity e) attachKickField = {
+	e.trigger_field = spawn();
+	e.trigger_field.classname = "kick_touch_triggerfield";
+	e.trigger_field.solid = SOLID_TRIGGER;
+	e.trigger_field.movetype = MOVETYPE_NONE;
+	e.trigger_field.owner = e;
+
+	setorigin(e.trigger_field, e.origin);
+	setsize(e.trigger_field, '-16 -16 -16','16 16 16');
+	
+	e.trigger_field.touch = kick_touch_triggerfield;
+	e.trigger_field.think = kick_touch_triggerfield_think;
+	e.trigger_field.nextthink = time + 0.0001;
+}
+
+void() kick_touch_triggerfield_think = {
+	setorigin(self, self.owner.origin);
+
+	if (self.owner.velocity == '0 0 0')
+		self.nextthink = time + 0.2;
+	else
+		self.nextthink = time + 0.0001;
+
+	self.think = kick_touch_triggerfield_think;
+}
+
+void() kick_touch_triggerfield = 
+{
+	local vector v;
+
+	// only a player can kick it
+	if (other.classname != "player")
+		return;
+	
+	self.enemy = other;
+	//if(self.model == "progs/ball.mdl" && self.classname == "ball") bprint("GOOOOOOOL!!!\n");
+	
+	//randomize sound
+	if (random()< 0.8)
+		sound(other, CHAN_ITEM, "zombie/z_hit.wav", 1, ATTN_NORM);
+	else
+		sound(other, CHAN_ITEM, "zombie/z_miss.wav", 1, ATTN_NORM);
+
+	//define velocity 
+	//you can play with these formulas to adjust
+	//trajectory
+	v_x = other.velocity_x*2 + 50*random();
+	v_y = other.velocity_y*2 + 50*random();
+	v_z = 250 + 160*random() + (other.velocity_y + other.velocity_x)*0.30;
+
+	self.owner.avelocity_x = crandom()*300;
+	self.owner.avelocity_y = crandom()*300;
+	self.owner.avelocity_z = crandom()*300;
+
+	self.owner.flags &~= FL_ONGROUND;
+	self.owner.velocity = v;
+
+	self.nextthink = time + 0.0001;
 };
