@@ -95,9 +95,6 @@ float AV_DASH_SPEED		= 650.0;
 float AV_DASH_DURATION	= 0.35;
 float AV_DASH_COOLDOWN	= 1.25;
 
-#define STAT_DASH_INDEX 33
-#define STAT_DASH_PERC 34
-
 void() AV_UpdateDashHUD = {
 	msg_entity = self; 
 	WriteByte(MSG_ONE, SVC_UPDATESTAT);

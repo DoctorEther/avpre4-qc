@@ -23,7 +23,6 @@ void() InitBodyQue;
 
 void() main =
 {
-	dprint ("main function\n");
 	
 // these are just commands the the prog compiler to copy these files
 
@@ -193,6 +192,11 @@ void() worldspawn =
 {
 	lastspawn = world;
 	InitBodyQue ();
+
+	clientstat(STAT_SKATE_ON, EV_FLOAT, av_skating);
+	clientstat(STAT_SKATE_POINTS, EV_FLOAT, skate_points);
+	clientstat(STAT_SKATE_LAPS, EV_FLOAT, skate_laps);
+
 
 // AVIAO
 	cvar_set("sv_autoload", "1");

@@ -1,4 +1,3 @@
-.float av_skating;
 
 #define AV_SKATE_FRICTION_WMOD 1.04
 #define AV_SKATE_FRICTION_SMOD 1.08

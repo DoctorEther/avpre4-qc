@@ -409,7 +409,22 @@ float	SVC_ACHIEVEMENT		= 52;
 
 float	SVC_MODAL			= 87;
 
-float	STAT_TOTALMONSTERS	= 12;		// pgm black magic
+const float	STAT_TOTALMONSTERS	= 12;		// pgm black magic
+const float STAT_DASH_INDEX		= 33;
+const float STAT_DASH_PERC		= 34;
+const float STAT_SKATE_ON		= 35;
+const float STAT_SKATE_POINTS	= 36;
+const float STAT_SKATE_LAPS		= 37;
+
+const float EV_VOID = 0;
+const float EV_STRING = 1;
+const float EV_FLOAT = 2;
+const float EV_VECTOR = 3;
+const float EV_ENTITY = 4;
+const float EV_FIELD = 5;
+const float EV_FUNCTION = 6;
+const float EV_POINTER = 7;
+const float EV_INTEGER = 8;
 
 float	TE_SPIKE		= 0;
 float	TE_SUPERSPIKE	= 1;
@@ -744,6 +759,10 @@ float	AS_MISSILE		= 4;
 .float returnpos;
 
 
+.float av_skating;
+.float skate_laps;
+.float skate_points;
+
 //
 // object stuff
 //
@@ -1051,7 +1070,7 @@ float checkextension( string s ) = #99;
 //============================================================================
 // QSS misc stuff
 float(float value, float exp) pow = #97;
-
+void(float num, float type, .__variant fld) clientstat = #232;
 // -----------------------------------------------------------------------------------
 // AVIÃOZINHO
 // CUSTOM FUNCTIONS
