@@ -87,15 +87,6 @@ float(entity inflictor, entity attacker, float damage, float orig_damage, float 
 }
 
 
-// ------------------------ TOUCH ---------------------------
-// Regras de toque:
-// • Toca player              → explode sempre
-// • Toca outro kamikaze      → explode só se o player está
-//                              dentro do raio (cadeia útil)
-// • Toca gib/corpse          → ignora
-// • Toca monstro vivo        → explode
-// • Toca world/brush         → ignora
-
 
 // ---------------------- GIBS EXTRA ------------------------
 
@@ -107,7 +98,7 @@ void() kamikaze_gibs =
     ThrowGib ("progs/gib1.mdl", -20);
     ThrowGib ("progs/gib2.mdl", -20);
     ThrowGib ("progs/gib3.mdl", -20);
-    ThrowHead("progs/h_gib.mdl", -20);
+    ThrowHead("progs/gib3.mdl", -20);
 };
 
 
@@ -241,8 +232,6 @@ void() kamikaze_boom = {
         blast_radius = KAMIKAZE_BLAST_RADIUS;
     }
 
-    kamikaze_gibs();
-
     WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
     WriteByte (MSG_BROADCAST, TE_EXPLOSION);
     WriteCoord(MSG_BROADCAST, self.origin_x);
@@ -251,7 +240,7 @@ void() kamikaze_boom = {
 
     Kamikaze_RadiusDamage(blast_radius, blast_damage, self.enemy);
 
-    remove(self);
+    kamikaze_gibs();
 }
 
 // ------------------------ SPAWN ---------------------------
