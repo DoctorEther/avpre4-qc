@@ -8,6 +8,7 @@ void() modeltrain_use =
 
 void() modeltrain_wait =
 {
+	activator = find(world, classname, "player");
 	entity oself = self;
 	self = self.enemy;
 	SUB_UseTargets();
@@ -61,7 +62,7 @@ void() func_modeltrain_find =
 	setorigin (self, targ.origin);
 	if (!self.targetname)
 	{	// not triggered, so start immediately
-		self.nextthink = self.ltime + 0.1;
+		self.nextthink = self.ltime + 0.0001;
 		self.think = modeltrain_next;
 	}
 };
@@ -95,7 +96,6 @@ void() func_modeltrain =
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NOCLIP;
 	self.use = modeltrain_use;
-	self.classname = "modeltrain";
 	
 	precache_model(self.model);
 	setmodel (self, self.model);
