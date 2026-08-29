@@ -938,3 +938,18 @@ void() target_move = {
 	
 	if (!self.mangle) self.mangle = self.angles;
 };
+
+//=================================================================================================
+
+void() trigger_message_use =
+{
+	entity e = find(world, classname, "player");
+	while (e) {
+		centerprint(e, self.message);
+		e = find(e, classname, "player");
+	}
+};
+
+void() trigger_message = {
+	self.use = trigger_message_use;
+};

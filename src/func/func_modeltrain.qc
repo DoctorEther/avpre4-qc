@@ -1,14 +1,3 @@
-.string path_corner_trigger;
-.string trigger_target;
-
-
-void() modeltrain_blocked =
-{
-	if (time < self.attack_finished)
-		return;
-	self.attack_finished = time + 0.5;
-	T_Damage (other, self, self, self.dmg, DMGTYPE_CRUSH);
-};
 
 void() modeltrain_use =
 {
@@ -19,22 +8,27 @@ void() modeltrain_use =
 
 void() modeltrain_wait =
 {
-	if (self.wait)
+	entity oself = self;
+	self = self.enemy;
+	SUB_UseTargets();
+	self = oself;
+
+	if (self.enemy.wait > 0)
 	{
-		self.nextthink = self.ltime + self.wait;
+		self.nextthink = getLocalTime() + self.enemy.wait;
+		self.think = modeltrain_next;
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	}
-	else
-		self.nextthink = self.ltime + 0.1;
-	
-	if(self.target == self.path_corner_trigger){
-		local string otarget = self.target;
-		self.target = self.trigger_target;
-		SUB_UseTargets();
-		self.target = otarget;
+	else if (self.enemy.wait < 0) {
+		self.nextthink = 0;
 	}
+	else {
+		modeltrain_next();
+		//self.nextthink = getLocalTime() + 0.1;
+	}
+
 	
-	self.think = modeltrain_next;
+
 };
 
 void() modeltrain_next =
@@ -50,6 +44,8 @@ void() modeltrain_next =
 	else
 		self.wait = 0;
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+
+	self.enemy = targ;
 	SUB_CalcMove (targ.origin, self.speed, modeltrain_wait);
 	
 	self.angles = vectoangles(targ.origin - self.origin);
@@ -98,7 +94,6 @@ void() func_modeltrain =
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NOCLIP;
-	self.blocked = modeltrain_blocked;
 	self.use = modeltrain_use;
 	self.classname = "modeltrain";
 	
@@ -110,6 +105,6 @@ void() func_modeltrain =
 	
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
-	self.nextthink = self.ltime + 0.1;
+	self.nextthink = getLocalTime() + 0.1;
 	self.think = func_modeltrain_find;
 };

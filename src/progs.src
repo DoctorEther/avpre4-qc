@@ -48,7 +48,6 @@ misc.qc
 triggers/trigger_soundtrack.qc
 triggers/trigger_ladder.qc
 triggers/trigger_localcmd.qc
-triggers/trigger_message.qc
 
 // --- AVIÃOZINHO FUNCS ------------------------
 func/func_modeltrain.qc
