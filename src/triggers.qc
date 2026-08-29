@@ -420,6 +420,10 @@ void() hurt_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	//players only
+	if (self.spawnflags & 1 && !(other.flags & FL_CLIENT))
+		return;
+
 	if (time < other.hurt_started + self.wait)
 		return;
 
@@ -428,7 +432,9 @@ void() hurt_touch =
 		other.hurt_started = time;
 	}
 
-	if (other.flags & FL_CLIENT && other.flags && other.movetype == MOVETYPE_NOCLIP)
+	
+
+	if (other.flags & FL_CLIENT && other.movetype == MOVETYPE_NOCLIP)
 		return;
 
 	// From Copper:
