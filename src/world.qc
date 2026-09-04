@@ -495,8 +495,8 @@ void() InitBodyQue =
 void(entity ent) CopyToBodyQue =
 {
 	// PGM - support for new deathmatch skins on corpses too!
-        bodyque_head.touch = ent.touch;
-        bodyque_head.solid = ent.solid;
+	bodyque_head.touch = ent.touch;
+	bodyque_head.solid = ent.solid;
 	bodyque_head.skin = ent.skin;
 
 	bodyque_head.angles = ent.angles;
@@ -509,6 +509,15 @@ void(entity ent) CopyToBodyQue =
 	bodyque_head.flags = 0;
 	setorigin (bodyque_head, ent.origin);
 	setsize (bodyque_head, ent.mins, ent.maxs);
+
+	if (bodyque_head.trigger_field.classname == "kick_touch_triggerfield") {
+		remove(bodyque_head.trigger_field);
+		bodyque_head.trigger_field = world;
+	}
+
+	if (ent.trigger_field.classname == "kick_touch_triggerfield")
+		attachKickField(bodyque_head);
+
 	bodyque_head = bodyque_head.owner;
 };
 

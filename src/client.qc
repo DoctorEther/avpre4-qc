@@ -969,9 +969,15 @@ void() PutClientInServer =
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	self.type = string_null;
 
 	self.shield_finished = 0;
 	self.antigrav_finished = 0;
+
+	if (self.trigger_field.classname == "kick_touch_triggerfield") {
+		remove(self.trigger_field);
+		self.trigger_field = world;
+	}
 		
 //ZOID--
 	self.ctf_lastreturnedflag = -10;

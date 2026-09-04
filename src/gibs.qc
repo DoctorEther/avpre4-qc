@@ -247,7 +247,7 @@ void() kick_touch_triggerfield_think = {
 	setorigin(self, self.owner.origin);
 
 	if (self.owner.velocity == '0 0 0')
-		self.nextthink = time + 0.2;
+		self.nextthink = time + 0.1;
 	else
 		self.nextthink = time + 0.0001;
 
@@ -261,15 +261,18 @@ void() kick_touch_triggerfield =
 	// only a player can kick it
 	if (other.classname != "player")
 		return;
+
+	// don't make dead players kick themselves
+	if (other.health <= 0)
+		return;
 	
 	self.enemy = other;
-	//if(self.model == "progs/ball.mdl" && self.classname == "ball") bprint("GOOOOOOOL!!!\n");
 	
 	//randomize sound
 	if (random()< 0.8)
-		sound(other, CHAN_ITEM, "zombie/z_hit.wav", 1, ATTN_NORM);
+		sound(other, 6, "zombie/z_hit.wav", 1, ATTN_NORM);
 	else
-		sound(other, CHAN_ITEM, "zombie/z_miss.wav", 1, ATTN_NORM);
+		sound(other, 6, "zombie/z_miss.wav", 1, ATTN_NORM);
 
 	//define velocity 
 	//you can play with these formulas to adjust
@@ -277,6 +280,13 @@ void() kick_touch_triggerfield =
 	v_x = other.velocity_x*2 + 50*random();
 	v_y = other.velocity_y*2 + 50*random();
 	v_z = 250 + 160*random() + (other.velocity_y + other.velocity_x)*0.30;
+
+	float linvel = vlen(v);
+
+	// limit linear speed
+	if (linvel > 2000) {
+		v *= 2000 / linvel;
+	}
 
 	self.owner.avelocity_x = crandom()*300;
 	self.owner.avelocity_y = crandom()*300;
@@ -286,4 +296,5 @@ void() kick_touch_triggerfield =
 	self.owner.velocity = v;
 
 	self.nextthink = time + 0.0001;
+
 };
