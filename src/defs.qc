@@ -763,6 +763,12 @@ float	AS_MISSILE		= 4;
 .float skate_laps;
 .float skate_points;
 
+#define SKATE_LASTCOMMAND_BUFFERSIZE 15
+.float skate_lastcommands[SKATE_LASTCOMMAND_BUFFERSIZE + 1];
+.float skate_lastcommand_nextindex;
+.float skate_lastcommand_time;
+.float skate_flags;
+
 //
 // object stuff
 //
@@ -1016,6 +1022,12 @@ void(string var, string val) cvar_set = #72;	// sets cvar.value
 //void(entity client, string s, ...) centerprint = #0:ex_centerprint;	// sprint, but in middle
 
 void(entity client, string s1) centerprint = #73;
+void(entity client, string s1, string s2) centerprint2 = #73;
+void(entity client, string s1, string s2, string s3) centerprint3 = #73;
+void(entity client, string s1, string s2, string s3, string s4) centerprint4 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5) centerprint5 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6) centerprint6 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint7 = #73;
 
 // Print a centerprint to every connected player (horde merge).
 void centerprint_all(string s)
