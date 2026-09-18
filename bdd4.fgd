@@ -534,7 +534,7 @@ Doesn't deal damage by default. For reference:
 ]
 
 
-@SolidClass base(Targetname) = func_train :
+@SolidClass base(Appearflags, Targetname) = func_train :
 "Trains are moving platforms that players can ride. The target's origin specifies the min point of the train at each corner. The train spawns at the first target it is pointing at.
 Use path_corner as targets.
 path_corners with a 'wait -1' value will stop the train. Trigger the func_train again to resume its path.
@@ -576,6 +576,9 @@ Check each field's description for more details.
 "
 [
 	target(target_source) : "Next waypoint target"
+	target2(target_source) : "Target"
+	target3(target_source) : "Target"
+	target4(target_source) : "Target"
 	speed(integer) : "Speed" : : "Sets a new speed for the train to move from this point onwards."
 	wait(float) : "Wait" : : "Waiting time at this point.
 - A positive value directly sets a waiting time in seconds.
@@ -756,6 +759,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 		4: "No teleport effect"
 		8: "Preserve velocity"
 		16: "Preserve angle (no offset)"
+		64: "Don't launch forward"
 	]
 	count(integer) : "Group order"
 ]
@@ -826,7 +830,7 @@ This ideally should match the same size and shape of the trigger_teleport brush.
 	message(string) : "Message"
 ]
 
-@SolidClass base(Appearflags) = trigger_hurt : "Hurt trigger"
+@SolidClass base(Appearflags, Targetname) = trigger_hurt : "Hurt trigger"
 [
 	dmg(integer) : "Damage" : 5
 	wait(integer) : "Damage interval in seconds" : 1
@@ -841,6 +845,10 @@ This ideally should match the same size and shape of the trigger_teleport brush.
 		1 : "Generic"
 		8 : "Lava"
 		16 : "Slime"
+	]
+	spawnflags(flags) = 
+	[ 
+		1 : "Players only" : 0 
 	]
 ]
 
@@ -1195,6 +1203,17 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 		[
 			1: "Not solid" : 0
 		]
+]
+
+@PointClass base(Appearflags, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : model, "skin" : skin, "frame" : frame}) = func_modeltrain :
+"Moving model prop"
+[
+	angle(integer) : "Direction"
+	model(string) : "Model Selection (ex progs/model.mdl)"
+	frame(integer) : "Frame" : 0
+	skin(integer) : "Skin index" : 0 : "Skin index (default 0) Use this when your custom model has more than one skin to select"
+	speed(integer) : "Speed (units per second)" : 100
+	target(target_source) : "First stop target"
 ]
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
