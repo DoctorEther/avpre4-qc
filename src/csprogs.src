@@ -1,0 +1,5 @@
+../csprogs.dat
+csqc/csdefs.qc
+csqc/csdefscustom.qc
+csqc/updateview.qc
+csqc/skatehud.qc
