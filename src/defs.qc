@@ -917,6 +917,9 @@ float	AS_MISSILE		= 4;
 
 .entity textstory_helper;
 
+
+.float	ritem, respawndelay, respawncount; // item respawning
+
 //===========================================================================
 
 //
