@@ -3,6 +3,8 @@
 // no need to declare function prototypes yay
 #pragma autoproto 
 
+//#pragma sourcefile csprogs.src
+
 defs.qc
 //qsextensions.qc
 teamplay.qc		// ZOID - teamplay stuff
