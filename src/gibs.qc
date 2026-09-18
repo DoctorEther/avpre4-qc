@@ -191,7 +191,9 @@ void() projectile_toss_think =
 }
 
 //**********************************************
-//Kicking Gibs n Dead Heads by Ivana Gibson
+// Kicking Gibs n Dead Heads
+// Based on original code by Ivana Gibson
+// Heavily modified by bmFbr
 //**********************************************
 
 
@@ -267,6 +269,7 @@ void() kick_touch_triggerfield =
 		return;
 	
 	self.enemy = other;
+	self.owner.enemy = other;
 	
 	//randomize sound
 	if (random()< 0.8)

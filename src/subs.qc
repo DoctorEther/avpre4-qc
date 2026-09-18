@@ -276,6 +276,11 @@ void() SUB_UseTargets =
 	    if (strncmp(self.message, "unlock_achievement(", 19) == 0)
 	    {
             string achievement_name = substring(self.message, 19, strlen(self.message) - 20);
+            if (cvar("developer")) {
+            	sprint(activator, "Triggered achievement: ");
+            	sprint(activator, achievement_name);
+            	sprint(activator, "\n");
+            }
             unlock_achievement(achievement_name);
 	    } 
 		else if (strncmp(self.message, "quick_save(", 11) == 0)
