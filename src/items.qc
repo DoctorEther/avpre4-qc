@@ -28,9 +28,83 @@ void() SUB_regen =
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
 	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// play respawn sound
 	setorigin (self, self.origin);
+
+	if (self.use) self.use = SUB_Null;
 };
 
+// General pickup action.
+// Does brightflash, plays sounds, hides the model, 
+// fires targets, and sets a respawn if that's the case.
+// Assumes that "other" is always a client entity
+void(string snd, float spdelay, float dmdelay) ItemPickup = {
 
+	sound(other, CHAN_ITEM, snd, 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+	
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+
+	if (deathmatch == 1) CheckItemRespawn(dmdelay, 1);
+	else CheckItemRespawn(spdelay, 0);
+	
+	activator = other;
+	SUB_UseTargets();
+};
+
+// Quoth respawning items support Respawn item like in DM if 'ritem' TRUE,
+// override respawn time with 'respawndelay' if set, inc 'cnt' with each respawn
+// and if 'respawncount' is set we'll remove the item if cnt > respawncount
+// remember that SUB_Regen is already set on every item that can respawn, all we
+// need to do is give a nextthink time in order to trigger it
+
+
+void(float defaultdelay, float forcerespawn) CheckItemRespawn = {
+	if (!self.ritem && !forcerespawn)	// respawn item if true, otherwise abort
+		return;
+
+	self.cnt++;	// increment before check to account for zero indexing
+
+	if (self.respawncount && self.respawncount < self.cnt && !forcerespawn)	// limited respawns
+		return;
+
+	// okay, we're clear to set up a respawn
+
+	if (self.respawndelay)	{// custom respawn delay?
+		self.nextthink = time + self.respawndelay;
+
+		// respawndelay -1 means it'll only respawn via triggering
+		if (self.respawndelay < 0)
+			self.nextthink = 0;
+	}
+	else
+		self.nextthink = time + defaultdelay;
+
+	self.think = SUB_regen;
+	
+	self.use = item_use;
+
+};
+
+// respawning item has been triggered
+void() item_use = {
+	// Item not set to respawn.
+	// Just a sanity check, if the item isn't set to respawn
+	// then this shouldn't be even running in the first place
+	if (!self.ritem)	
+		return;
+
+	// item is already in the world, don't do anything
+	if (self.solid == SOLID_TRIGGER)
+		return;
+
+	// respawn count reached, don't spawn it again
+	if (self.respawncount && self.respawncount < self.cnt)
+		return;
+
+	self.cnt++;
+	self.nextthink = 0;
+	SUB_regen();
+}
 
 /*QUAKED noclass (0 0 0) (-8 -8 -8) (8 8 8)
 prints a warning message when spawned
