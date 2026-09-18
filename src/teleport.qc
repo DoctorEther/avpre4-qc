@@ -23,6 +23,8 @@ float TELEDEST_STEALTH = 4;
 float TELEDEST_KEEPVELOCITY = 8;
 float TELEDEST_KEEPANGLE_NOOFFSET = 16;
 float TELEDEST_DONTDROP = 32;
+float TELEDEST_DONTLAUNCHFWD = 64;
+
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -511,12 +513,14 @@ void() teleport_touch =
 
 
 		if (t.style != TELEDEST_STYLE_INSTANT && !(t.spawnflags & TELEDEST_KEEPANGLE)){
-			if (!(t.spawnflags & TELEDEST_KEEPVELOCITY))
+			if (t.spawnflags & TELEDEST_KEEPVELOCITY)
+				other.velocity = f_forward * vlen([other.velocity_x, other.velocity_y, 0]);
+			else if (t.spawnflags & TELEDEST_DONTLAUNCHFWD)
+				other.velocity = '0 0 0';
+		 	else 
 				other.velocity = f_forward * 300;
-			else	
-				other.velocity = f_forward * vlen(other.velocity);
-		} 
-
+			
+		}
 
 	}
 	//dprint3("After: ", vtos(other.angles),"\n");
