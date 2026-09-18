@@ -263,8 +263,8 @@ void() kick_touch_triggerfield =
 		return;
 
 	// don't make dead players kick themselves
-	if (other.health <= 0)
-		return;
+	//if (other.health <= 0)
+	//	return;
 	
 	self.enemy = other;
 	
