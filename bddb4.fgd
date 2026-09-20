@@ -1,13 +1,9 @@
-
-//
-// QUAKE game definition file (.fgd)
-// updated october 15 1997 by autolycus
-// email any problems to autolycus@planetquake.com
-//
+//BRAZILIAN DRUG DEALER BEFORE 4
 
 //
 // worldspawn
 //
+
 
 @SolidClass = worldspawn : "World entity"
 [
