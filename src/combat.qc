@@ -250,18 +250,18 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	else
 		save = 0;
 //--ZOID
-	if (save >= targ.armorvalue && !ignore_armor)
+	if (ignore_armor)
+		save = 0;
+	
+	if (save >= targ.armorvalue)
 	{
 		save = targ.armorvalue;
-		targ.armortype = 0;	// lost all armor
+		targ.armortype = 0;
 		targ.items2 = targ.items2 - (targ.items2 & (IT2_ARMOR1 | IT2_ARMOR2 | IT2_ARMOR3));
-		
-		targ.armorvalue = targ.armorvalue - save;
-		take = ceil(damage-save);
 	}
 	
-
-	
+	targ.armorvalue = targ.armorvalue - save;
+	take = ceil(damage-save);
 
 	// checks if entity has a custom damage calculation function
 	if (targ.th_damage)	{
