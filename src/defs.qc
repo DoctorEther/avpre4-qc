@@ -762,6 +762,8 @@ float	AS_MISSILE		= 4;
 .float av_skating;
 .float skate_laps;
 .float skate_points;
+.float skate_speed;
+.float skate_grindtime;
 
 #define SKATE_LASTCOMMAND_BUFFERSIZE 15
 .float skate_lastcommands[SKATE_LASTCOMMAND_BUFFERSIZE + 1];

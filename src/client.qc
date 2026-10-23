@@ -1295,8 +1295,8 @@ void() PlayerJump =
 
 		return;
 	}
-
-	if (!(self.flags & FL_ONGROUND))
+	
+	if (!(self.flags & FL_ONGROUND) && !(self.skate_flags & SKFL_GRINDING))
 		return;
 
 	if ( !(self.flags & FL_JUMPRELEASED) )
@@ -1307,7 +1307,7 @@ void() PlayerJump =
 	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 	
 	self.jump_count = self.jump_count + 1;
-	if (self.av_skating) self.skate_flags |= FLSKATE_JUMPED;
+	if (self.skate_flags & SKFL_SKATING) self.skate_flags |= SKFL_JUMPED;
 	self.button2 = 0;
 // player jumping sound
 	sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);

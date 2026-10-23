@@ -920,6 +920,14 @@ void() QuadCheat =
 	dprint ("$qc_quad_cheat");
 };
 
+void() CheckSkatePoints = {
+	centerprint3(self, "Skate points: ", ftos(rint(self.skate_points)), "\n");
+}
+
+void() ResetSkatePoints = {
+	self.skate_points = 0;
+	centerprint(self, "Skate points reset\n");
+}
 
 /*
 ============
@@ -953,6 +961,10 @@ void() ImpulseCommands =
 	}
 	else if (self.impulse == 23)
 		TeamFlagStatusReport();
+	else if (self.impulse == 30)
+		CheckSkatePoints();
+	else if (self.impulse == 31)
+		ResetSkatePoints();
 	else if (self.impulse == 255)
 		QuadCheat();
 	else if (self.impulse == 69)

@@ -113,6 +113,7 @@ void() player_run;
 void()	player_stand1 =[	$axstnd1,	player_stand1	]
 {
 	self.weaponframe=0;
+	self.skate_flags &~= SKFL_TRICK;
 	if (self.velocity_x || self.velocity_y)
 	{
 		self.walkframe=0;
@@ -138,6 +139,7 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 void()	player_run =[	$rockrun1,	player_run	]
 {
 	self.weaponframe=0;
+	self.skate_flags &~= SKFL_TRICK;
 	if (!self.velocity_x && !self.velocity_y)
 	{
 		self.walkframe=0;
@@ -160,6 +162,8 @@ void()	player_run =[	$rockrun1,	player_run	]
 	self.walkframe = self.walkframe + 1;
 };
 
+
+
 // --- AVIAOZINHO ----------------------------------------
 
 void()	player_feijao1 =	[$attacka, player_feijao2	] { self.weaponframe = 1; };
@@ -168,6 +172,52 @@ void()	player_feijao3 =	[$attackc, player_feijao4	] { self.weaponframe = 3; };
 void()	player_feijao4 =	[$attackd, player_feijao5	] { self.weaponframe = 4; };
 void()	player_feijao5 =	[$attacke, player_feijao6	] { self.weaponframe = 5; };
 void()	player_feijao6 =	[$attackf, player_run		] { self.weaponframe = 6; };
+
+
+void()	player_sk_grind1 = 	[96, player_sk_grind2	] { };
+void()	player_sk_grind2 =	[97, player_sk_grind2	] { /*self.angles_z = 60;*/ };
+
+
+void()	player_sk_flip1 = 	[61, player_sk_flip2	] {};
+void()	player_sk_flip2 =	[62, player_sk_flip3	] {};
+void()	player_sk_flip3 =	[63, player_sk_flip4	] {};
+void()	player_sk_flip4 =	[62, player_sk_flip5	] {};
+void()	player_sk_flip5 =	[61, player_sk_flip6	] {};
+void()	player_sk_flip6 =	[61, player_run		] {
+	self.skate_flags &~= SKFL_TRICK;
+	self.skate_points += 200;
+	centerprint(self, "Kickflip +200\n");
+};
+
+
+void()	player_sk_spin1 =	[143, player_sk_spin2	] {};
+void()	player_sk_spin2 =	[144, player_sk_spin3	] {};
+void()	player_sk_spin3 =	[145, player_sk_spin4	] {};
+void()	player_sk_spin4 =	[146, player_sk_spin5	] {};
+void()	player_sk_spin5 =	[147, player_sk_spin6	] {};
+void()	player_sk_spin6 =	[148, player_sk_spin7	] {};
+void()	player_sk_spin7 =	[149, player_sk_spin8	] {};
+void()	player_sk_spin8 =	[150, player_run	] {
+	self.skate_flags &~= SKFL_TRICK;
+	self.skate_points += 500;
+	centerprint(self, "Spin +500\n");
+};
+
+void()	player_sk_bflip1 =	[151, player_sk_bflip2	] {};
+void()	player_sk_bflip2 =	[152, player_sk_bflip3	] {};
+void()	player_sk_bflip3 =	[153, player_sk_bflip4	] {};
+void()	player_sk_bflip4 =	[154, player_sk_bflip5	] {};
+void()	player_sk_bflip5 =	[155, player_sk_bflip6	] {};
+void()	player_sk_bflip6 =	[156, player_sk_bflip7	] {};
+void()	player_sk_bflip7 =	[157, player_sk_bflip8	] {};
+void()	player_sk_bflip8 =	[158, player_sk_bflip9	] {};
+void()	player_sk_bflip9 =	[159, player_sk_bflip10	] {};
+void()	player_sk_bflip10 =	[160, player_run	] {
+	self.skate_flags &~= SKFL_TRICK;
+	self.skate_points += 800;
+	centerprint(self, "Backflip +800\n");
+};
+
 
 void()	player_feijaoa = {
 	if(self.weaponframe > 0)

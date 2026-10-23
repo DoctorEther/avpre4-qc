@@ -1,4 +1,4 @@
-../progs.dat
+../../bddpre4/progs.dat
 
 // no need to declare function prototypes yay
 #pragma autoproto 

@@ -61,12 +61,12 @@ void(float speed) PushPlayer =
 // --- JUMP -----------------------------------------
 
 void() PlayerDoubleJump = {
-	if(self.jump_count == 0 && (self.flags & FL_ONGROUND)){
+	if(self.jump_count == 0 && (self.flags & FL_ONGROUND || self.skate_flags & SKFL_GRINDING)){
 		PlayerJump();
 		return;
 	}
 	
-	if(self.av_skating)										return; //Can't double jump while skating.
+	if(self.skate_flags & SKFL_SKATING)						return; //Can't double jump while skating.
 	if(self.waterlevel >= 2)								return; //Can't double jump in water.
 	if(!(self.flags & FL_ONGROUND) && self.jump_count >= 2)	return; // Already jumped twice.
 	if(!(self.flags & FL_JUMPRELEASED))						return; // don't pogo stick
@@ -107,7 +107,7 @@ void() AV_UpdateDashHUD = {
 };
 
 void() PlayerDash = {
-	if(self.av_skating) return; //Can't double jump while skating.
+	if(self.skate_flags & SKFL_SKATING) return; //Can't double jump while skating.
 	if(self.dash_count >= 3) return; //Is dash available?
 	
 	if(!(self.flags & FL_DASHING)) self.flags = self.flags + FL_DASHING;

@@ -4,15 +4,53 @@
 #define AV_SKATE_ROTATION_SPEED 0.04
 #define AV_SKATE_SPEED_LIMIT 1024
 
-void() AV_SkateUpdate = {
-	if(!self.av_skating) return;
-	
-	skate_extractCommands();
-	skate_checkCombos();
+float SKFL_SKATING = 1;
+float SKFL_GRINDING = 2;
+float SKFL_STOPPEDGRIND = 4;
+float SKFL_JUMPED = 8;
+float SKFL_TRICK = 16;
 
-	if(!(self.flags & FL_ONGROUND)) return;
+void() AV_SkateUpdate = {
+	if (!(self.skate_flags & SKFL_SKATING)) return;
+	
+	
+	if (!(self.skate_flags & SKFL_GRINDING)) {
+		skate_extractCommands();
+		skate_checkCombos();
+	}
+
+	// clears grinding flag
+	// if player is still grinding, the trigger itself will set it back again on the same frame
+	if (self.skate_flags & SKFL_STOPPEDGRIND) {
+		float grindpoints = (time - self.skate_grindtime) * 50;
+		self.skate_points += grindpoints;
+		centerprint3(self, "Grind +", ftos(rint(grindpoints)), "\n");
+
+		self.skate_grindtime = 0;
+		self.skate_flags &~= SKFL_STOPPEDGRIND;
+		player_run();
+		//self.think = player_run;
+		//self.nextthink = time + 0.0001;
+	}
+	
+
+	if (self.skate_flags & SKFL_GRINDING) {
+		self.skate_flags |= SKFL_STOPPEDGRIND;
+		self.skate_flags &~= SKFL_GRINDING;
+	}
+
+	
+	
+
+	if (!(self.flags & FL_ONGROUND)) return;
+
+	if (self.skate_flags & SKFL_TRICK) {
+		self.skate_flags &~= SKFL_TRICK;
+		player_run();
+	}
 	
 	float framefactor = frametime/0.013888; // baseline is 72fps, modulate parameters according to that
+
 
 	//DELAY HORIZONTAL FRICTION
 	if(self.movement_x || self.movement_y){
@@ -37,7 +75,11 @@ void() AV_SkateUpdate = {
 	v_vec_z = 0;
 	
 	s_speed = vlen(v_vec); //SPEED
-	if(s_speed > AV_SKATE_SPEED_LIMIT) s_speed = AV_SKATE_SPEED_LIMIT;
+
+	float max_speed = AV_SKATE_SPEED_LIMIT;
+	if (world.skate_speed) max_speed = world.skate_speed;
+
+	if (s_speed > max_speed) s_speed = max_speed;
 	
 	v_vec = normalize(v_vec);
 	
@@ -77,7 +119,7 @@ void() skate_clearCommands = {
 	}
 }
 
-float FLSKATE_JUMPED = 1;
+
 
 void() skate_extractCommands = {
 	if (self.skate_lastcommand_time + 0.5 < time) {
@@ -99,10 +141,10 @@ void() skate_extractCommands = {
 	if (self.movement_y < -150)// && !(self.skate_lastcommands[lastidx] & CMD_LEFT))
 		currentcommand |= CMD_LEFT;
 
-	if (self.skate_flags & FLSKATE_JUMPED)// && !(self.skate_lastcommands[lastidx] & CMD_JUMP))
+	if (self.skate_flags & SKFL_JUMPED)// && !(self.skate_lastcommands[lastidx] & CMD_JUMP))
 		currentcommand |= CMD_JUMP;
 
-	self.skate_flags &~= FLSKATE_JUMPED;
+	self.skate_flags &~= SKFL_JUMPED;
 
 	if (currentcommand && (
 			(currentcommand & 31 != skate_getCommand(-1) & 31) || // if changed from last command
@@ -149,27 +191,68 @@ void() skate_checkCombos = {
 
 	// flip
 	if (
-		skate_getCommand(-1) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND &&
+		skate_getCommand(-1) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND &&
 		(
-			skate_getCommand(-2) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND ||
-			skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
+			skate_getCommand(-2) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND// ||
+			//skate_getCommand(-3) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND
 		)
 	) {
-		centerprint2(self, ftos(time), " - Flip\n");
-		//sound (self, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_flip1();
 		skate_clearCommands();
 		return;
 	}
 
-	// flip
+	// FLIP 2
 	if (
 		skate_getCommand(-1) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND &&
 		(
-			skate_getCommand(-2) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND ||
-			skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
+			skate_getCommand(-2) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND// ||
+			//skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
 		)
 	) {
-		centerprint2(self, ftos(time), " - Flip\n");
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_flip1();
+		skate_clearCommands();
+		return;
+	}
+
+	// SPIN
+	if (
+		skate_getCommand(-1) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND &&
+		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
+		skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
+		
+	) {
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_spin1();
+		skate_clearCommands();
+		return;
+	}
+
+	// SPIN 2
+	if (
+		skate_getCommand(-1) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND &&
+		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
+		skate_getCommand(-3) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND
+		
+	) {
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_spin1();
+		skate_clearCommands();
+		return;
+	}
+
+	// BACKFLIP
+	if (
+		skate_getCommand(-1) & (CMD_FORWARD | CMD_OFFGROUND) == CMD_FORWARD | CMD_OFFGROUND &&
+		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
+		skate_getCommand(-3) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND
+		
+	) {
+		//centerprint2(self, ftos(time), " - Flip started\n");
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_bflip1();
 		//sound (self, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
 		skate_clearCommands();
 		return;
@@ -180,10 +263,10 @@ void(entity plr) AV_SkateOn = {
 	entity tmp = self;
 	self = plr;
 
-	self.av_skating = TRUE;
+	self.skate_flags |= SKFL_SKATING;
 	AV_CameraOn();
 
-	setmodel(self, "progs/splayer.mdl");
+	setmodel(self, "progs/splayer2.mdl");
 	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
 
 	modelindex_player = self.modelindex;
@@ -195,7 +278,7 @@ void(entity plr) AV_SkateOff = {
 	entity tmp = self;
 	self = plr;
 
-	self.av_skating = FALSE;
+	self.skate_flags &~= SKFL_SKATING;
 	AV_CameraOff();
 
 	setmodel(self, "progs/player.mdl");
@@ -207,7 +290,7 @@ void(entity plr) AV_SkateOff = {
 }
 
 void() AV_SwitchSkate = {
-	if (self.av_skating)
+	if (self.skate_flags & SKFL_SKATING)
 		AV_SkateOff(self);
 	else
 		AV_SkateOn(self);
@@ -223,10 +306,10 @@ void() skate_touch = {
 	// state 0 = turns skating ON, state 1 = turns skating OFF
 	// so state and av_skating need to be different for trigger to act
 
-	if (self.state == 0 && !other.av_skating) {
+	if (self.state == 0 && !(other.skate_flags & SKFL_SKATING)) {
 		AV_SkateOn(other);
 	}
-	else if (self.state == 1 && other.av_skating) {
+	else if (self.state == 1 && (other.skate_flags & SKFL_SKATING)) {
 		AV_SkateOff(other);
 	}
 };
@@ -237,3 +320,64 @@ void() trigger_skate = {
 
 	SUB_CheckWaiting();
 };
+
+//=================================================================================================
+
+void() trigger_grind = {
+	InitTrigger();
+    self.touch = grind_touch;
+    //dprint2(vtos(self.angles), "\n");
+    makevectors([-self.mangle_x, self.mangle_y, self.mangle_z]);
+    self.dest1 = v_forward;
+	makevectors([-self.mangle_x, self.mangle_y - 180, self.mangle_z]);
+	self.dest2 = v_forward;
+
+	if (!self.speed) self.speed = 300;
+	SUB_CheckWaiting();
+}
+
+void() grind_touch = {
+	if (self.estate != STATE_ACTIVE) return;
+	if (other.classname != "player") return;
+	if (!other.skate_flags) return;
+	if (other.velocity_z >= 0) return;
+	//if (other.flags & FL_ONGROUND) return;
+	
+	if (!(other.skate_flags & (SKFL_STOPPEDGRIND | SKFL_GRINDING))) {
+		other.skate_grindtime = time;
+
+		SUB_CallAsSelf(player_sk_grind1, other);
+	}
+
+	other.skate_flags &~= SKFL_STOPPEDGRIND;
+	other.skate_flags |= SKFL_GRINDING;
+
+	vector dir = self.dest1;
+
+	if (normalize([self.dest1_x, self.dest1_y, 0]) * normalize([other.velocity_x, other.velocity_y, 0]) < 0) // invert grind angle if player is coming from the other way
+		dir = self.dest2;
+
+	float spd = max(vlen(other.velocity)*0.98, self.speed);
+	
+	
+	other.velocity = spd * dir;
+
+	vector suck = self.origin + (self.mins + [self.maxs_x, self.maxs_y, self.mins_z])/2 - other.origin - [0, 0, other.mins_z];
+	//vector suck = [self.origin_x, self.origin_y, 0] + ([self.mins_x, self.mins_y, 0] + [self.maxs_x, self.maxs_y, 0])/2 - [other.origin_x, other.origin_y, 0];
+	suck -= dir * (suck * dir);
+	other.velocity += suck * spd * 0.01;
+	other.velocity_z = 0;
+
+	//other.origin_z = (self.origin_z + self.mins_z) - other.mins_z;
+	setorigin(other, other.origin + '0 0 32');
+	entity oself = self;
+	self = other;
+	droptofloor();
+	self = oself;
+	setorigin(other, other.origin + '0 0 8');
+
+	//other.angles = vectoangles2(other.velocity);
+	//other.angles_x = other.v_angle_x;
+	//other.fixangle = 1;
+	//dprint3("Grinding velocity: ", vtos(other.velocity), "\n");
+}
