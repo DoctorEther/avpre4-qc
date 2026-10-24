@@ -100,7 +100,9 @@ float CMD_BACK = 2;
 float CMD_LEFT = 4;
 float CMD_RIGHT = 8;
 float CMD_JUMP = 16;
+float CMD_ALL_COMMANDS = CMD_FORWARD | CMD_BACK | CMD_LEFT | CMD_RIGHT | CMD_JUMP;
 float CMD_OFFGROUND = 32;
+
 
 float(float offset) skate_getIndex = {
 	float idx = self.skate_lastcommand_nextindex + offset;
@@ -147,8 +149,8 @@ void() skate_extractCommands = {
 	self.skate_flags &~= SKFL_JUMPED;
 
 	if (currentcommand && (
-			(currentcommand & 31 != skate_getCommand(-1) & 31) || // if changed from last command
-			!(self.skate_lastcommands[SKATE_LASTCOMMAND_BUFFERSIZE] & 31) // if previous frame had no commands
+			(currentcommand & CMD_ALL_COMMANDS != skate_getCommand(-1) & CMD_ALL_COMMANDS) || // if changed from last command
+			!(self.skate_lastcommands[SKATE_LASTCOMMAND_BUFFERSIZE] & CMD_ALL_COMMANDS) // if previous frame had no commands
 		)
 	) {
 		self.skate_lastcommand_time = time;
@@ -167,14 +169,6 @@ void() skate_extractCommands = {
 		if (currentcommand & CMD_JUMP) dprint("J ");
 		if (currentcommand & CMD_OFFGROUND) dprint("A ");
 		
-		/*dprint("; last command: ");
-		if (self.skate_lastcommands[lastidx] & CMD_FORWARD) dprint("F ");
-		if (self.skate_lastcommands[lastidx] & CMD_BACK) dprint("B ");
-		if (self.skate_lastcommands[lastidx] & CMD_RIGHT) dprint("R ");
-		if (self.skate_lastcommands[lastidx] & CMD_LEFT) dprint("L ");
-		if (self.skate_lastcommands[lastidx] & CMD_JUMP) dprint("J ");
-		if (self.skate_lastcommands[lastidx] & CMD_OFFGROUND) dprint("A ");
-		*/
 		dprint("\n");
 
 		self.skate_lastcommand_nextindex = skate_getIndex(1);
@@ -188,6 +182,32 @@ void() skate_extractCommands = {
 
 void() skate_checkCombos = {
 	float idx = self.skate_lastcommand_nextindex;
+
+	// SPIN
+	if (
+		skate_getCommand(-1) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND &&
+		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
+		skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
+		
+	) {
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_spin1();
+		skate_clearCommands();
+		return;
+	}
+
+	// SPIN 2
+	if (
+		skate_getCommand(-1) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND &&
+		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
+		skate_getCommand(-3) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND
+		
+	) {
+		self.skate_flags |= SKFL_TRICK;
+		player_sk_spin1();
+		skate_clearCommands();
+		return;
+	}
 
 	// flip
 	if (
@@ -213,32 +233,6 @@ void() skate_checkCombos = {
 	) {
 		self.skate_flags |= SKFL_TRICK;
 		player_sk_flip1();
-		skate_clearCommands();
-		return;
-	}
-
-	// SPIN
-	if (
-		skate_getCommand(-1) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND &&
-		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
-		skate_getCommand(-3) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND
-		
-	) {
-		self.skate_flags |= SKFL_TRICK;
-		player_sk_spin1();
-		skate_clearCommands();
-		return;
-	}
-
-	// SPIN 2
-	if (
-		skate_getCommand(-1) & (CMD_RIGHT | CMD_OFFGROUND) == CMD_RIGHT | CMD_OFFGROUND &&
-		skate_getCommand(-2) & (CMD_BACK | CMD_OFFGROUND) == CMD_BACK | CMD_OFFGROUND &&
-		skate_getCommand(-3) & (CMD_LEFT | CMD_OFFGROUND) == CMD_LEFT | CMD_OFFGROUND
-		
-	) {
-		self.skate_flags |= SKFL_TRICK;
-		player_sk_spin1();
 		skate_clearCommands();
 		return;
 	}
