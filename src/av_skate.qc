@@ -9,6 +9,7 @@ float SKFL_GRINDING = 2;
 float SKFL_STOPPEDGRIND = 4;
 float SKFL_JUMPED = 8;
 float SKFL_TRICK = 16;
+float SKFL_GRINDMODE = 32;
 
 void() AV_SkateUpdate = {
 	if (!(self.skate_flags & SKFL_SKATING)) return;
@@ -48,6 +49,8 @@ void() AV_SkateUpdate = {
 		self.skate_flags &~= SKFL_TRICK;
 		player_run();
 	}
+	
+	if(self.skate_flags & SKFL_GRINDMODE) self.skate_flags = self.skate_flags - SKFL_GRINDMODE;
 	
 	float framefactor = frametime/0.013888; // baseline is 72fps, modulate parameters according to that
 
@@ -290,6 +293,13 @@ void() AV_SwitchSkate = {
 		AV_SkateOn(self);
 };
 
+void() AV_StartGrind = {
+	if(!(self.skate_flags & SKFL_SKATING))	return; //Can't grind without skate.
+	if(self.skate_flags & SKFL_GRINDING)	return; //Already grinding.
+	
+	if(!(self.skate_flags & SKFL_GRINDMODE)) self.skate_flags = self.skate_flags + SKFL_GRINDMODE;
+};
+
 
 //=================================================================================================
 
@@ -333,11 +343,15 @@ void() trigger_grind = {
 void() grind_touch = {
 	if (self.estate != STATE_ACTIVE) return;
 	if (other.classname != "player") return;
-	if (!other.skate_flags) return;
+	if (!(other.skate_flags & SKFL_SKATING)) return;
 	if (other.velocity_z >= 0) return;
 	//if (other.flags & FL_ONGROUND) return;
 	
 	if (!(other.skate_flags & (SKFL_STOPPEDGRIND | SKFL_GRINDING))) {
+		if(!(other.skate_flags & SKFL_GRINDMODE)) return;
+		
+		other.skate_flags = other.skate_flags - SKFL_GRINDMODE;
+		
 		other.skate_grindtime = time;
 
 		SUB_CallAsSelf(player_sk_grind1, other);

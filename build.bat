@@ -1,6 +1,6 @@
 @echo off
-
-set "progs_path=%USERPROFILE%\Desktop\bddb4\bddpre4"
+REM PUT YOUR BDDPRE4 MOD FOLDER HERE (INSTEAD OF '.')
+set "progs_path=."
 
 C:\Quake\fteqcc\fteqcc64.exe src\progs.src
 
