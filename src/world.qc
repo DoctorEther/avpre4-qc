@@ -122,6 +122,12 @@ void() main =
 
 	precache_sound ("ambience/water1.wav");
 	precache_sound ("ambience/wind2.wav");
+
+	precache_sound("skate/grind.wav");
+	precache_sound("skate/roll.wav");
+	precache_sound("skate/ollie.wav");
+	precache_sound("skate/grind_in.wav");
+	precache_sound("skate/grind_out.wav");
 	
 // shareware
 	precache_file ("maps/start.bsp");
@@ -192,10 +198,13 @@ void() worldspawn =
 {
 	lastspawn = world;
 	InitBodyQue ();
+	skate_level = self.skatemode;
 
 	clientstat(STAT_SKATE_ON, EV_FLOAT, av_skating);
 	clientstat(STAT_SKATE_POINTS, EV_FLOAT, skate_points);
 	clientstat(STAT_SKATE_LAPS, EV_FLOAT, skate_laps);
+	clientstat(STAT_SKATE_COMBO, EV_FLOAT, skate_combo);
+	clientstat(STAT_SKATE_MULT, EV_FLOAT, skate_combo_mult);
 
 
 // AVIAO
@@ -211,10 +220,21 @@ void() worldspawn =
 
 // the area based ambient sounds MUST be the first precache_sounds
 	world_sounds = &world.sounds;
+
+	local entity music = spawn();
+	music.classname = "skate_music";
+	music.think = AV_SkateMusicStart;
+	music.nextthink = time + 0.2;
 	
 // player precaches	
 	W_Precache ();			// get weapon precaches
 	RunePrecache();			// precache the runes
+
+	precache_sound("skate/grind.wav");
+	precache_sound("skate/roll.wav");
+	precache_sound("skate/ollie.wav");
+	precache_sound("skate/grind_in.wav");
+	precache_sound("skate/grind_out.wav");
 
 // sounds used from C physics code
         precache_sound ("zombie/z_miss.wav");

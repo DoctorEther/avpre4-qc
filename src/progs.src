@@ -113,3 +113,11 @@ horde.qc				// MG1 horde mode merge
 
 // --- AVIÃOZINHO PRE-4 FINAL ------------------------
 trigger_finale.qc
+
+// --- AVIÃOZINHO SKATE -------------------------------
+skate/skate_defs.qc
+skate/skate_upd.qc
+skate/skate_move.qc
+skate/skate_goals.qc
+skate/skate_lesson.qc
+skate/skate_tricks.qc

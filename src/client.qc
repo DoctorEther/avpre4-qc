@@ -945,6 +945,8 @@ called each time a player is spawned
 
 void() PutClientInServer =
 {
+	AV_SkateFov();
+	
 	local	entity spot;
 
 	self.classname = "player";
@@ -991,6 +993,7 @@ void() PutClientInServer =
 	}
 
 	DecodeLevelParms ();
+	if(skate_level) AV_SkateCapAmmo();
 
 	// spawn selection must be after DecodeLevelParms because of team stuff
 	spot = SelectSpawnPoint (FALSE);
@@ -1296,7 +1299,7 @@ void() PlayerJump =
 		return;
 	}
 	
-	if (!(self.flags & FL_ONGROUND) && !(self.skate_flags & SKFL_GRINDING))
+	if(!(self.flags & FL_ONGROUND) && !(self.skate_flags & (SKFL_GRINDING | SKFL_WALLRIDE)))
 		return;
 
 	if ( !(self.flags & FL_JUMPRELEASED) )
@@ -1304,13 +1307,37 @@ void() PlayerJump =
 
 	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
 
-	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
+	self.flags = self.flags - (self.flags & FL_ONGROUND); // don't stairwalk
 	
 	self.jump_count = self.jump_count + 1;
 	if (self.skate_flags & SKFL_SKATING) self.skate_flags |= SKFL_JUMPED;
 	self.button2 = 0;
 // player jumping sound
-	sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+	if(self.skate_flags & SKFL_SKATING) sound(self, CHAN_AUTO, "skate/ollie.wav", 1, ATTN_NORM);
+	else sound(self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+	
+	if(self.skate_flags & SKFL_WALLRIDE){
+		self.velocity = self.velocity + self.skate_wallnormal * 260;
+		self.velocity_z = 300;
+		self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_WALLRIDE);
+		self.skate_wallride_time = time;
+		
+		AV_SkateAddTrick("$qc_sk_wallie", 100);
+		return;
+	}
+	
+	if(self.skate_flags & SKFL_GRINDING){
+		local vector steer = MovementVector();
+		local vector flat = normalize([self.skate_grinddir_x, self.skate_grinddir_y, 0]);
+		steer_z = 0;
+		steer = steer - flat * (steer * flat);
+		
+		self.velocity = self.velocity + normalize(steer) * 160;
+		self.velocity_z = 330;
+		self.skate_grindstuck = time + 0.3;
+		return;
+	}
+	
 	self.velocity_z = self.velocity_z + 270;
 };
 
@@ -1562,6 +1589,7 @@ void() PlayerPreThink =
 		}
 	}else{
 		self.gravity = 1; 
+		if(skate_level) AV_SkateAirGravity();
 		if(self.button2)
 			PlayerJump ();
 		else
@@ -1634,6 +1662,7 @@ void() CheckPowerups =
 		self.frame = 0;
 		self.modelindex = modelindex_eyes;
 	}
+	else if(self.skate_flags & SKFL_SKATING) self.modelindex = modelindex_skate;
 	else
 		self.modelindex = modelindex_player;	// don't use eyes
 
@@ -1795,6 +1824,7 @@ Called every frame after physics are run
 
 void() PlayerPostThink =
 {
+	if(skate_level) AV_SkateScoreGoals();
 
 	if (self.view_ofs == '0 0 0')
 		return; // intermission or finale

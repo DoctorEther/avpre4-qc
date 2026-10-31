@@ -415,6 +415,8 @@ const float STAT_DASH_PERC		= 34;
 const float STAT_SKATE_ON		= 35;
 const float STAT_SKATE_POINTS	= 36;
 const float STAT_SKATE_LAPS		= 37;
+const float STAT_SKATE_COMBO	= 38;
+const float STAT_SKATE_MULT		= 39;
 
 const float EV_VOID = 0;
 const float EV_STRING = 1;
@@ -763,6 +765,9 @@ float	AS_MISSILE		= 4;
 .float skate_laps;
 .float skate_points;
 .float skate_speed;
+.float skate_friction;
+.float skate_slope;
+.float skate_tilt_pitch, skate_tilt_roll;
 .float skate_grindtime;
 
 #define SKATE_LASTCOMMAND_BUFFERSIZE 15
@@ -770,6 +775,33 @@ float	AS_MISSILE		= 4;
 .float skate_lastcommand_nextindex;
 .float skate_lastcommand_time;
 .float skate_flags;
+
+.float skate_combo;
+.float skate_combo_mult;
+.float skate_combo_tricks;
+.float skate_landtime;
+.float skate_grindbutton;
+.float skate_grindend;
+.float skate_grindstuck;
+.vector skate_grindpos;
+.float skate_grindmoved;
+.float skate_grindframe;
+.float skate_grindalign;
+.vector skate_grindvel;
+.vector skate_grinddir;
+.float skate_takeoff;
+.float skate_onramp;
+.float skatemode;
+float modelindex_skate;
+float skate_level;
+
+float AV_SKATE_MAX_SHELLS	= 10;
+float AV_SKATE_MAX_AUTO		= 20;
+float AV_SKATE_MAX_ROCKETS	= 5;
+
+.float skate_wallride_time;
+.vector skate_wallnormal;
+.float skate_fxtime;
 
 //
 // object stuff
@@ -1026,13 +1058,15 @@ void(string var, string val) cvar_set = #72;	// sets cvar.value
 
 //void(entity client, string s, ...) centerprint = #0:ex_centerprint;	// sprint, but in middle
 
-void(entity client, string s1) centerprint = #73;
-void(entity client, string s1, string s2) centerprint2 = #73;
-void(entity client, string s1, string s2, string s3) centerprint3 = #73;
-void(entity client, string s1, string s2, string s3, string s4) centerprint4 = #73;
-void(entity client, string s1, string s2, string s3, string s4, string s5) centerprint5 = #73;
-void(entity client, string s1, string s2, string s3, string s4, string s5, string s6) centerprint6 = #73;
-void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint7 = #73;
+void(entity client, string s1) builtin_centerprint = #73;
+void(entity client, string s1, string s2) builtin_centerprint2 = #73;
+void(entity client, string s1, string s2, string s3) builtin_centerprint3 = #73;
+void(entity client, string s1, string s2, string s3, string s4) builtin_centerprint4 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5) builtin_centerprint5 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6) builtin_centerprint6 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) builtin_centerprint7 = #73;
+
+void(entity client, string s, ...) loc_centerprint = #0:ex_centerprint;
 
 // Print a centerprint to every connected player (horde merge).
 void centerprint_all(string s)

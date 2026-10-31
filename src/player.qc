@@ -174,49 +174,98 @@ void()	player_feijao5 =	[$attacke, player_feijao6	] { self.weaponframe = 5; };
 void()	player_feijao6 =	[$attackf, player_run		] { self.weaponframe = 6; };
 
 
-void()	player_sk_grind1 = 	[96, player_sk_grind2	] { };
-void()	player_sk_grind2 =	[97, player_sk_grind2	] { /*self.angles_z = 60;*/ };
+void()	player_sk_grind1 =	[204, player_sk_grind2	] { };
+void()	player_sk_grind2 =	[205, player_sk_grind3	] { };
+void()	player_sk_grind3 =	[206, player_sk_grind4	] { };
+void()	player_sk_grind4 =	[207, player_sk_grind5	] { };
+void()	player_sk_grind5 =	[208, player_sk_grind6	] { };
+void()	player_sk_grind6 =	[209, player_sk_grind7	] { };
+void()	player_sk_grind7 =	[210, player_sk_grind8	] { };
+void()	player_sk_grind8 =	[211, player_sk_grind9	] { };
+void()	player_sk_grind9 =	[212, player_sk_grind10	] { };
+void()	player_sk_grind10 =	[213, player_sk_grind11	] { };
+void()	player_sk_grind11 =	[214, player_sk_grind12	] { };
+void()	player_sk_grind12 =	[215, player_sk_grind5	] { };
 
 
-void()	player_sk_flip1 = 	[61, player_sk_flip2	] {};
-void()	player_sk_flip2 =	[62, player_sk_flip3	] {};
-void()	player_sk_flip3 =	[63, player_sk_flip4	] {};
-void()	player_sk_flip4 =	[62, player_sk_flip5	] {};
-void()	player_sk_flip5 =	[61, player_sk_flip6	] {};
-void()	player_sk_flip6 =	[61, player_run		] {
-	self.skate_flags &~= SKFL_TRICK;
-	self.skate_points += 200;
-	centerprint(self, "Kickflip +200\n");
+void()	player_sk_flip1_old =	[162, player_sk_flip2	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip2_old =	[163, player_sk_flip3	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip3_old =	[164, player_sk_flip4	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip4_old =	[165, player_sk_flip5	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip5_old =	[166, player_sk_flip6	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip6_old =	[167, player_sk_flip7	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip7_old =	[168, player_sk_flip8	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip8_old =	[169, player_sk_flip9	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip9_old =	[170, player_sk_flip10	] {
+	self.nextthink = time + AV_SKATE_TRICK_FRAMETIME;
+	self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_TRICK);
+	AV_SkateAddTrick("Kickflip", 200);
 };
+void()	player_sk_flip10_old =	[171, player_sk_flip11	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip11_old =	[172, player_sk_flip12	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_flip12_old =	[173, player_run	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
 
 
-void()	player_sk_spin1 =	[143, player_sk_spin2	] {};
-void()	player_sk_spin2 =	[144, player_sk_spin3	] {};
-void()	player_sk_spin3 =	[145, player_sk_spin4	] {};
-void()	player_sk_spin4 =	[146, player_sk_spin5	] {};
-void()	player_sk_spin5 =	[147, player_sk_spin6	] {};
-void()	player_sk_spin6 =	[148, player_sk_spin7	] {};
-void()	player_sk_spin7 =	[149, player_sk_spin8	] {};
-void()	player_sk_spin8 =	[150, player_run	] {
-	self.skate_flags &~= SKFL_TRICK;
-	self.skate_points += 500;
-	centerprint(self, "Spin +500\n");
+void()	player_sk_spin1_old =	[174, player_sk_spin2	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin2_old =	[175, player_sk_spin3	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin3_old =	[176, player_sk_spin4	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin4_old =	[177, player_sk_spin5	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin5_old =	[178, player_sk_spin6	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin6_old =	[179, player_sk_spin7	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin7_old =	[180, player_sk_spin8	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin8_old =	[181, player_sk_spin9	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin9_old =	[182, player_sk_spin10	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin10_old =	[183, player_sk_spin11	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin11_old =	[184, player_sk_spin12	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin12_old =	[185, player_sk_spin13	] {
+	self.nextthink = time + AV_SKATE_TRICK_FRAMETIME;
+	self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_TRICK);
+	AV_SkateAddTrick("Spin", 500);
 };
+void()	player_sk_spin13_old =	[186, player_sk_spin14	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_spin14_old =	[187, player_run	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
 
-void()	player_sk_bflip1 =	[151, player_sk_bflip2	] {};
-void()	player_sk_bflip2 =	[152, player_sk_bflip3	] {};
-void()	player_sk_bflip3 =	[153, player_sk_bflip4	] {};
-void()	player_sk_bflip4 =	[154, player_sk_bflip5	] {};
-void()	player_sk_bflip5 =	[155, player_sk_bflip6	] {};
-void()	player_sk_bflip6 =	[156, player_sk_bflip7	] {};
-void()	player_sk_bflip7 =	[157, player_sk_bflip8	] {};
-void()	player_sk_bflip8 =	[158, player_sk_bflip9	] {};
-void()	player_sk_bflip9 =	[159, player_sk_bflip10	] {};
-void()	player_sk_bflip10 =	[160, player_run	] {
-	self.skate_flags &~= SKFL_TRICK;
-	self.skate_points += 800;
-	centerprint(self, "Backflip +800\n");
+void()	player_sk_bflip1_old =	[188, player_sk_bflip2	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip2_old =	[189, player_sk_bflip3	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip3_old =	[190, player_sk_bflip4	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip4_old =	[191, player_sk_bflip5	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip5_old =	[192, player_sk_bflip6	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip6_old =	[193, player_sk_bflip7	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip7_old =	[194, player_sk_bflip8	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip8_old =	[195, player_sk_bflip9	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip9_old =	[196, player_sk_bflip10	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip10_old =	[197, player_sk_bflip11	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip11_old =	[198, player_sk_bflip12	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip12_old =	[199, player_sk_bflip13	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip13_old =	[200, player_sk_bflip14	] {
+	self.nextthink = time + AV_SKATE_TRICK_FRAMETIME;
+	self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_TRICK);
+	AV_SkateAddTrick("Backflip", 800);
 };
+void()	player_sk_bflip14_old =	[201, player_sk_bflip15	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip15_old =	[202, player_sk_bflip16	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_bflip16_old =	[203, player_run	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+
+
+void()	player_sk_wallr1 =	[216, player_sk_wallr2	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_wallr2 =	[217, player_sk_wallr3	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_wallr3 =	[218, player_sk_wallr4	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_wallr4 =	[219, player_sk_wallr5	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_wallr5 =	[220, player_sk_wallr6	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_wallr6 =	[221, player_sk_wallr7	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_wallr7 =	[222, player_sk_wallr8	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_wallr8 =	[223, player_sk_wallr9	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_wallr9 =	[224, player_sk_wallr4	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+
+void()	player_sk_walll1 =	[225, player_sk_walll2	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_walll2 =	[226, player_sk_walll3	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_walll3 =	[227, player_sk_walll4	] { self.nextthink = time + AV_SKATE_TRICK_FRAMETIME; };
+void()	player_sk_walll4 =	[228, player_sk_walll5	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_walll5 =	[229, player_sk_walll6	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_walll6 =	[230, player_sk_walll7	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_walll7 =	[231, player_sk_walll8	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_walll8 =	[232, player_sk_walll9	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
+void()	player_sk_walll9 =	[233, player_sk_walll4	] { if(!(self.skate_flags & SKFL_WALLRIDE)) player_run(); };
 
 
 void()	player_feijaoa = {
@@ -305,7 +354,7 @@ void()  player_grapple5 =  [$axattd4, player_run    ]
 //--ZOID
 //============================================================================
 
-void() player_nail1   =[$nailatt1, player_nail2  ] 
+void() player_nail1_campaign   =[$nailatt1, player_nail2  ] 
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -322,7 +371,7 @@ void() player_nail1   =[$nailatt1, player_nail2  ]
 	W_FireSpikes (4);
 	self.attack_finished = time + 0.2;
 };
-void() player_nail2   =[$nailatt2, player_nail1  ]
+void() player_nail2_campaign   =[$nailatt2, player_nail1  ]
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -340,7 +389,7 @@ void() player_nail2   =[$nailatt2, player_nail1  ]
 
 void(float ox) W_FireLavaSpikes;
 
-void() player_lava_nail1   =[$nailatt1, player_lava_nail2  ] 
+void() player_lava_nail1_campaign   =[$nailatt1, player_lava_nail2  ] 
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -353,7 +402,7 @@ void() player_lava_nail1   =[$nailatt1, player_lava_nail2  ]
 	W_FireLavaSpikes (4);
 	self.attack_finished = time + 0.2;
 };
-void() player_lava_nail2   =[$nailatt2, player_lava_nail1  ]
+void() player_lava_nail2_campaign   =[$nailatt2, player_lava_nail1  ]
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -370,7 +419,7 @@ void() player_lava_nail2   =[$nailatt2, player_lava_nail1  ]
 //============================================================================
 void() W_FirePlasma;
 
-void() player_light1   =[$light1, player_light2  ] 
+void() player_light1_campaign   =[$light1, player_light2  ] 
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
@@ -393,7 +442,7 @@ void() player_light1   =[$light1, player_light2  ]
 		return;
 	}
 };
-void() player_light2   =[$light2, player_light1  ]
+void() player_light2_campaign   =[$light2, player_light1  ]
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 

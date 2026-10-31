@@ -55,6 +55,14 @@ void(vector screensize, float scoreboard) CSQC_DrawHud =
 	if (getstatf(STAT_SKATE_ON) > 0)
 		drawstring([screensize_x/2 - 30, screensize_y/2, 0], "$yes", '10 10 10', '1 1 1', 1, 0);
 		//drawrawstring(screensize/2, "SKATE!!!", '10 10 10', '1 1 1', 1, 0);
+
+	local float points = getstatf(STAT_SKATE_POINTS);
+	local float combo = getstatf(STAT_SKATE_COMBO);
+	local float mult = getstatf(STAT_SKATE_MULT);
+	
+	if(points > 0) drawstring([16, 16, 0], strcat("SCORE ", ftos(rint(points))), '12 12 0', '1 1 1', 1, 0);
+	
+	if(mult > 0) drawstring([screensize_x/2 - 80, screensize_y * 0.7, 0], strcat("COMBO ", ftos(rint(combo)), "  x", ftos(mult)), '14 14 0', '1 0.8 0.2', 1, 0);
 	/*HUD_UpdateStats();
 	if (intermission || coopdata == -1) return;
 	float viewsize = cvar("viewsize");

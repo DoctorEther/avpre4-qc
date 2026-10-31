@@ -178,6 +178,8 @@ void(entity targ, entity attacker, entity inflictor) Killed =
 	self.takedamage = DAMAGE_NO;
 	self.touch = SUB_Null;
 
+	if(self.flags & FL_MONSTER) AV_SkateKillBonus(attacker);
+
 	monster_death_use();
 	self.th_die ();
 	

@@ -926,7 +926,7 @@ void() CheckSkatePoints = {
 
 void() ResetSkatePoints = {
 	self.skate_points = 0;
-	centerprint(self, "Skate points reset\n");
+	centerprint(self, "$qc_sk_points_reset");
 }
 
 /*
@@ -936,6 +936,8 @@ ImpulseCommands
 */
 void() ImpulseCommands =
 {
+	if(skate_level) AV_SkateAggroPush();
+	
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon();
 	else if (self.impulse >= 60 && self.impulse <= 68)
@@ -961,10 +963,11 @@ void() ImpulseCommands =
 	}
 	else if (self.impulse == 23)
 		TeamFlagStatusReport();
-	else if (self.impulse == 30)
+	else if(self.impulse == 30 && skate_level)
 		CheckSkatePoints();
-	else if (self.impulse == 31)
+	else if(self.impulse == 31 && skate_level)
 		ResetSkatePoints();
+	else if(self.impulse == 70 && skate_level) self.skate_grindbutton = time + AV_SKATE_GRINDBUTTON_TIME;
 	else if (self.impulse == 255)
 		QuadCheat();
 	else if (self.impulse == 69)
@@ -992,7 +995,6 @@ void() PreImpulseCommands = {
 	
 	if(self.impulse == 42) AV_SwitchCam();
 	if(self.impulse == 43) AV_SwitchSkate();
-	if(self.impulse == 44) AV_StartGrind();
 	
 	if(self.impulse >= 40 && self.impulse <= 50) self.impulse = 0;
 }

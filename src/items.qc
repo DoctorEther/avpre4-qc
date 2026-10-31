@@ -29,7 +29,7 @@ void() SUB_regen =
 	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// play respawn sound
 	setorigin (self, self.origin);
 
-	if (self.use) self.use = SUB_Null;
+	if(self.use && skate_level) self.use = SUB_Null;
 };
 
 // General pickup action.
@@ -447,6 +447,16 @@ void() bound_other_ammo =
 		other.ammo_multi_rockets = 100;
 	if (other.ammo_plasma > 100)
 		other.ammo_plasma = 100;
+
+	if(skate_level){
+		other.ammo_shells1 = min(other.ammo_shells1, AV_SKATE_MAX_SHELLS);
+		other.ammo_nails1 = min(other.ammo_nails1, AV_SKATE_MAX_AUTO);
+		other.ammo_lava_nails = min(other.ammo_lava_nails, AV_SKATE_MAX_AUTO);
+		other.ammo_cells1 = min(other.ammo_cells1, AV_SKATE_MAX_AUTO);
+		other.ammo_plasma = min(other.ammo_plasma, AV_SKATE_MAX_AUTO);
+		other.ammo_rockets1 = min(other.ammo_rockets1, AV_SKATE_MAX_ROCKETS);
+		other.ammo_multi_rockets = min(other.ammo_multi_rockets, AV_SKATE_MAX_ROCKETS);
+	}
 };
 
 
@@ -587,6 +597,10 @@ void() weapon_touch =
     else
         leave = 0;
 
+	local vector skate_ammo1 = [other.ammo_shells1, other.ammo_nails1, other.ammo_rockets1];
+	local vector skate_ammo2 = [other.ammo_cells1, other.ammo_lava_nails, other.ammo_multi_rockets];
+	local float skate_ammo3 = other.ammo_plasma;
+
     if (self.classname == "weapon_nailgun")
     {
         if (leave && (other.items & IT_NAILGUN) )
@@ -655,6 +669,8 @@ void() weapon_touch =
     // weapon touch sound
     sound (other, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
     stuffcmd (other, "bf\n");
+
+	if(skate_level) AV_SkateWeaponPickup(skate_ammo1, skate_ammo2, skate_ammo3);
 
     bound_other_ammo ();
 
@@ -959,6 +975,11 @@ Small box is 20, Big box is 40.
 
 void() item_shells =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -986,6 +1007,11 @@ Small box is 25, Big box is 50.
 
 void() item_spikes =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -1013,6 +1039,11 @@ Small box is 25, Big box is 50.
 
 void() item_lava_spikes =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -1040,6 +1071,11 @@ Small box is 5, Big box is 10.
 
 void() item_rockets =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -1067,6 +1103,11 @@ Small box is 5, Big box is 10.
 
 void() item_multi_rockets =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -1094,6 +1135,11 @@ Small box is 6, Big box is 12.
 */
 void() item_cells =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)
@@ -1120,6 +1166,11 @@ Small box is 6, Big box is 12.
 */
 void() item_plasma =
 {
+	if(skate_level){
+		remove(self);
+		return;
+	}
+	
 	self.touch = ammo_touch;
 
 	if (self.spawnflags & WEAPON_BIG2)

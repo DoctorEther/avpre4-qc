@@ -70,4 +70,6 @@ const float STAT_TINTCOLOR_B	= 37;
 const float STAT_SKATE_ON		= 35;
 const float STAT_SKATE_POINTS	= 36;
 const float STAT_SKATE_LAPS		= 37;
+const float STAT_SKATE_COMBO	= 38;
+const float STAT_SKATE_MULT		= 39;
 float skill;
