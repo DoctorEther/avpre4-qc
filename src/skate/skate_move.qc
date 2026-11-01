@@ -143,7 +143,7 @@ void() AV_SkateUpdate = {
 	
 	if(self.skate_grindbutton > time + AV_SKATE_GRINDBUTTON_WINDOW) self.skate_grindbutton = time + AV_SKATE_GRINDBUTTON_WINDOW;
 	
-	if(!(self.skate_flags & SKFL_GRINDING)){
+	if(!(self.skate_flags & SKFL_GRINDING) && !AV_SkateIntroRunning()){
 		skate_extractCommands();
 		skate_checkCombos();
 	}

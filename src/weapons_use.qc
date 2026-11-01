@@ -176,6 +176,8 @@ void() W_SetCurrentAmmo =
 	
 	UpdateAmmoCounts(self);
 	AV_UpdateWeaponIcon();
+	
+	if(self.av_camera_active || AV_SkateIntroRunning()) self.weaponmodel = "";
 };
 
 float() W_BestWeapon =

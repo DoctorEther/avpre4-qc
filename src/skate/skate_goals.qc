@@ -195,6 +195,10 @@ vector(entity g) AV_SkateCamSpot = {
 	return spot;
 };
 
+float() AV_SkateIntroRunning = {
+	return skate_intro == 1 && self == skate_intro_player;
+};
+
 void(entity plr) AV_SkateIntroEnd = {
 	skate_intro = 2;
 	
