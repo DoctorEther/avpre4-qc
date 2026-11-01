@@ -205,6 +205,8 @@ void() worldspawn =
 	clientstat(STAT_SKATE_LAPS, EV_FLOAT, skate_laps);
 	clientstat(STAT_SKATE_COMBO, EV_FLOAT, skate_combo);
 	clientstat(STAT_SKATE_MULT, EV_FLOAT, skate_combo_mult);
+	clientstat(STAT_SKATE_HUD, EV_FLOAT, skate_hud_on);
+	clientstat(STAT_SKATE_GOAL, EV_FLOAT, skate_hud_goal);
 
 
 // AVIAO
@@ -325,6 +327,8 @@ void() worldspawn =
 
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/splayer2.mdl"); // AVIÃOZINHO
+	precache_model ("progs/splayer2_lower.mdl");
+	precache_model ("progs/splayer2_upper.mdl");
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
 	precache_model ("progs/gib1.mdl");

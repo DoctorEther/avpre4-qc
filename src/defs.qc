@@ -417,6 +417,8 @@ const float STAT_SKATE_POINTS	= 36;
 const float STAT_SKATE_LAPS		= 37;
 const float STAT_SKATE_COMBO	= 38;
 const float STAT_SKATE_MULT		= 39;
+const float STAT_SKATE_HUD		= 40;
+const float STAT_SKATE_GOAL		= 41;
 
 const float EV_VOID = 0;
 const float EV_STRING = 1;
@@ -778,6 +780,7 @@ float	AS_MISSILE		= 4;
 
 .float skate_combo;
 .float skate_combo_mult;
+.float skate_hud_on, skate_hud_goal, skate_hud_labels;
 .float skate_combo_tricks;
 .float skate_landtime;
 .float skate_grindbutton;
@@ -802,6 +805,7 @@ float AV_SKATE_MAX_ROCKETS	= 5;
 .float skate_wallride_time;
 .vector skate_wallnormal;
 .float skate_fxtime;
+.entity skate_soundent;
 
 //
 // object stuff

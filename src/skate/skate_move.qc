@@ -10,6 +10,14 @@ float AV_SKATE_BANK_FRICTION		= 0;
 float AV_SKATE_GRIND_HOLD			= 0.25;
 float AV_SKATE_GRINDBUTTON_WINDOW	= 0.45;
 float AV_SKATE_ASSIST_SIDE			= 52;
+float AV_SKATE_MODELYAW_RATE		= 10;
+float AV_SKATE_MODELYAW_MINSPEED	= 60;
+float AV_SKATE_UPPER_LIMIT_LEFT	= 45;
+float AV_SKATE_UPPER_LIMIT_RIGHT	= 120;
+float AV_SKATE_UPPER_RATE			= 10;
+float AV_SKATE_UPPER_HOLD			= 0.35;
+float AV_SKATE_UPPER_RAMP			= 0.5;
+float AV_SKATE_RAD2DEG				= 57.29578;
 
 float(float a, float b) skate_pow = #97;
 
@@ -19,6 +27,103 @@ float(float base, float push) AV_SkatePushAccel = {
 	if(mult < 1) mult = 1;
 	
 	return AV_SKATE_PUSH_ACCEL * mult;
+};
+
+void() AV_SkateUpperBody = {
+	local entity upper = self.skate_upper;
+	
+	if(!skate_level || !(self.skate_flags & SKFL_SKATING) || self.health <= 0 || !self.modelindex || self.modelindex != modelindex_skate){
+		if(upper && upper.modelindex) setmodel(upper, "");
+		self.skate_upper_twist = 0;
+		return;
+	}
+	
+	if(!upper){
+		upper = spawn();
+		upper.classname = "skate_upper";
+		upper.owner = self;
+		upper.solid = SOLID_NOT;
+		upper.movetype = MOVETYPE_NOCLIP;
+		self.skate_upper = upper;
+	}
+	
+	if(!upper.modelindex) setmodel(upper, "progs/splayer2_upper.mdl");
+	
+	setorigin(upper, self.origin);
+	upper.frame = self.frame;
+	upper.skin = self.skin;
+	upper.colormap = self.colormap;
+	upper.alpha = self.alpha;
+	
+	local float look = anglemod180(self.v_angle_y - self.angles_y);
+	if(look > AV_SKATE_UPPER_LIMIT_LEFT || look < 0 - AV_SKATE_UPPER_LIMIT_RIGHT){
+		if(self.skate_upper_twist >= 0) look = AV_SKATE_UPPER_LIMIT_LEFT;
+		else look = 0 - AV_SKATE_UPPER_LIMIT_RIGHT;
+	}
+	
+	if(self.skate_flags & SKFL_WALLRIDE) self.skate_upper_lock = time + AV_SKATE_UPPER_HOLD;
+	else if((self.flags & FL_ONGROUND) && self.skate_upper_lock > time) self.skate_upper_lock = time;
+	
+	if(time < self.skate_upper_lock) self.skate_upper_twist = 0;
+	else{
+		local float ramp = (time - self.skate_upper_lock) / AV_SKATE_UPPER_RAMP;
+		if(ramp > 1) ramp = 1;
+		
+		local float blend = frametime * AV_SKATE_UPPER_RATE * ramp;
+		if(blend > 1) blend = 1;
+		self.skate_upper_twist = self.skate_upper_twist + (look - self.skate_upper_twist) * blend;
+	}
+	
+	makevectors(vec3(0 - self.angles_x, self.angles_y, self.angles_z));
+	
+	local float twist_cos = skate_cos(self.skate_upper_twist / AV_SKATE_RAD2DEG);
+	local float twist_sin = skate_sin(self.skate_upper_twist / AV_SKATE_RAD2DEG);
+	local vector twist_fwd = v_forward * twist_cos - v_right * twist_sin;
+	local vector twist_right = v_forward * twist_sin + v_right * twist_cos;
+	
+	upper.angles_x = skate_atan2(twist_fwd_z, skate_sqrt(twist_fwd_x * twist_fwd_x + twist_fwd_y * twist_fwd_y)) * AV_SKATE_RAD2DEG;
+	upper.angles_y = skate_atan2(twist_fwd_y, twist_fwd_x) * AV_SKATE_RAD2DEG;
+	upper.angles_z = skate_atan2(0 - twist_right_z, v_up_z) * AV_SKATE_RAD2DEG;
+};
+
+void() EndFrame = {
+	if(!skate_level) return;
+	
+	local entity oself = self;
+	
+	local entity ent = find(world, classname, "skate_upper");
+	while(ent){
+		local entity next = find(ent, classname, "skate_upper");
+		if(ent.owner.skate_upper != ent || ent.owner.classname != "player") remove(ent);
+		ent = next;
+	}
+	
+	ent = find(world, classname, "player");
+	while(ent){
+		self = ent;
+		AV_SkateUpperBody();
+		ent = find(ent, classname, "player");
+	}
+	
+	self = oself;
+};
+
+void() AV_SkateModelYaw = {
+	if(!(self.skate_flags & SKFL_SKATING) || self.health <= 0 || self.fixangle){
+		self.skate_model_yaw = self.angles_y;
+		self.skate_wish_dir = '0 0 0';
+		return;
+	}
+	
+	local float target = self.skate_model_yaw;
+	if(vlen(self.skate_wish_dir) > 0.5) target = vectoyaw2(self.skate_wish_dir);
+	if(vlen(vec3(self.velocity_x, self.velocity_y, 0)) > AV_SKATE_MODELYAW_MINSPEED) target = vectoyaw2(vec3(self.velocity_x, self.velocity_y, 0));
+	
+	local float blend = frametime * AV_SKATE_MODELYAW_RATE;
+	if(blend > 1) blend = 1;
+	
+	self.skate_model_yaw = anglemod(self.skate_model_yaw + anglemod180(target - self.skate_model_yaw) * blend);
+	self.angles_y = self.skate_model_yaw;
 };
 
 void() AV_SkateUpdate = {
@@ -161,7 +266,10 @@ void() AV_SkateUpdate = {
 	
 	local vector l_vec, v_vec, r_vec;
 	
-	if(h_speed > 1){
+	if(fabs(self.movement_x) <= 50 && fabs(self.movement_y) <= 50 && base == self.skate_hspeed && vlen(self.skate_hdir) > 0.5 && !(self.skate_flags & SKFL_STOPPEDGRIND)){
+		self.velocity_x = self.skate_hdir_x * target;
+		self.velocity_y = self.skate_hdir_y * target;
+	}else if(h_speed > 1){
 		self.velocity_x = self.velocity_x * (target / h_speed);
 		self.velocity_y = self.velocity_y * (target / h_speed);
 	}else if(target > 1){
@@ -195,7 +303,14 @@ void() AV_SkateUpdate = {
 	//ROTATE VELOCITY TOWARDS LOOKING VECTOR
 	l_vec = MovementVector();
 	l_vec_z = 0;
-	l_vec = normalize(l_vec);
+	if(fabs(self.movement_x) > 50 || fabs(self.movement_y) > 50){
+		l_vec = normalize(l_vec);
+		self.skate_wish_dir = l_vec;
+	}else{
+		l_vec = self.skate_wish_dir;
+		v_vec = normalize(vec3(self.velocity_x, self.velocity_y, 0));
+		if(vlen(v_vec) > 0.5 && l_vec * v_vec < 0) l_vec = '0 0 0';
+	}
 	
 	v_vec = self.velocity;
 	v_vec_z = 0;
@@ -205,8 +320,13 @@ void() AV_SkateUpdate = {
 	
 	v_vec = normalize(v_vec);
 	
-	r_vec_x = v_vec_x + (l_vec_x - v_vec_x) * AV_SKATE_ROTATION_SPEED * framefactor;
-	r_vec_y = v_vec_y + (l_vec_y - v_vec_y) * AV_SKATE_ROTATION_SPEED * framefactor;
+	local float turn = cvar("skate_turn");
+	if(turn <= 0) turn = 1;
+	turn = AV_SKATE_ROTATION_SPEED * framefactor * turn;
+	if(turn > 1) turn = 1;
+	
+	r_vec_x = v_vec_x + (l_vec_x - v_vec_x) * turn;
+	r_vec_y = v_vec_y + (l_vec_y - v_vec_y) * turn;
 	r_vec_z = 0;
 	
 	r_vec = normalize(r_vec);
@@ -217,6 +337,7 @@ void() AV_SkateUpdate = {
 
 void() AV_SkateStoreSpeed = {
 	self.skate_hspeed = vlen(vec3(self.velocity_x, self.velocity_y, 0));
+	self.skate_hdir = normalize(vec3(self.velocity_x, self.velocity_y, 0));
 	self.skate_hspeed_time = time;
 };
 

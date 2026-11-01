@@ -406,7 +406,7 @@ void(entity plr) AV_SkateOn = {
 	self.skate_flags |= SKFL_SKATING;
 	AV_CameraOn();
 
-	setmodel(self, "progs/splayer2.mdl");
+	setmodel(self, "progs/splayer2_lower.mdl");
 	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
 
 	//modelindex_player = self.modelindex;
@@ -425,6 +425,7 @@ void(entity plr) AV_SkateOff = {
 	self = plr;
 
 	self.skate_flags &~= SKFL_SKATING;
+	AV_SkateStopSounds(self);
 	AV_CameraOff();
 
 	setmodel(self, "progs/player.mdl");
@@ -618,7 +619,8 @@ void(string trickname, float points) AV_SkateAddTrick = {
 	
 	AV_SkateGiveAmmo(1);
 	
-	AV_SkatePrintLoc(self, "$qc_sk_trick", 1, trickname, ftos(points), strcat(ftos(rint(self.skate_combo)), "  x", ftos(self.skate_combo_mult)));
+	if(AV_SkateHudActive(self)) AV_SkateSendTrick(self, trickname, points);
+	else AV_SkatePrintLoc(self, "$qc_sk_trick", 1, trickname, ftos(points), strcat(ftos(rint(self.skate_combo)), "  x", ftos(self.skate_combo_mult)));
 };
 
 void() AV_SkateAddGrind = {
@@ -631,7 +633,8 @@ void() AV_SkateEndCombo = {
 	
 	AV_SkateGiveAmmo(floor(total / AV_SKATE_POINTS_PER_AMMO));
 	
-	AV_SkatePrintLoc(self, "$qc_sk_combo", 0, ftos(total), "", "");
+	if(AV_SkateHudActive(self)) AV_SkateSendCombo(self, total);
+	else AV_SkatePrintLoc(self, "$qc_sk_combo", 0, ftos(total), "", "");
 	
 	self.skate_combo = 0;
 	self.skate_combo_mult = 0;
@@ -802,25 +805,46 @@ void() AV_SkateSparksOld = {
 
 // --- SOUNDS -----------------------------------------
 
+entity(entity plr) AV_SkateSoundEnt = {
+	if(plr.av_camera_active && plr.av_camera) return plr.av_camera;
+
+	return plr;
+};
+
+void(entity plr, string sample, float vol) AV_SkateLoopSound = {
+	local entity ent = AV_SkateSoundEnt(plr);
+
+	if(plr.skate_soundent && plr.skate_soundent != ent) sound(plr.skate_soundent, CHAN_BODY, "misc/null.wav", 1, ATTN_NORM);
+
+	plr.skate_soundent = ent;
+	sound(ent, CHAN_BODY, sample, vol, ATTN_NORM);
+};
+
+void(entity plr) AV_SkateStopSounds = {
+	if(plr.skate_flags & SKFL_GRINDSOUND)		sound(plr.skate_soundent, CHAN_BODY, "skate/grind_out.wav", 1, ATTN_NORM);
+	else if(plr.skate_flags & SKFL_ROLLSOUND)	sound(plr.skate_soundent, CHAN_BODY, "misc/null.wav", 1, ATTN_NORM);
+
+	plr.skate_flags = plr.skate_flags - (plr.skate_flags & (SKFL_GRINDSOUND | SKFL_ROLLSOUND));
+};
+
 void() AV_SkateSounds = {
+	if(self.skate_soundent != AV_SkateSoundEnt(self)){
+		if(self.skate_flags & SKFL_GRINDSOUND)		AV_SkateLoopSound(self, "skate/grind.wav", 1);
+		else if(self.skate_flags & SKFL_ROLLSOUND)	AV_SkateLoopSound(self, "skate/roll.wav", 0.6);
+	}
+
 	if(self.skate_flags & SKFL_GRINDSOUND){
-		if(!(self.skate_flags & (SKFL_GRINDING | SKFL_STOPPEDGRIND)) && time > self.skate_grindend + 0.1){
-			sound(self, CHAN_BODY, "skate/grind_out.wav", 1, ATTN_NORM);
-			self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_GRINDSOUND);
-		}
-		
+		if(!(self.skate_flags & (SKFL_GRINDING | SKFL_STOPPEDGRIND)) && time > self.skate_grindend + 0.1) AV_SkateStopSounds(self);
+
 		return;
 	}
-	
+
 	if(self.flags & FL_ONGROUND && vlen(self.velocity) > 80){
 		if(!(self.skate_flags & SKFL_ROLLSOUND)){
-			sound(self, CHAN_BODY, "skate/roll.wav", 0.6, ATTN_NORM);
+			AV_SkateLoopSound(self, "skate/roll.wav", 0.6);
 			self.skate_flags = self.skate_flags | SKFL_ROLLSOUND;
 		}
-	}else if(self.skate_flags & SKFL_ROLLSOUND){
-		sound(self, CHAN_BODY, "misc/null.wav", 1, ATTN_NORM);
-		self.skate_flags = self.skate_flags - (self.skate_flags & SKFL_ROLLSOUND);
-	}
+	}else if(self.skate_flags & SKFL_ROLLSOUND) AV_SkateStopSounds(self);
 };
 
 // --- MUSIC ------------------------------------------
@@ -913,11 +937,13 @@ void(vector ammo1, vector ammo2, float ammo3) AV_SkateWeaponPickup = {
 
 // --- RAMP TILT --------------------------------------
 
+.float skate_model_yaw;
+
 void() AV_SkateTilt = {
 	local float pitch = 0;
 	local float roll = 0;
-	
-	makevectors([0, self.angles_y, 0]);
+
+	makevectors([0, self.skate_model_yaw, 0]);
 	traceline(self.origin, self.origin - '0 0 72', TRUE, self);
 	
 	if(!(self.skate_flags & SKFL_GRINDING) && trace_fraction < 1 && trace_plane_normal_z > 0.2){

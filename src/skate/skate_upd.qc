@@ -23,40 +23,6 @@ void() AV_SkateSparks = {
 	if(time < self.skate_grindtime + 0.06) particle(org, '0 0 0', 0, 255);
 };
 
-void() AV_SkateFov = {
-	local float cur = cvar("fov");
-	local float last = cvar("saved2");
-	if(last < 0) return;
-	
-	if(!skate_level){
-		if(last > 0 && cur == last) stuffcmd(self, "fov 90\n");
-		if(last > 0) cvar_set("saved2", "0");
-		return;
-	}
-	
-	if(last > 0 && cur != last){
-		cvar_set("saved2", "-1");
-		return;
-	}
-	
-	if(last == 0 && cur != 90){
-		cvar_set("saved2", "-1");
-		return;
-	}
-	
-	local float target;
-	if(skate_level) target = 130;
-	else target = 110;
-	
-	if(cur != target){
-		if(target == 130) stuffcmd(self, "fov 130\n");
-		else stuffcmd(self, "fov 110\n");
-	}
-	
-	if(target == 130) cvar_set("saved2", "130");
-	else cvar_set("saved2", "110");
-};
-
 // --- SCORE GOALS ------------------------------------
 
 .float skate_goal_points;
@@ -137,6 +103,7 @@ void() AV_SkateAirGravity = {
 };
 
 void() AV_SkateScoreGoals = {
+	AV_SkateHudState();
 	AV_SkateAirGravity();
 	AV_SkateIntroThink();
 	AV_SkateRailHold();
@@ -144,6 +111,7 @@ void() AV_SkateScoreGoals = {
 	AV_SkateHud();
 	AV_SkateBankKeep();
 	AV_SkateStoreSpeed();
+	AV_SkateModelYaw();
 	
 	if(self.skate_points == self.skate_goal_points) return;
 	
@@ -496,7 +464,7 @@ void() grind_touch = {
 		SUB_CallAsSelf(player_sk_grind1, other);
 		
 		if(!(other.skate_flags & SKFL_GRINDSOUND)){
-			sound(other, CHAN_BODY, "skate/grind.wav", 1, ATTN_NORM);
+			AV_SkateLoopSound(other, "skate/grind.wav", 1);
 			other.skate_flags = other.skate_flags | (SKFL_GRINDSOUND);
 		}
 		
@@ -651,9 +619,88 @@ string() AV_SkateScoreLine = {
 	return strcat(line, "  !!!");
 };
 
+float AV_SKATE_SVC_SKATEHUD		= 89;
+float AV_SKATE_EVT_TRICK		= 1;
+float AV_SKATE_EVT_COMBO		= 2;
+float AV_SKATE_EVT_TEXT			= 3;
+float AV_SKATE_EVT_LABELS		= 4;
+float AV_SKATE_SLOT_MSG			= 1;
+float AV_SKATE_SLOT_GOALS		= 2;
+float AV_SKATE_SLOT_INTRO		= 3;
+
+float(entity e) AV_SkateHudActive = {
+	if(e.classname != "player" || !skate_level || intermission_running) return FALSE;
+	if(!(e.skate_flags & SKFL_SKATING)) return FALSE;
+	
+	return e.skate_hud_on;
+};
+
+void(entity e, float slot, string fmt, string a0, string a1, string a2, string a3, string a4, string a5) AV_SkateSendText = {
+	msg_entity = e;
+	WriteByte(MSG_ONE, AV_SKATE_SVC_SKATEHUD);
+	WriteByte(MSG_ONE, AV_SKATE_EVT_TEXT);
+	WriteByte(MSG_ONE, slot);
+	WriteString(MSG_ONE, fmt);
+	WriteString(MSG_ONE, a0);
+	WriteString(MSG_ONE, a1);
+	WriteString(MSG_ONE, a2);
+	WriteString(MSG_ONE, a3);
+	WriteString(MSG_ONE, a4);
+	WriteString(MSG_ONE, a5);
+};
+
+void(entity e, string name, float points) AV_SkateSendTrick = {
+	msg_entity = e;
+	WriteByte(MSG_ONE, AV_SKATE_SVC_SKATEHUD);
+	WriteByte(MSG_ONE, AV_SKATE_EVT_TRICK);
+	WriteString(MSG_ONE, name);
+	WriteLong(MSG_ONE, points);
+};
+
+void(entity e, float total) AV_SkateSendCombo = {
+	msg_entity = e;
+	WriteByte(MSG_ONE, AV_SKATE_SVC_SKATEHUD);
+	WriteByte(MSG_ONE, AV_SKATE_EVT_COMBO);
+	WriteLong(MSG_ONE, total);
+};
+
+void() AV_SkateHudState = {
+	local float active = 0;
+	if(skate_level && (self.skate_flags & SKFL_SKATING) && !intermission_running && skate_infokey(self, "avskatehud") == "1") active = 1;
+	
+	if(active && !self.skate_hud_labels){
+		msg_entity = self;
+		WriteByte(MSG_ONE, AV_SKATE_SVC_SKATEHUD);
+		WriteByte(MSG_ONE, AV_SKATE_EVT_LABELS);
+		WriteString(MSG_ONE, "$qc_sk_score");
+		self.skate_hud_labels = 1;
+	}
+	if(!active) self.skate_hud_labels = 0;
+	
+	self.skate_hud_on = active;
+	
+	if(skate_score_goals == 0){
+		skate_score_goals = 2;
+		if(find(world, targetname, "score_amateur") != world) skate_score_goals = 1;
+	}
+	
+	self.skate_hud_goal = 0;
+	if(skate_score_goals == 1){
+		if(self.skate_points < 20000) self.skate_hud_goal = 20000;
+		else if(self.skate_points < 40000) self.skate_hud_goal = 40000;
+		else if(self.skate_points < 60000) self.skate_hud_goal = 60000;
+		else self.skate_hud_goal = -1;
+	}
+};
+
 void(entity e, string msg) AV_SkatePrint = {
 	if(e.classname != "player" || !(e.skate_flags & SKFL_SKATING) || intermission_running){
 		builtin_centerprint(e, msg);
+		return;
+	}
+	
+	if(AV_SkateHudActive(e)){
+		if(msg != "") AV_SkateSendText(e, AV_SKATE_SLOT_MSG, msg, "", "", "", "", "", "");
 		return;
 	}
 	
@@ -700,6 +747,12 @@ void(entity e, string key, float lines, string a0, string a1, string a2) AV_Skat
 		return;
 	}
 	
+	if(AV_SkateHudActive(e)){
+		if(key == "$qc_sk_nogoals") AV_SkateSendText(e, AV_SKATE_SLOT_GOALS, key, a0, a1, a2, "", "", "");
+		else AV_SkateSendText(e, AV_SKATE_SLOT_MSG, key, a0, a1, a2, "", "", "");
+		return;
+	}
+	
 	local string pad = "\n\n";
 	if(lines < AV_SKATE_HUD_LINE) pad = substring(AV_SKATE_HUD_PADDING, 0, AV_SKATE_HUD_LINE - lines);
 	
@@ -732,7 +785,8 @@ void(entity client, string s1) centerprint = {
 	}
 	
 	if(AV_SkateIsLoc(s1)){
-		builtin_centerprint(client, s1);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, "", "", "", "", "", "");
+		else builtin_centerprint(client, s1);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -747,7 +801,8 @@ void(entity client, string s1, string s2) centerprint2 = {
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2)){
-		builtin_centerprint2(client, s1, s2);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, "", "", "", "", "");
+		else builtin_centerprint2(client, s1, s2);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -762,7 +817,8 @@ void(entity client, string s1, string s2, string s3) centerprint3 = {
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2) || AV_SkateIsLoc(s3)){
-		builtin_centerprint3(client, s1, s2, s3);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, s3, "", "", "", "");
+		else builtin_centerprint3(client, s1, s2, s3);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -777,7 +833,8 @@ void(entity client, string s1, string s2, string s3, string s4) centerprint4 = {
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2) || AV_SkateIsLoc(s3) || AV_SkateIsLoc(s4)){
-		builtin_centerprint4(client, s1, s2, s3, s4);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, s3, s4, "", "", "");
+		else builtin_centerprint4(client, s1, s2, s3, s4);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -792,7 +849,8 @@ void(entity client, string s1, string s2, string s3, string s4, string s5) cente
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2) || AV_SkateIsLoc(s3) || AV_SkateIsLoc(s4) || AV_SkateIsLoc(s5)){
-		builtin_centerprint5(client, s1, s2, s3, s4, s5);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, s3, s4, s5, "", "");
+		else builtin_centerprint5(client, s1, s2, s3, s4, s5);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -807,7 +865,8 @@ void(entity client, string s1, string s2, string s3, string s4, string s5, strin
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2) || AV_SkateIsLoc(s3) || AV_SkateIsLoc(s4) || AV_SkateIsLoc(s5) || AV_SkateIsLoc(s6)){
-		builtin_centerprint6(client, s1, s2, s3, s4, s5, s6);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, s3, s4, s5, s6, "");
+		else builtin_centerprint6(client, s1, s2, s3, s4, s5, s6);
 		AV_SkateHoldHud(client);
 		return;
 	}
@@ -822,7 +881,8 @@ void(entity client, string s1, string s2, string s3, string s4, string s5, strin
 	}
 	
 	if(AV_SkateIsLoc(s1) || AV_SkateIsLoc(s2) || AV_SkateIsLoc(s3) || AV_SkateIsLoc(s4) || AV_SkateIsLoc(s5) || AV_SkateIsLoc(s6) || AV_SkateIsLoc(s7)){
-		builtin_centerprint7(client, s1, s2, s3, s4, s5, s6, s7);
+		if(AV_SkateHudActive(client)) AV_SkateSendText(client, AV_SKATE_SLOT_MSG, s1, s2, s3, s4, s5, s6, s7);
+		else builtin_centerprint7(client, s1, s2, s3, s4, s5, s6, s7);
 		AV_SkateHoldHud(client);
 		return;
 	}

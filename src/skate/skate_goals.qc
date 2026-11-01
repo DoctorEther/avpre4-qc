@@ -141,7 +141,8 @@ void() AV_SkatePrintGoals = {
 		return;
 	}
 	
-	loc_centerprint(self, "$qc_sk_goals_all", skate_goal_arg0, skate_goal_arg1, skate_goal_arg2, skate_goal_arg3, skate_goal_arg4, skate_goal_arg5);
+	if(AV_SkateHudActive(self)) AV_SkateSendText(self, AV_SKATE_SLOT_GOALS, "$qc_sk_goals_all", skate_goal_arg0, skate_goal_arg1, skate_goal_arg2, skate_goal_arg3, skate_goal_arg4, skate_goal_arg5);
+	else loc_centerprint(self, "$qc_sk_goals_all", skate_goal_arg0, skate_goal_arg1, skate_goal_arg2, skate_goal_arg3, skate_goal_arg4, skate_goal_arg5);
 	
 #ifdef SKTEST
 	bprint("GOALS[", skate_goal_arg0, "|", skate_goal_arg1, "|", skate_goal_arg2, "|", skate_goal_arg3);
@@ -326,7 +327,8 @@ void() AV_SkateIntroThink = {
 			g = AV_SkateNextCamGoal(g);
 		}
 		
-		loc_centerprint(self, "$qc_sk_intro", ftos(skate_intro_index), ftos(count), skate_intro_goal.message);
+		if(AV_SkateHudActive(self)) AV_SkateSendText(self, AV_SKATE_SLOT_INTRO, "$qc_sk_intro", ftos(skate_intro_index), ftos(count), skate_intro_goal.message, "", "", "");
+		else loc_centerprint(self, "$qc_sk_intro", ftos(skate_intro_index), ftos(count), skate_intro_goal.message);
 		self.skate_hud_time = time + 2;
 	}
 	

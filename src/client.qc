@@ -945,8 +945,6 @@ called each time a player is spawned
 
 void() PutClientInServer =
 {
-	AV_SkateFov();
-	
 	local	entity spot;
 
 	self.classname = "player";
